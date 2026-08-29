@@ -111,7 +111,6 @@ export default function Dock({ items }: { items: DockItem[] }) {
 
   return (
     <div
-      onPointerLeave={() => setPointerX(null)}
       style={{
         position: "fixed",
         left: "50%",
@@ -119,13 +118,24 @@ export default function Dock({ items }: { items: DockItem[] }) {
         transform: "translateX(-50%)",
         zIndex: "var(--gy-z-dock)",
         // Headroom so a fully grown icon and its label are never clipped.
+        // Nothing in this band is hoverable: see the row's pointer handlers.
         paddingTop: Math.ceil(BASE * (MAX_SCALE - 1)) + 34,
+        // The band is invisible but it still sat over the desktop, swallowing
+        // clicks on anything beneath it. The row re-enables them for itself.
+        pointerEvents: "none",
       }}
     >
       <div
         ref={rowRef}
         onPointerEnter={measure}
         onPointerMove={(e) => setPointerX(e.clientX)}
+        // Leave belongs on the SAME element as move. It used to sit on the
+        // wrapper, whose 68px of headroom is above the row: moving the pointer
+        // straight up off an icon left it inside the wrapper, so no leave
+        // fired, and inside no move handler, so pointerX froze. The icon stayed
+        // magnified with its label lit until the pointer happened to cross the
+        // wrapper's edge.
+        onPointerLeave={() => setPointerX(null)}
         style={{
           display: "flex",
           alignItems: "flex-end",
@@ -140,6 +150,7 @@ export default function Dock({ items }: { items: DockItem[] }) {
           border: "1px solid rgba(255, 255, 255, 0.45)",
           borderRadius: "var(--gy-r-dock)",
           boxShadow: "var(--gy-e-dock)",
+          pointerEvents: "auto",
         }}
       >
         {items.map((item, i) => {
@@ -170,20 +181,20 @@ export default function Dock({ items }: { items: DockItem[] }) {
                 cursor: "pointer",
                 color: "inherit",
                 font: "inherit",
-                // transform-origin bottom pins the icon's base to the strip and
-                // grows it upward, the way a real dock behaves. Do not add a
-                // translateY here: it would be applied in scaled space and
-                // multiply by `s`, tearing the icon off the dock.
-                transform: `scale(${s})`,
-                transformOrigin: "bottom center",
-                transition: pointerX === null ? "transform 180ms var(--gy-ease)" : "none",
+                // NOT scaled. The magnification lives on the glyph wrapper
+                // below, so the label and the running dot keep their real size:
+                // as a child of a scale(1.6) button the 8px label rendered at
+                // nearly 13px and floated 1.6x too far above the strip. Leaving
+                // the hit box at a steady 56px is also a better target than one
+                // that grows under the pointer.
               }}
             >
-              {/* Label rides above the icon, only once it has grown. */}
+              {/* Label rides above the icon, only once it has grown. Its offset
+                  has to clear the GROWN glyph, which is why it tracks `s`. */}
               <span
                 style={{
                   position: "absolute",
-                  bottom: `calc(100% + 8px)`,
+                  bottom: `calc(100% + ${Math.round(8 + BASE * (s - 1))}px)`,
                   left: "50%",
                   transform: "translateX(-50%)",
                   whiteSpace: "nowrap",
@@ -210,7 +221,21 @@ export default function Dock({ items }: { items: DockItem[] }) {
                 )}
               </span>
 
-              {item.glyph(BASE)}
+              {/* The magnification. transform-origin bottom pins the icon's
+                  base to the strip and grows it upward, the way a real dock
+                  behaves. Do not add a translateY here: it would be applied in
+                  scaled space, multiply by `s`, and tear the icon off the strip. */}
+              <span
+                style={{
+                  display: "flex",
+                  transform: `scale(${s})`,
+                  transformOrigin: "bottom center",
+                  transition: pointerX === null ? "transform 180ms var(--gy-ease)" : "none",
+                  pointerEvents: "none",
+                }}
+              >
+                {item.glyph(BASE)}
+              </span>
 
               {/* running indicator */}
               <span
