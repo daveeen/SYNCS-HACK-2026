@@ -26,6 +26,7 @@ import {
   MOCK_COMMENTS,
   MOCK_LIKES,
   MOCK_POSTS,
+  stripMentions,
   timeAgo,
   type MockComment,
   type MockPost,
@@ -528,7 +529,7 @@ export default function ForumWindow() {
                           }}
                         >
                           <span style={{ fontFamily: "var(--gy-font-mono)", color: "var(--gy-ink-faint)" }}>@{p.author}:</span>{" "}
-                          {p.body}
+                          {stripMentions(p.body, p.mentions)}
                         </span>
                         <span style={{ flex: "0 0 auto", display: "flex", alignItems: "center", gap: "var(--gy-s-4)" }}>
                           <span
@@ -590,7 +591,7 @@ export default function ForumWindow() {
               {activePost.title}
             </h1>
             <p style={{ margin: 0, fontSize: "var(--gy-t-lead)", color: "var(--gy-ink-dim)", lineHeight: 1.5 }}>
-              {activePost.body}
+              {stripMentions(activePost.body, activePost.mentions)}
             </p>
             <div
               style={{

@@ -132,3 +132,22 @@ export function timeAgo(iso: string): string {
   const day = Math.round(hr / 24);
   return `${day}d ago`;
 }
+
+/**
+ * The body stores the raw text someone typed, @handles and all — that's the
+ * contract (forum-reads.md "Rendering @mentions"). But once a mention is
+ * pulled out into its own row of pills, leaving the same "@handle" sitting in
+ * the body too just repeats it. This strips each resolved mention back out of
+ * the DISPLAYED text only; the underlying body is never touched.
+ */
+export function stripMentions(body: string, mentions: string[]): string {
+  if (mentions.length === 0) return body;
+  let out = body;
+  for (const m of mentions) {
+    const escaped = m.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    // Eat one leading space with the handle so removing it doesn't leave a
+    // double space behind.
+    out = out.replace(new RegExp(`\\s?${escaped}\\b`, "gi"), "");
+  }
+  return out.replace(/\s{2,}/g, " ").replace(/\s+([.,!?])/g, "$1").trim();
+}
