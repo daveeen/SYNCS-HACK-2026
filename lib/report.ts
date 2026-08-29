@@ -18,8 +18,14 @@
  */
 import type { RootCauseCategory, StartupMatch } from "@/lib/types";
 
-/** A field the pipeline could not verify. Never printed as though it were a fact. */
-function known(value: string): boolean {
+/**
+ * A field the pipeline could not verify. Never printed as though it were a fact.
+ *
+ * Exported because the results cards apply the same rule. Two copies drift, and
+ * a card that prints "unknown" beside a report that suppresses it is worse than
+ * either behaviour on its own.
+ */
+export function known(value: string): boolean {
   return Boolean(value) && value.trim().toLowerCase() !== "unknown";
 }
 
@@ -40,19 +46,22 @@ function sentence(text: string): string {
  * The list answers "who died and roughly why"; the full text belongs on the
  * tombstone card, where there is room for it.
  *
- * Capped at 170 characters: long enough to carry a real cause, short enough
- * that five of them stack into something a judge will actually read.
+ * Capped at 170 characters by default: long enough to carry a real cause, short
+ * enough that five of them stack into something a judge will actually read. The
+ * results cards pass a shorter cap, and take this function rather than their
+ * own copy so the same cause cannot appear with two different truncations and
+ * two different trailing punctuations in one window.
  *
  * Splits on sentence-ending punctuation followed by a space, so decimals and
  * "Inc." survive. Falls back to a hard truncation if the text is one long
  * sentence, which most of these are.
  */
-function firstSentence(text: string): string {
+export function firstSentence(text: string, maxChars = 170): string {
   const trimmed = text.trim();
   const match = trimmed.match(/^.*?[.!?](?=\s|$)/);
   const lead = (match?.[0] ?? trimmed).trim();
-  if (lead.length <= 170) return lead.endsWith(".") ? lead : `${lead}.`;
-  return `${lead.slice(0, 167).trimEnd()}…`;
+  if (lead.length <= maxChars) return lead.endsWith(".") ? lead : `${lead}.`;
+  return `${lead.slice(0, maxChars - 3).trimEnd()}…`;
 }
 
 function lifespan(m: StartupMatch): string {

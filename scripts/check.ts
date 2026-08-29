@@ -22,6 +22,7 @@ import { composeReport } from "../lib/report";
 import { isValidHandle, HANDLE_RULE } from "../lib/forum/handle";
 import { parseMentions } from "../lib/forum/mentions";
 import { LIMITS, isOverLimit } from "../lib/forum/ratelimit";
+import { parseInline, parseMarkdown } from "../lib/markdown";
 import type { FailedStartup, StartupMatch, StartupVectors } from "../lib/types";
 
 /** Mock records as matches, so the report checks need no data and no key. */
@@ -256,6 +257,74 @@ async function main(): Promise<void> {
     assert.equal(isOverLimit(LIMITS.post.max, "post"), true);
     assert.equal(isOverLimit(LIMITS.post.max + 5, "post"), true);
     assert.equal(isOverLimit(0, "comment"), false);
+  });
+
+  await check("markdown: bold wins over italic, so ** never parses as a stray *", () => {
+    assert.deepEqual(parseInline("died of **out-competed** today"), [
+      { text: "died of " },
+      { text: "out-competed", bold: true },
+      { text: " today" },
+    ]);
+    assert.deepEqual(parseInline("the cause is *regulatory*"), [
+      { text: "the cause is " },
+      { text: "regulatory", italic: true },
+    ]);
+  });
+
+  // A report that silently loses characters to a stray asterisk is worse than
+  // one that shows the asterisk. The PAIRED case is the dangerous one: two
+  // loose asterisks used to parse as emphasis and delete both markers.
+  await check("markdown: loose asterisks stay literal, single and paired", () => {
+    assert.deepEqual(parseInline("2 * 3 is six"), [{ text: "2 * 3 is six" }]);
+    assert.deepEqual(parseInline("2 * 3 * 4 is not right"), [{ text: "2 * 3 * 4 is not right" }]);
+    assert.deepEqual(parseInline("5 * 5 * 5 * 5"), [{ text: "5 * 5 * 5 * 5" }]);
+  });
+
+  // The founder's raw query is echoed back into the report inside a
+  // blockquote, so whatever they type has to survive the round trip intact.
+  await check("markdown: tight emphasis still parses beside loose asterisks", () => {
+    assert.deepEqual(parseInline("a *better* Uber for 5 * 5 logistics"), [
+      { text: "a " },
+      { text: "better", italic: true },
+      { text: " Uber for 5 * 5 logistics" },
+    ]);
+  });
+
+  await check("markdown: headings, quote and list are separate blocks", () => {
+    const blocks = parseMarkdown("## Title\n\n> the idea\n\n- one\n- two");
+    assert.deepEqual(
+      blocks.map((b) => b.kind),
+      ["h2", "quote", "list"],
+    );
+    const list = blocks[2];
+    assert.equal(list.kind === "list" && list.items.length, 2);
+  });
+
+  // composeReport() hard-wraps prose across source lines. Rendering each line
+  // as its own paragraph puts a blank gap between every clause.
+  await check("markdown: wrapped prose lines join into one paragraph", () => {
+    const blocks = parseMarkdown("We cannot say. None of these\nhas a cause on record.");
+    assert.equal(blocks.length, 1);
+    assert.equal(blocks[0].kind, "p");
+    assert.match(
+      blocks[0].kind === "p" ? blocks[0].spans.map((s) => s.text).join("") : "",
+      /None of these has a cause/,
+    );
+  });
+
+  // The end-to-end guard: whatever composeReport emits must come out the other
+  // side as text, with no marker syntax left visible to the user.
+  await check("markdown: a real report renders with no leftover markers", async () => {
+    const md = composeReport("grocery delivery", await loadMatches(5));
+    const spans = parseMarkdown(md).flatMap((b) => (b.kind === "list" ? b.items.flat() : b.spans));
+    // Assert per span, not on a joined string. Joining with a space erases the
+    // line breaks, so an anchored /^#/m would only ever inspect character 0 and
+    // would pass on exactly the leaked heading it was written to catch.
+    for (const s of spans) {
+      assert.doesNotMatch(s.text, /\*/, `asterisk survived: ${s.text}`);
+      assert.doesNotMatch(s.text, /#/, `hash survived: ${s.text}`);
+    }
+    assert.match(spans.map((s) => s.text).join(" "), /The pattern/);
   });
 
 

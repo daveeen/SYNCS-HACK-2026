@@ -247,6 +247,53 @@ Three worth knowing about:
 
 ---
 
+## The frontend is wired
+
+`docs/search-ux-flow.md` is the design; this is what shipped, and it differs
+from that document in two places worth knowing.
+
+**Two calls, in `Desktop.tsx › runSearch`.** `POST /api/search` paints the
+match cards, then `POST /api/report` fills the write-up under them. The report
+call is the one the doc expects to take 5 to 8 seconds; since the report became
+a pure function it returns instantly, and the skeleton flashes rather than
+holds.
+
+**The doc is wrong in two details, both corrected in the code:**
+
+- `/api/report` streams `text/plain` Markdown. It does NOT return
+  `{ report }` JSON, so read it with `res.text()`. On failure it switches to a
+  JSON `ApiError`, which is why the two paths read the body differently.
+- There is no `x-graveyard-stub` header and there never was. The rails are
+  `x-graveyard-mock-data` and `x-graveyard-degraded`, and `ResultsWindow`
+  renders a banner for each.
+
+**`SIMILARITY_FLOOR = 0.35` applies to cosine scores only.** Calibrated against
+the live corpus: a real hit scores 0.48 to 0.51, a loose but genuine neighbour
+around 0.40, and an idea with no counterpart 0.17 to 0.24. **It is skipped
+entirely when `x-graveyard-degraded` is set**, because BM25 ranks are
+normalised by the top hit, so the leader is always exactly 1.00 however weak it
+is. Applying a cosine threshold to them would pass junk at 1.00 and cut real
+neighbours sitting at 0.3 of the leader. In degraded mode the per-card score is
+hidden too, for the same reason.
+
+**New components, all mine:** `ResultsWindow.tsx` (match cards, report,
+skeleton, empty and error states, both rails), `SiteWindow.tsx` (the archived
+homepage in a sandboxed iframe), `Markdown.tsx` plus `lib/markdown.ts` (a
+tokenizer for the exact Markdown subset `composeReport()` emits, so no parser
+dependency and no path for HTML to reach the page).
+
+**`app/page.tsx` now loads through `lib/data.ts`** rather than `fs.readFile`.
+That module statically imports the JSON, so Vercel's tracer is guaranteed to
+ship it, and it applies the same `rootCauseCategory` coercion the API uses, so
+the shell and `/api/report` read one corpus rather than two.
+
+**`/api/reconstruct` has no UI caller, deliberately.** 171 of 173 records carry
+a baked `waybackUrl` that already has the `if_` flag, so `SiteWindow` iframes it
+directly and the demo path makes zero network calls of its own. The route
+remains the answer for an arbitrary domain that was never in the corpus.
+
+---
+
 ## Known gaps
 
 **`rootCauseCategory` is missing on all 173 records, so "The pattern" never
