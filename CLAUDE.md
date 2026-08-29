@@ -78,3 +78,34 @@ app/components/ and the design tokens; Darryl owns page composition and routing
   these closely. They exist so an arbitrary judge-typed idea finds a real match
   instead of a 0.19 similarity to something irrelevant.
 Both land in data/startups.enriched.json in the same FailedStartup shape.
+
+---
+
+## Asher's data-cleaning progress (working notes)
+
+Base dataset: CB Insights Kaggle "startup failures" dump, `data/raw/archive (5)/`
+— one bare index file (`Startup Failures.csv`, 815 rows, no failure detail) plus
+6 sector-specific CSVs (Finance and Insurance, Food and services / Accommodation,
+Health Care, Manufactures, Retail Trade, Information) that carry the real detail:
+`what_they_did`, `how_much_they_raised`, `why_they_failed`, `takeaway`, plus 14
+one-hot failure-cause flags (competition, overhype, regulatory pressure, etc.).
+
+Pipeline so far:
+- `data/clean/startups_base.csv` — the 6 sector CSVs combined, column names
+  standardized to snake_case. 409 rows.
+- `data/clean/startups_clean.csv` — same, plus parsed fields via `src/clean.py`:
+  - `funding_musd` (float, millions USD) — parsed from `how_much_they_raised`,
+    parenthetical annotations (acquirer names, "(est.)") stripped and ignored.
+    1 unparseable value (`$lowM`) left null.
+  - `founded_year`, `shutdown_year`, `duration_years` (ints) and
+    `duration_mismatch` (bool) — parsed from `years_of_operation`, which mixes
+    `YYYY-YYYY` and `N (YYYY-YYYY)` formats. 0 mismatches found across 272 rows
+    with a stated duration prefix.
+- `data/clean/unenriched_names.csv` — 489 of the 815 base-index names have no
+  matching row in the 6 sector CSVs (matched on normalized name). This is the
+  candidate list for the enrichment scraper if we need to grow past 409 rows
+  toward the ~50 BREADTH target.
+
+Open question: 409 enriched rows is well short of the 483 CB Insights figure —
+worth checking with the team whether the 6 sector CSVs are the complete enriched
+set or partial.
