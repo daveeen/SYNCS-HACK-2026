@@ -53,7 +53,7 @@ ChowNow,Accommodation and Food Services,12 (2011-2023),Restaurant ordering platf
 Clover,Accommodation and Food Services,8 (2012-2020),Plant-based fast food chain,$20M,Closed 2020; niche; lost to McDonald's,Niche eats need taste,1,0,1,0,0,,0,1,0,0,,,,1.0,20.0,2012,2020,8,False
 Curb Food,Accommodation and Food Services,4 (2019-2023),Automated ghost kitchens,$10M,Closed 2023; tech glitches; lost to DoorDash,Robots need results,1,0,1,0,0,,0,0,1,0,,,,1.0,10.0,2019,2023,4,False
 Dinner Lab,Accommodation and Food Services,6 (2011-2017),Pop-up dining events,$10M,Closed 2017; high costs; low demand,Events need economics,0,1,0,1,0,,0,0,0,0,,,,1.0,10.0,2011,2017,6,False
-Flowtab,Accommodation and Food Services,3 (2011-2014),Bar ordering app,$2M,Closed 2014; low adoption; lost to POS systems,Convenience needs converts,0,1,0,1,0,,0,0,0,0,,,,0.0,2.0,2011,2014,3,False
+Flowtab,Accommodation and Food Services,3 (2011-2014),Bar ordering app,$2M,Closed 2014; low adoption; lost to POS systems,Convenience needs converts,0,1,0,1,0,,0,0,0,0,,,,0.0,2.0,2011,2013,2,True
 Foodler,Accommodation and Food Services,14 (2004-2018),Food delivery aggregator,$5M,Sold 2018; lost to Grubhub,Aggregators need scale,1,0,1,0,1,,0,0,0,0,,,,0.0,5.0,2004,2018,14,False
 Grubwithus,Accommodation and Food Services,5 (2010-2015),Social dining events,$8M,Closed 2015; waned demand; high costs,Social dining needs crowd,0,1,0,1,0,,0,0,0,0,,,,1.0,8.0,2010,2015,5,False
 Maple,Accommodation and Food Services,5 (2014-2019),Premium meal delivery,$50M,Closed 2019; high costs; lost to DoorDash,Premium food needs profit,1,0,1,0,0,,0,0,0,0,,,,1.0,50.0,2014,2019,5,False
@@ -168,7 +168,7 @@ AllRomance,Retail Trade,10 (2006-2016),E-book retailer for romance novels,$1M,Cl
 Auctionata,Retail Trade,6 (2012-2018),Online auction house for art and luxury,$95M,Shut down 2018; high costs; lost to eBay; valuation scandal,Trust and economics matter,1,0,1,0,0,0.0,0,0,1,0,1.0,0.0,0.0,,95.0,2012,2018,6,False
 Augury Books,Retail Trade,5 (2012-2017),Indie e-commerce bookstore for poetry,$0.5M,Closed 2017; couldn't scale; lost to Amazon,Niche retail bleeds,1,1,0,0,0,0.0,0,1,0,0,0.0,0.0,0.0,,0.5,2012,2017,5,False
 Beepi,Retail Trade,4 (2013-2017),Peer-to-peer used car marketplace,$150M,Shut down 2017; high shipping costs; cash burned out,Costs can kill,1,1,0,0,0,0.0,1,0,1,0,0.0,0.0,0.0,,150.0,2013,2017,4,False
-Boxed,Retail Trade,8 (2013-2021),Bulk e-commerce platform,$326M,Bankruptcy 2021; lost to Amazon; high shipping costs,Scale trumps convenience,1,0,1,0,0,0.0,1,0,0,0,0.0,0.0,0.0,,326.0,2013,2021,8,False
+Boxed,Retail Trade,8 (2013-2021),Bulk e-commerce platform,$326M,Bankruptcy 2021; lost to Amazon; high shipping costs,Scale trumps convenience,1,0,1,0,0,0.0,1,0,0,0,0.0,0.0,0.0,,326.0,2013,2023,10,True
 BurstIQ,Retail Trade,7 (2015-2022),Blockchain health data marketplace,$5.8M,Faded 2022; low adoption; lost to data brokers,Tech alone doesn't sell,0,0,1,1,0,0.0,0,1,0,0,0.0,1.0,0.0,,5.8,2015,2022,7,False
 Carwoo,Retail Trade,6 (2009-2015),Online car-buying platform,$15M,Closed 2015; dealers resisted; cash ran dry,Resistance stalls disruption,0,1,1,0,0,0.0,0,0,0,0,0.0,0.0,0.0,,15.0,2009,2015,6,False
 Catelyn,Retail Trade,3 (2015-2018),Subscription jewelry rental service,$2M,Shut down 2018; low demand; lost to Stitch Fix,Niche needs traction,0,0,1,1,0,0.0,0,1,0,0,0.0,0.0,0.0,,2.0,2015,2018,3,False
@@ -261,7 +261,7 @@ Change.org,Information,15 (2007-2022),Petition platform for activism,$50M,"Start
 Chirp,Information,5 (2011-2016),App to share data via sound,$1.8M,Closed in 2016; niche; no real problem solved; adoption lagged,Cool doesn't equal useful,0,0,0,1,0,0.0,0,1,0,0,0.0,0.0,0.0,,1.8,2011,2016,5,False
 Cloudera,Information,15 (2008-2023),Big data analytics platform,$300M,Wound down 2023; lost to AWS; Google BigQuery; went private,Giants eat niches,1,0,1,0,0,0.0,0,0,0,0,0.0,0.0,0.0,,300.0,2008,2023,15,False
 Cocoon,Information,4 (2018-2022),Privacy-focused browser,$3M,Shut down 2022; lost to VPNs; Chrome; trust waned,Trust is currency,1,0,1,0,0,0.0,0,0,0,0,1.0,0.0,0.0,,3.0,2018,2022,4,False
-Codeacademy,Information,11 (2011-2022),Online coding lessons,$42.5M,"Acquired 2021; ""closed"" 2022; free tiers didn't convert; lost to Coursera",Freemium's a gamble,0,0,1,0,1,0.0,1,0,0,0,0.0,0.0,0.0,,42.5,2011,2022,11,False
+Codecademy,Information,11 (2011-2022),Online coding lessons,$42.5M,"Acquired 2021; ""closed"" 2022; free tiers didn't convert; lost to Coursera",Freemium's a gamble,0,0,1,0,1,0.0,1,0,0,0,0.0,0.0,0.0,,42.5,2011,2022,11,False
 CollabFinder,Information,7 (2011-2018),Matchmaking for project collaborators,$0.75M,Shut down 2018; too niche; lost to GitHub; LinkedIn,Networks need mass,1,1,1,0,0,0.0,0,1,0,0,0.0,0.0,0.0,,0.75,2011,2018,7,False
 Color Labs,Information,3 (2011-2014),Photo-sharing by location,$41M,Closed 2014; confused users; lost to Instagram; Apple absorbed,Hype can't save fit,1,0,1,1,1,0.0,0,0,0,0,0.0,0.0,1.0,,41.0,2011,2014,3,False
 Connect,Information,6 (2010-2016),Social networking via Facebook,$10M,Shut down 2016; lost to Facebook's own features; privacy issues,Don't bet on turf,1,0,0,0,0,1.0,0,0,0,0,1.0,0.0,0.0,,10.0,2010,2016,6,False
