@@ -422,7 +422,10 @@ export default function Desktop({ startups }: { startups: FailedStartup[] }) {
         >
           {w.pane.kind === "doc" && <DocWindow doc={w.pane.doc} />}
           {w.pane.kind === "startup" && <StartupWindow s={w.pane.startup} />}
-          {w.pane.kind === "forum" && <ForumWindow />}
+          {/* startups: so a resolved @mention can show the real company name
+              (forum-reads.md "Rendering @mentions") — already loaded here,
+              just not previously threaded down to Sam's canvas. */}
+          {w.pane.kind === "forum" && <ForumWindow startups={startups} />}
           {w.pane.kind === "site" && <SiteWindow s={w.pane.startup} />}
           {w.pane.kind === "results" && (
             <ResultsWindow
