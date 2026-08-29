@@ -514,30 +514,49 @@ Watch the Vercel preview build, then hit `<preview-url>/api/embed-smoke`.
 
 **Returns 384** → MiniLM is settled. Continue to Task 4. Note the `coldStartMs`; if it is over ~5000, mention it to Darryl so the results page can warm the function on page load.
 
-**"A Serverless Function has exceeded the unzipped maximum size of 250 MB"** → do not immediately abandon MiniLM. Work the exclusions below first, and switch to the Supabase Edge fallback in [backend-spec.md §12](backend-spec.md) only if they do not get it under. Only `lib/embed.ts` changes shape either way; every task below stays as written. Tell Darryl the same hour.
+**"A Serverless Function has exceeded the unzipped maximum size of 250 MB"** → this should not happen — the measured trace is roughly 70 MB on Vercel (see below). If it does, something changed: re-measure from the trace file first, work the exclusions listed below, and switch to the Supabase Edge fallback in [backend-spec.md §12](backend-spec.md) only if those do not get it under. Only `lib/embed.ts` changes shape either way; every task below stays as written. Tell Darryl the same hour.
 
-### Measured size, and what to cut if the gate fails
+### Measured size — the gate should pass comfortably
 
-Everything the `/api/search` function must carry, measured locally:
+Do not measure this with `du` on node_modules. That counts whole packages on
+disk and wildly overstates it; the tracer only pulls what is reachable. Read the
+real answer out of the trace Next writes at build time:
 
-| | Size |
+```bash
+pnpm build
+node -e "const t=require('./.next/server/app/api/search/route.js.nft.json');console.log(t.files.length,'files traced')"
+```
+
+Deduped by realpath, the `/api/search` function traces to **53.4 MB** locally:
+
+| | Traced |
 |---|---|
-| `onnxruntime-node` | 92M |
-| `onnxruntime-web` | 66M |
-| `sharp` | 50M |
-| `@xenova/transformers` | 45M |
-| `models/` (committed weights) | 23M |
-| **total** | **239M** |
+| `sharp` (vendored libvips) | 27.4M |
+| `models/` (weights) | 22.6M |
+| `next` | 1.4M |
+| `@xenova/transformers` | 0.8M |
+| `onnxruntime-web` | 0.5M |
+| `onnxruntime-node` | 0.2M |
+| everything else | ~0.5M |
+| **total** | **53.4M** |
 
-Against a 250MB ceiling that is an 11MB margin, and Next's tracer is not guaranteed to be tighter than `du`. Treat this gate as genuinely uncertain rather than a formality.
+On Vercel it lands near **70 MB**: the build runs on linux, so the tracer takes
+`bin/napi-v3/linux/x64/libonnxruntime.so.1.14.0` (16.3M) in place of the 0.2M
+win32 binding it picks locally. Against a 250 MB ceiling that is roughly 3.5x
+headroom.
 
-If it fails, add `outputFileTracingExcludes` to `next.config.ts` and re-push, cutting in this order — **one at a time, re-deploying between each**, because each can break the model at runtime rather than at build time and you want to know which one did:
+`sharp` being the single largest entry is galling — we never process an image —
+but it is not worth removing. @xenova/transformers imports it at module load, so
+the only ways out are patching the dependency's import graph or aliasing it to a
+stub, and both risk breaking model loading to reclaim headroom that is already
+there. Leave it.
 
-1. **`onnxruntime-web`** (66M, the biggest safe win). transformers.js uses `onnxruntime-node` when the native binding loads and falls back to the WASM build otherwise. Excluding it makes that fallback impossible — which is what you want on a platform where you have already committed to the native path. If the binding then fails on Vercel you get a loud error instead of a silent switch to a slower backend.
-2. **Non-linux `onnxruntime-node` binaries.** The package ships prebuilds per platform under `bin/napi-v3/`; Vercel only ever needs `linux/x64`. This is the exclusion from [transformers.js#1164](https://github.com/huggingface/transformers.js/issues/1164) — keep `libonnxruntime.so.1` and `onnxruntime_binding.node`, drop the rest.
-3. **`sharp` — carefully.** 50M and we never process an image, but `@xenova/transformers` imports it at module load, so excluding the package outright crashes the import. Only its non-linux vendored libvips builds can go; the linux binary and its DLLs must stay.
-
-Do not touch `models/` — that 23M is the entire point of the design.
+If a future change does push this over, cut in this order, one at a time,
+redeploying between each: `onnxruntime-web` (the WASM fallback, redundant once
+the native binding works), then the non-linux `onnxruntime-node` prebuilds under
+`bin/napi-v3/` — the exclusion from
+[transformers.js#1164](https://github.com/huggingface/transformers.js/issues/1164).
+Never `models/`; those 23M are the entire point of the design.
 
 ---
 
