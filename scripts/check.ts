@@ -9,6 +9,7 @@
  */
 import assert from "node:assert/strict";
 import { cosineSimilarity } from "../lib/embed";
+import { toEmbeddableSnapshot } from "../lib/wayback";
 
 let failed = 0;
 
@@ -39,6 +40,22 @@ async function main(): Promise<void> {
 
   await check("cosine: length mismatch throws", () => {
     assert.throws(() => cosineSimilarity([1, 2], [1, 2, 3]), /length mismatch/);
+  });
+
+  await check("wayback: snapshot URL becomes https and gains the if_ flag", () => {
+    assert.equal(
+      toEmbeddableSnapshot("http://web.archive.org/web/20160421075323/http://webvan.com/"),
+      "https://web.archive.org/web/20160421075323if_/http://webvan.com/",
+    );
+  });
+
+  await check("wayback: an already-embeddable URL is left alone", () => {
+    const already = "https://web.archive.org/web/20160421075323if_/http://webvan.com/";
+    assert.equal(toEmbeddableSnapshot(already), already);
+  });
+
+  await check("wayback: an empty string stays empty", () => {
+    assert.equal(toEmbeddableSnapshot(""), "");
   });
 
   console.log(failed === 0 ? "\nall checks passed" : `\n${failed} check(s) failed`);
