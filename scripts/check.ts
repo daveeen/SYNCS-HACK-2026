@@ -19,6 +19,9 @@ import {
 import { rankByVector, rankByBM25 } from "../lib/search";
 import { toEmbeddableSnapshot } from "../lib/wayback";
 import { composeReport } from "../lib/report";
+import { isValidHandle, HANDLE_RULE } from "../lib/forum/handle";
+import { parseMentions } from "../lib/forum/mentions";
+import { LIMITS, isOverLimit } from "../lib/forum/ratelimit";
 import type { FailedStartup, StartupMatch, StartupVectors } from "../lib/types";
 
 /** Mock records as matches, so the report checks need no data and no key. */
@@ -179,6 +182,58 @@ async function main(): Promise<void> {
   await check("wayback: an empty string stays empty", () => {
     assert.equal(toEmbeddableSnapshot(""), "");
   });
+
+  await check("handle: accepts lowercase, digits and underscore, 3-20 chars", () => {
+    assert.equal(isValidHandle("yeriel"), true);
+    assert.equal(isValidHandle("yeriel_1"), true);
+    assert.equal(isValidHandle("a_b_c"), true);
+  });
+
+  await check("handle: rejects short, long, uppercase and punctuation", () => {
+    assert.equal(isValidHandle("ab"), false);
+    assert.equal(isValidHandle("a".repeat(21)), false);
+    assert.equal(isValidHandle("Yeriel"), false);
+    assert.equal(isValidHandle("a-b"), false);
+    assert.equal(isValidHandle("a b"), false);
+    assert.equal(isValidHandle(""), false);
+  });
+
+  // supabase/schema.sql duplicates this as a CHECK constraint. The route
+  // validates so the user gets a readable error; the database validates because
+  // the route is not the only thing that can ever insert. This keeps them equal.
+  await check("handle: route regex and schema constraint are the same rule", () => {
+    assert.equal(HANDLE_RULE.source, "^[a-z0-9_]{3,20}$");
+  });
+
+  await check("mentions: resolves @name against the corpus", async () => {
+    assert.deepEqual(parseMentions("@fetchly died in 2018", await loadMock()), ["mock-001"]);
+  });
+
+  await check("mentions: normalises punctuation and spacing in names", async () => {
+    assert.deepEqual(parseMentions("see @orbitalpost", await loadMock()), ["mock-009"]);
+  });
+
+  await check("mentions: drops an unknown handle rather than inventing a link", async () => {
+    assert.deepEqual(parseMentions("@notacompany was great", await loadMock()), []);
+  });
+
+  await check("mentions: deduplicates a repeated mention", async () => {
+    assert.deepEqual(parseMentions("@fetchly and again @fetchly", await loadMock()), ["mock-001"]);
+  });
+
+  // Without a leading boundary on the @, every post containing an email address
+  // would silently link to a dead startup.
+  await check("mentions: an email address is not a mention", async () => {
+    assert.deepEqual(parseMentions("mail me at yeriel@fetchly.com", await loadMock()), []);
+  });
+
+  await check("ratelimit: allows under the cap, rejects at and above it", () => {
+    assert.equal(isOverLimit(LIMITS.post.max - 1, "post"), false);
+    assert.equal(isOverLimit(LIMITS.post.max, "post"), true);
+    assert.equal(isOverLimit(LIMITS.post.max + 5, "post"), true);
+    assert.equal(isOverLimit(0, "comment"), false);
+  });
+
 
   console.log(failed === 0 ? "\nall checks passed" : `\n${failed} check(s) failed`);
   process.exit(failed === 0 ? 0 : 1);
