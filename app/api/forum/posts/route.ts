@@ -57,7 +57,16 @@ export async function POST(
 
   const supabase = await createClient();
 
-  const recent = await countRecentWrites(supabase, "post", caller.userId);
+  // countRecentWrites throws by design when its own query fails — a limiter that
+  // opens on error is not a limiter. But an uncaught throw here escapes as an
+  // unshaped 500 that leaks the database message, so it is caught and shaped.
+  let recent: number;
+  try {
+    recent = await countRecentWrites(supabase, "post", caller.userId);
+  } catch (err) {
+    console.error("posts: rate limit check failed:", err);
+    return NextResponse.json({ error: "could not create the post" }, { status: 500 });
+  }
   if (isOverLimit(recent, "post")) {
     return NextResponse.json(
       {

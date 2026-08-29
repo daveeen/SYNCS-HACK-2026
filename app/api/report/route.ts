@@ -30,6 +30,34 @@ const STREAM_HEADERS = {
   "cache-control": "no-store",
 };
 
+/**
+ * Does this match carry everything composeReport() reads?
+ *
+ * The body is client-supplied, so a caller can post `{id, name}` and nothing
+ * else. Checking only those two produced "2000–undefined" lifespans and
+ * "died of the same thing: **undefined**" — the fabricated output the whole
+ * pure-function design exists to make impossible. A partial match is dropped
+ * rather than rendered, because a report is only as trustworthy as its worst
+ * line.
+ */
+function isRenderable(m: unknown): m is StartupMatch {
+  if (!m || typeof m !== "object") return false;
+  const r = m as Record<string, unknown>;
+  return (
+    typeof r.id === "string" &&
+    typeof r.name === "string" &&
+    typeof r.tagline === "string" &&
+    typeof r.rootCause === "string" &&
+    typeof r.rootCauseCategory === "string" &&
+    typeof r.timingNote === "string" &&
+    typeof r.lesson === "string" &&
+    typeof r.fundingRaised === "string" &&
+    typeof r.foundedYear === "number" &&
+    typeof r.diedYear === "number" &&
+    typeof r.similarity === "number"
+  );
+}
+
 function streamString(text: string): Response {
   const encoder = new TextEncoder();
   return new Response(
@@ -66,9 +94,7 @@ export async function POST(request: Request): Promise<Response | NextResponse<Ap
     return NextResponse.json({ error: "matches must be an array" }, { status: 400 });
   }
 
-  const matches: StartupMatch[] = body.matches
-    .slice(0, MAX_MATCHES)
-    .filter((m) => m && typeof m.id === "string" && typeof m.name === "string");
+  const matches: StartupMatch[] = body.matches.slice(0, MAX_MATCHES).filter(isRenderable);
 
   return streamString(composeReport(query, matches));
 }

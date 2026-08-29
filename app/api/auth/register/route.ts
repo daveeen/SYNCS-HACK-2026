@@ -55,18 +55,68 @@ export async function POST(
   });
 
   if (error) {
+    // Always log the real thing. Collapsing every failure into one generic 500
+    // is how a misconfigured project looks like a code bug for an hour.
+    console.error(
+      `register: signUp failed [${error.code ?? "no-code"} / ${error.status ?? "no-status"}]:`,
+      error.message,
+    );
+
     // A duplicate handle surfaces as a Postgres 23505 raised inside the trigger,
     // which Supabase reports as a signup failure. Map it to something a person
     // can act on rather than leaking a constraint name.
-    const duplicateHandle =
-      error.message.includes("profiles_handle_key") || error.message.includes("23505");
-    if (duplicateHandle) {
-      return NextResponse.json({ error: "that handle is taken" }, { status: 409 });
+    // GoTrue does NOT pass the Postgres error through. Any exception raised
+    // inside the signup trigger — including the unique violation on
+    // profiles.handle — is collapsed into the opaque "Database error saving new
+    // user" / unexpected_failure. Matching only on 23505 or the constraint name
+    // means this branch never fires and a taken handle returns a bare 500.
+    //
+    // The trigger is the only thing that can fail in that transaction, and a
+    // duplicate handle is by far its likeliest failure, so we check the handle
+    // ourselves to say something true rather than guessing from the message.
+    const looksLikeTriggerFailure =
+      error.message.includes("profiles_handle_key") ||
+      error.message.includes("23505") ||
+      error.message.toLowerCase().includes("database error saving new user") ||
+      error.code === "unexpected_failure";
+
+    if (looksLikeTriggerFailure) {
+      const { data: taken } = await supabase
+        .from("profiles")
+        .select("handle")
+        .eq("handle", handle)
+        .maybeSingle();
+
+      if (taken) {
+        return NextResponse.json({ error: "that handle is taken" }, { status: 409 });
+      }
+      return NextResponse.json({ error: "could not create the account" }, { status: 500 });
     }
+
     if (error.message.toLowerCase().includes("already registered")) {
       return NextResponse.json({ error: "that email already has an account" }, { status: 409 });
     }
-    console.error("register: signUp failed:", error.message);
+
+    // Supabase is rate-limiting its own confirmation emails. This only happens
+    // when "Confirm email" is still ON in the dashboard — with it off, signup
+    // sends no mail and cannot hit this at all. Surfacing it as a 500 sends
+    // whoever sees it hunting through route code for a bug that is a project
+    // setting.
+    if (error.code === "over_email_send_rate_limit" || error.status === 429) {
+      return NextResponse.json(
+        {
+          error:
+            "signup is temporarily rate limited by the auth provider — if this persists, " +
+            "email confirmation is still enabled and should be turned off",
+        },
+        { status: 429 },
+      );
+    }
+
+    if (error.message.toLowerCase().includes("password")) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
     return NextResponse.json({ error: "could not create the account" }, { status: 500 });
   }
 

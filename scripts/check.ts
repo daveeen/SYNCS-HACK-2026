@@ -198,13 +198,16 @@ async function main(): Promise<void> {
     assert.equal(isValidHandle(""), false);
   });
 
-  // supabase/schema.sql duplicates this as a CHECK constraint. The route
-  // validates so the user gets a readable error; the database validates because
-  // the route is not the only thing that can ever insert. This keeps them equal.
-  await check("handle: route regex and schema constraint are the same rule", () => {
-    assert.equal(HANDLE_RULE.source, "^[a-z0-9_]{3,20}$");
+  // Reads the ACTUAL constraint out of supabase/schema.sql rather than
+  // comparing against a second hardcoded copy. Asserting a literal against a
+  // literal proves nothing: the whole risk is the schema and the route drifting
+  // apart, and only one of them is in this repo's TypeScript.
+  await check("handle: route regex is identical to the schema CHECK constraint", async () => {
+    const sql = await readFile("supabase/schema.sql", "utf8");
+    const m = sql.match(/check \(handle ~ '([^']+)'\)/);
+    assert.ok(m, "could not find the handle CHECK constraint in supabase/schema.sql");
+    assert.equal(HANDLE_RULE.source, m![1]);
   });
-
   await check("mentions: resolves @name against the corpus", async () => {
     assert.deepEqual(parseMentions("@fetchly died in 2018", await loadMock()), ["mock-001"]);
   });

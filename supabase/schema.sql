@@ -177,7 +177,7 @@ create policy "read post_matches" on public.post_matches for select using (true)
 -- an hour. Grants say which ROLES may touch a table; RLS says which ROWS.
 -- Both are required.
 
-grant usage on schema public to anon, authenticated;
+grant usage on schema public to anon, authenticated, service_role;
 
 grant select on public.profiles, public.posts, public.comments,
                 public.likes, public.mentions, public.post_matches
@@ -193,3 +193,38 @@ grant insert, delete on public.likes to authenticated;
 -- tombstones and no mentions — which presents as a broken matcher, not a
 -- permissions error.
 grant insert, delete on public.mentions, public.post_matches to service_role;
+
+-- ============================================================================
+-- ORPHAN CLEANUP
+-- ============================================================================
+-- likes.target_id and mentions.source_id are polymorphic (they point at either
+-- a post or a comment), so neither can have a foreign key and neither cascades.
+-- Without this, deleting a post leaves its likes and mentions behind, and the
+-- "every post that mentions @webvan" lookup starts returning ids that resolve
+-- to nothing.
+create or replace function public.cleanup_orphans()
+returns trigger
+language plpgsql
+security definer set search_path = ''
+as 2651
+begin
+  delete from public.likes
+   where target_type = tg_argv[0] and target_id = old.id;
+  delete from public.mentions
+   where source_type = tg_argv[0] and source_id = old.id;
+  return old;
+end;
+$$;
+
+drop trigger if exists on_post_deleted on public.posts;
+create trigger on_post_deleted
+  after delete on public.posts
+  for each row execute function public.cleanup_orphans('post');
+
+drop trigger if exists on_comment_deleted on public.comments;
+create trigger on_comment_deleted
+  after delete on public.comments
+  for each row execute function public.cleanup_orphans('comment');
+
+-- The function needs to delete rows users cannot: security definer covers it.
+grant delete on public.likes, public.mentions to service_role;
