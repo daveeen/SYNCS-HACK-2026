@@ -1,0 +1,208 @@
+@import "tailwindcss";
+@import "./cursors.css";
+
+/* ==========================================================================
+   ARCHIVED — design tokens
+   --------------------------------------------------------------------------
+   DRAFT for Sam. She owns this file (CLAUDE.md ownership). Change any value
+   here freely; the point is the *structure*, not the specific hexes.
+
+   Structure borrowed as technique from the parinazkassemi.com teardown
+   (output/www.parinazkassemi.com/TEARDOWN.md §2): a documented z-index
+   ladder, radii varied by role, layered shadows for physical surfaces, and a
+   dense deliberate type scale. None of her values are used — her palette is
+   bright daylight glass, and her UI face (Space Grotesk) and surface
+   treatment (translucent glass) are both on our own banned list.
+   ========================================================================== */
+
+:root {
+  /* --- Ground & surfaces ------------------------------------------------
+     macOS light with real vibrancy. Rule 8 (Liquid Glass) is deliberately
+     overridden here at Darryl's call, so chrome is genuinely translucent and
+     blurred over the wallpaper. That only reads as depth if there is
+     something behind it worth blurring, which is why the wallpaper below is
+     a layered dusk rather than a flat fill.
+
+     Division of labour, same as the real OS: chrome (menubar, dock,
+     titlebars, wells) is vibrant; window CONTENT stays near-opaque, because
+     body text over a moving background is unreadable. */
+
+  /* Wallpaper: cool dusk sky with a warm band low on the horizon. */
+  --gy-wall: linear-gradient(
+    176deg,
+    #0d2b4d 0%,
+    #17436e 18%,
+    #22598c 36%,
+    #3273a8 54%,
+    #4a8fc0 72%,
+    #6aabd4 88%,
+    #8cc4e4 100%
+  );
+
+  --gy-ground:        #22598c;
+  --gy-ground-lift:   #8cc4e4;
+
+  /* Vibrant chrome */
+  --gy-chrome:        rgba(243, 243, 240, 0.68);
+  --gy-chrome-strong: rgba(240, 240, 236, 0.80);
+  --gy-blur:          saturate(180%) blur(24px);
+  --gy-blur-heavy:    saturate(190%) blur(34px);
+
+  /* Window content: near-opaque so prose stays readable. */
+  --gy-surface:       rgba(252, 252, 250, 0.975);
+  --gy-surface-raise: var(--gy-chrome);
+  --gy-surface-sink:  rgba(120, 130, 128, 0.10);
+  --gy-line:          rgba(0, 0, 0, 0.14);
+  --gy-line-soft:     rgba(0, 0, 0, 0.07);
+
+  /* --- Ink -------------------------------------------------------------- */
+  --gy-ink:           #1d1d1f;
+  --gy-ink-dim:       #6a6a70;
+  --gy-ink-faint:     #97979d;
+
+  /* --- Accents ----------------------------------------------------------
+     Moss for live, rust for dead. Darkened from the previous set so they
+     hold contrast against light surfaces. */
+  --gy-live:          #3f6b52;
+  --gy-live-dim:      rgba(63, 107, 82, 0.16);
+  --gy-dead:          #9a4f2b;
+  --gy-dead-dim:      rgba(154, 79, 43, 0.14);
+
+  /* macOS window controls. A recognised OS convention, not decorative
+     rainbow colouring. */
+  --gy-tl-close:  #ff5f57;
+  --gy-tl-min:    #febc2e;
+  --gy-tl-zoom:   #28c840;
+
+  /* --- Type ------------------------------------------------------------
+     Loaded in app/layout.tsx via next/font. None of these are on the
+     banned list (no Inter / Geist / Space Grotesk). */
+  --gy-font-display: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  --gy-font-ui:      var(--font-plex-sans), system-ui, sans-serif;
+  --gy-font-mono:    var(--font-plex-mono), ui-monospace, "SF Mono", monospace;
+
+  /* Dense scale. OS chrome lives at 11-13px; only the epitaph gets to be big. */
+  --gy-t-micro:  10px;
+  --gy-t-meta:   11px;
+  --gy-t-ui:     12px;
+  --gy-t-body:   13px;
+  --gy-t-lead:   15px;
+  --gy-t-title:  18px;
+  --gy-t-head:   24px;
+  --gy-t-epitaph:40px;
+
+  /* --- Spacing ---------------------------------------------------------
+     1-2px granularity at the chrome end, like real OS furniture. Not an
+     8pt grid. */
+  --gy-s-1: 2px;  --gy-s-2: 4px;  --gy-s-3: 6px;  --gy-s-4: 8px;
+  --gy-s-5: 10px; --gy-s-6: 12px; --gy-s-7: 16px; --gy-s-8: 24px;
+  --gy-s-9: 32px; --gy-s-10: 48px;
+
+  /* --- Radii, varied by role -------------------------------------------
+     The slop tell is uniformity (one rounded-lg on everything), so each
+     role gets its own value and folders stay deliberately angular. */
+  --gy-r-folder: 2px;   /* file objects are sharp */
+  --gy-r-field:  5px;
+  --gy-r-icon:   6px;
+  --gy-r-window: 10px;  /* macOS window corner */
+  --gy-r-dock:   16px;
+  --gy-r-pill:   999px;
+
+  /* --- Elevation -------------------------------------------------------
+     Light-mode shadows are cool and low-alpha; on a light ground a heavy
+     black shadow reads as dirt. Still role-specific, never one blanket
+     shadow on every surface. */
+  --gy-e-object:
+    0 2px 5px rgba(30, 40, 50, 0.20),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  --gy-e-window:
+    0 22px 60px rgba(20, 28, 36, 0.30),
+    0 2px 8px rgba(20, 28, 36, 0.16),
+    0 0 0 0.5px rgba(0, 0, 0, 0.16);
+  --gy-e-dock:
+    0 10px 30px rgba(20, 28, 36, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 0 0 0.5px rgba(0, 0, 0, 0.12);
+  --gy-e-inset: inset 0 1px 2px rgba(0, 0, 0, 0.10);
+
+  /* --- Z-index ladder --------------------------------------------------
+     One documented ladder. Never write a raw z-index in a component. */
+  --gy-z-desktop:   0;
+  --gy-z-icon:     10;
+  --gy-z-label:    20;
+  --gy-z-window:  100;   /* + per-window stacking offset, see Desktop.tsx */
+  --gy-z-menubar: 200;
+  --gy-z-dock:    300;
+  --gy-z-drag:    600;   /* whatever is being dragged wins */
+  --gy-z-spotlight: 800;
+  --gy-z-modal:   900;
+  --gy-z-ctx:    1000;
+
+  /* --- Motion ----------------------------------------------------------
+     Short and springless for chrome; nothing decorative. */
+  --gy-ease: cubic-bezier(0.2, 0.9, 0.3, 1);
+  --gy-menubar-h: 26px;
+
+  --gy-dur-fast: 120ms;
+  --gy-dur:      180ms;
+}
+
+/* ==========================================================================
+   Expose the tokens Tailwind should know about, so utilities stay in the
+   same vocabulary as the raw custom properties above.
+   ========================================================================== */
+@theme inline {
+  --color-ground:  var(--gy-ground);
+  --color-surface: var(--gy-surface);
+  --color-raise:   var(--gy-surface-raise);
+  --color-sink:    var(--gy-surface-sink);
+  --color-line:    var(--gy-line);
+  --color-ink:     var(--gy-ink);
+  --color-dim:     var(--gy-ink-dim);
+  --color-faint:   var(--gy-ink-faint);
+  --color-live:    var(--gy-live);
+  --color-dead:    var(--gy-dead);
+
+  --font-display: var(--gy-font-display);
+  --font-ui:      var(--gy-font-ui);
+  --font-mono:    var(--gy-font-mono);
+}
+
+/* ========================================================================== */
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  /* The desktop is a fixed stage, not a scrolling page. Windows scroll
+     internally; the ground never moves. */
+  overflow: hidden;
+  background: var(--gy-ground);
+  color: var(--gy-ink);
+  font-family: var(--gy-font-ui);
+  font-size: var(--gy-t-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Visible focus is non-negotiable — killing decoration is not the same as
+   killing affordance. */
+:focus-visible {
+  outline: 2px solid var(--gy-live);
+  outline-offset: 2px;
+  border-radius: var(--gy-r-field);
+}
+
+/* Windows come up from slightly under and behind, the way an OS opens one.
+   Short enough to feel like response, not choreography. */
+@keyframes gy-window-in {
+  from { opacity: 0; transform: translateY(6px) scale(0.985); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
