@@ -23,6 +23,8 @@ import { isValidHandle, HANDLE_RULE } from "../lib/forum/handle";
 import { parseMentions } from "../lib/forum/mentions";
 import { LIMITS, isOverLimit } from "../lib/forum/ratelimit";
 import { parseInline, parseMarkdown } from "../lib/markdown";
+import { cacheKey } from "../lib/report-key";
+import { plainDashes } from "../lib/text";
 import type { FailedStartup, StartupMatch, StartupVectors } from "../lib/types";
 
 /** Mock records as matches, so the report checks need no data and no key. */
@@ -327,6 +329,61 @@ async function main(): Promise<void> {
     assert.match(spans.map((s) => s.text).join(" "), /The pattern/);
   });
 
+
+  // Design rule 9 bans dashes in copy, and both the corpus (166 of them) and
+  // Haiku (about 20 a report, despite being asked not to) produce them anyway.
+  await check("text: a spaced dash becomes a comma, a year range becomes a hyphen", () => {
+    assert.equal(
+      plainDashes("not a timing problem — the category was growing"),
+      "not a timing problem, the category was growing",
+    );
+    assert.equal(plainDashes("SpoonRocket (2013–2016, $13M)"), "SpoonRocket (2013-2016, $13M)");
+  });
+
+  // Haiku's preferred form is the TIGHT parenthetical em dash, which the
+  // spaced-only rule used to walk straight past.
+  await check("text: a tight dash between words is punctuation too", () => {
+    assert.equal(
+      plainDashes("the economics of speed—faster delivery—can be profitable"),
+      "the economics of speed, faster delivery, can be profitable",
+    );
+  });
+
+  // The dash cleanup runs over Claude's Markdown BEFORE it is cached, so a
+  // dash at the end of a line must not swallow the line break: that would pull
+  // the next heading inline and the wreckage would be cached permanently.
+  await check("text: a trailing dash does not eat the line break after it", () => {
+    const md = "demand never came —\n\n## What would have to be different\n\n- Ship it first";
+    const out = plainDashes(md);
+    assert.match(out, /^## What would have to be different$/m);
+    assert.match(out, /^- Ship it first$/m);
+    assert.deepEqual(plainDashes("- one —\n- two").split("\n").length, 2);
+  });
+
+  // A joining hyphen inside a word is a hyphen-minus, not a dash, and must
+  // survive, or "cook-and-deliver" turns into "cook, and, deliver".
+  await check("text: a word-joining hyphen is left alone", () => {
+    assert.equal(plainDashes("its cook-and-deliver model"), "its cook-and-deliver model");
+    assert.equal(plainDashes("2013-2016, 30-minute delivery"), "2013-2016, 30-minute delivery");
+    assert.equal(plainDashes("nothing to change here"), "nothing to change here");
+  });
+
+  // A cache that misses on a report it already holds costs a model call every
+  // time; one that HITS on a different match set serves the wrong document.
+  // Both failure modes live in this one function.
+  await check("report cache key: same question, different spelling and order, one row", () => {
+    const a = cacheKey("m", "  Same-Day  GROCERY delivery ", [{ id: "b" }, { id: "a" }]);
+    const b = cacheKey("m", "same-day grocery delivery", [{ id: "a" }, { id: "b" }]);
+    assert.equal(a, b);
+  });
+
+  await check("report cache key: model, query or match set changes the row", () => {
+    const base = cacheKey("m", "grocery delivery", [{ id: "a" }, { id: "b" }]);
+    assert.notEqual(base, cacheKey("m2", "grocery delivery", [{ id: "a" }, { id: "b" }]));
+    assert.notEqual(base, cacheKey("m", "grocery deliverys", [{ id: "a" }, { id: "b" }]));
+    assert.notEqual(base, cacheKey("m", "grocery delivery", [{ id: "a" }, { id: "c" }]));
+    assert.notEqual(base, cacheKey("m", "grocery delivery", [{ id: "a" }]));
+  });
 
   console.log(failed === 0 ? "\nall checks passed" : `\n${failed} check(s) failed`);
   process.exit(failed === 0 ? 0 : 1);

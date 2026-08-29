@@ -2,6 +2,7 @@
 
 import type { StartupMatch } from "@/lib/types";
 import { firstSentence, known } from "@/lib/report";
+import { plainDashes } from "@/lib/text";
 import { FolderGlyph } from "./FolderGlyph";
 import Markdown from "./Markdown";
 
@@ -35,7 +36,15 @@ export type SearchState =
   | { kind: "empty"; query: string; flags: SearchFlags }
   | { kind: "error"; query: string; message: string; flags: SearchFlags }
   | { kind: "reporting"; query: string; matches: StartupMatch[]; flags: SearchFlags }
-  | { kind: "complete"; query: string; matches: StartupMatch[]; flags: SearchFlags; report: string }
+  | {
+      kind: "complete";
+      query: string;
+      matches: StartupMatch[];
+      flags: SearchFlags;
+      report: string;
+      /** Which of the three sources answered. See app/api/report/route.ts. */
+      source: "cache" | "claude" | "composed";
+    }
   | {
       kind: "report-failed";
       query: string;
@@ -74,7 +83,7 @@ const CAUSE_CHARS = 150;
 
 /** A banner for the two states where the answer must not be trusted. */
 function Rail({ tone, children }: { tone: "bad" | "warn"; children: React.ReactNode }) {
-  const colour = tone === "bad" ? "var(--gy-dead)" : "#8a6a1f";
+  const colour = tone === "bad" ? "var(--gy-dead)" : "var(--gy-warn)";
   return (
     <p
       role="status"
@@ -84,7 +93,7 @@ function Rail({ tone, children }: { tone: "bad" | "warn"; children: React.ReactN
         fontSize: "var(--gy-t-ui)",
         lineHeight: 1.45,
         color: colour,
-        background: tone === "bad" ? "var(--gy-dead-dim)" : "rgba(190, 150, 40, 0.13)",
+        background: tone === "bad" ? "var(--gy-dead-dim)" : "var(--gy-warn-dim)",
         border: `1px solid ${colour}`,
         borderRadius: "var(--gy-r-field)",
       }}
@@ -108,7 +117,10 @@ function MatchCard({
   onOpenSite: () => void;
 }) {
   return (
+    // gy-row carries the hover in CSS, behind a fine-pointer query. The two
+    // mouse handlers it replaces fired on touch too and left the card lit.
     <div
+      className="gy-row"
       style={{
         display: "flex",
         flexDirection: "column",
@@ -117,17 +129,19 @@ function MatchCard({
         borderRadius: "var(--gy-r-field)",
         transition: "border-color var(--gy-dur-fast) var(--gy-ease)",
       }}
-      onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--gy-line)"; }}
-      onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--gy-line-soft)"; }}
     >
       <button
+        className="gy-press"
         onClick={onOpen}
         style={{
           display: "flex",
-          gap: "var(--gy-s-6)",
+          // Wraps on a narrow window so the score drops below the text instead
+          // of squeezing the company name into two characters a line.
+          flexWrap: "wrap",
+          gap: "clamp(var(--gy-s-5), 2vw, var(--gy-s-6))",
           width: "100%",
           textAlign: "left",
-          padding: "var(--gy-s-6)",
+          padding: "clamp(var(--gy-s-5), 2.5vw, var(--gy-s-6))",
           background: "transparent",
           border: "none",
           borderRadius: "var(--gy-r-field)",
@@ -140,7 +154,7 @@ function MatchCard({
         <FolderGlyph tone="dead" size={38} />
       </span>
 
-      <span style={{ flex: "1 1 auto", minWidth: 0, display: "flex", flexDirection: "column", gap: "var(--gy-s-2)" }}>
+      <span style={{ flex: "1 1 190px", minWidth: 0, display: "flex", flexDirection: "column", gap: "var(--gy-s-2)" }}>
         <span
           style={{
             fontFamily: "var(--gy-font-display)",
@@ -152,7 +166,7 @@ function MatchCard({
           {m.name}
         </span>
         <span style={{ fontSize: "var(--gy-t-ui)", lineHeight: 1.4, color: "var(--gy-ink-dim)" }}>
-          {m.tagline}
+          {plainDashes(m.tagline)}
         </span>
         <span
           style={{
@@ -206,9 +220,10 @@ function MatchCard({
       {m.waybackUrl && (
         <div style={{ padding: "0 var(--gy-s-6) var(--gy-s-6)", marginTop: "calc(-1 * var(--gy-s-3))" }}>
           <button
+            className="gy-press gy-chip"
             onClick={onOpenSite}
             style={{
-              padding: "var(--gy-s-2) var(--gy-s-5)",
+              padding: "var(--gy-s-3) var(--gy-s-6)",
               fontFamily: "var(--gy-font-ui)",
               fontSize: "var(--gy-t-meta)",
               color: "var(--gy-ink-dim)",
@@ -333,7 +348,30 @@ export default function ResultsWindow({
 
       {state.kind === "reporting" && <ReportSkeleton />}
 
-      {state.kind === "complete" && <Markdown markdown={state.report} />}
+      {state.kind === "complete" && (
+        <section style={{ display: "flex", flexDirection: "column", gap: "var(--gy-s-6)" }}>
+          <Markdown markdown={state.report} />
+          {/* Say who wrote it. A model-written brief and a composed one read
+              differently and are trusted differently, and the reader is
+              entitled to know which one is in front of them. */}
+          <p
+            style={{
+              margin: 0,
+              paddingTop: "var(--gy-s-5)",
+              borderTop: "1px solid var(--gy-line-soft)",
+              fontFamily: "var(--gy-font-mono)",
+              fontSize: "var(--gy-t-micro)",
+              color: "var(--gy-ink-faint)",
+            }}
+          >
+            {state.source === "composed"
+              ? "composed from the archive's own reviewed fields"
+              : state.source === "cache"
+                ? "written by claude haiku, served from cache"
+                : "written by claude haiku from the records above"}
+          </p>
+        </section>
+      )}
 
       {state.kind === "report-failed" && (
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "var(--gy-s-5)" }}>
@@ -342,6 +380,7 @@ export default function ResultsWindow({
             unaffected.
           </Rail>
           <button
+            className="gy-press gy-chip"
             onClick={onRetryReport}
             style={{
               padding: "var(--gy-s-3) var(--gy-s-7)",

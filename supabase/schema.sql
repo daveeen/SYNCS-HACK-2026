@@ -228,3 +228,71 @@ create trigger on_comment_deleted
 
 -- The function needs to delete rows users cannot: security definer covers it.
 grant delete on public.likes, public.mentions to service_role;
+
+-- ============================================================================
+-- REPORT CACHE
+-- ============================================================================
+-- Every /api/report answer written by Claude, keyed by what produced it. Two
+-- jobs in one table:
+--
+--   1. Cache. The same idea matched against the same five companies always
+--      deserves the same write-up, so the second asker is served from Postgres
+--      and costs nothing. On stage this matters: a judge retyping the demo
+--      query gets an instant answer instead of a model call.
+--   2. Log. Every generated report is inspectable after the fact, with its
+--      model, its token counts and the exact records it was given. If Claude
+--      says something wrong on stage, the row shows precisely what it was
+--      shown.
+--
+-- `cache_key` is a SHA-256 of model + normalised query + sorted startup ids, so
+-- changing the model or the match set is automatically a different row rather
+-- than a stale hit. Computed in lib/report-cache.ts.
+create table if not exists public.report_cache (
+  cache_key     text primary key,
+  query         text        not null,
+  startup_ids   text[]      not null,
+  model         text        not null,
+  report        text        not null,
+  input_tokens  integer,
+  output_tokens integer,
+  created_at    timestamptz not null default now(),
+  hit_count     integer     not null default 0,
+  last_used_at  timestamptz not null default now()
+);
+
+create index if not exists report_cache_created_idx on public.report_cache (created_at desc);
+
+-- RLS on with NO policies, which is a deny-all for anon and authenticated.
+-- Deliberate: these rows are keyed by whatever a stranger typed into the search
+-- bar, and there is no reason for one visitor to be able to read another's
+-- idea back out of the database. The route reads and writes them through the
+-- service-role client, which bypasses RLS.
+alter table public.report_cache enable row level security;
+
+-- Delete is for scripts/smoke-report-cache.ts, which writes a reserved row and
+-- must be able to take it back out again. This project has no usable default
+-- privileges (see the GRANTS block above), so an ungranted delete fails
+-- silently and leaves smoke rows in the log forever.
+grant select, insert, update, delete on public.report_cache to service_role;
+
+-- Count the hit without rewriting the report. A plain UPDATE from the route
+-- would need a read-modify-write; this keeps it to one statement and cannot
+-- lose a count to a concurrent request.
+create or replace function public.touch_report_cache(key text)
+returns void
+language sql
+security definer set search_path = ''
+as $$
+  update public.report_cache
+     set hit_count = hit_count + 1, last_used_at = now()
+   where cache_key = key;
+$$;
+
+-- Postgres grants EXECUTE on a new function to PUBLIC by default, and `anon`
+-- has usage on this schema, so without the revoke below PostgREST exposes this
+-- at /rest/v1/rpc/touch_report_cache to anyone. It is SECURITY DEFINER, so that
+-- would hand an unauthenticated visitor a write into a table whose RLS is a
+-- deliberate deny-all. The grant that follows is what makes it reachable again,
+-- for the service role only.
+revoke execute on function public.touch_report_cache(text) from public;
+grant execute on function public.touch_report_cache(text) to service_role;

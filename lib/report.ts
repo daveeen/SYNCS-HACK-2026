@@ -16,6 +16,7 @@
  *   - Cannot reason about the founder's specific idea the way a model can.
  *     It names the pattern the corpus shows; it does not invent an insight.
  */
+import { plainDashes } from "@/lib/text";
 import type { RootCauseCategory, StartupMatch } from "@/lib/types";
 
 /**
@@ -34,7 +35,7 @@ export function known(value: string): boolean {
  * one, and appending blindly produced "…tried to beat.." in the output.
  */
 function sentence(text: string): string {
-  const t = text.trim().replace(/[.!?]+$/, "");
+  const t = plainDashes(text.trim()).replace(/[.!?]+$/, "");
   return `${t}.`;
 }
 
@@ -57,7 +58,7 @@ function sentence(text: string): string {
  * sentence, which most of these are.
  */
 export function firstSentence(text: string, maxChars = 170): string {
-  const trimmed = text.trim();
+  const trimmed = plainDashes(text.trim());
   const match = trimmed.match(/^.*?[.!?](?=\s|$)/);
   const lead = (match?.[0] ?? trimmed).trim();
   if (lead.length <= maxChars) return lead.endsWith(".") ? lead : `${lead}.`;
@@ -65,7 +66,7 @@ export function firstSentence(text: string, maxChars = 170): string {
 }
 
 function lifespan(m: StartupMatch): string {
-  const years = `${m.foundedYear}–${m.diedYear}`;
+  const years = `${m.foundedYear} to ${m.diedYear}`;
   return known(m.fundingRaised) ? `${years}, ${m.fundingRaised}` : years;
 }
 
@@ -108,7 +109,7 @@ export function composeReport(query: string, matches: StartupMatch[]): string {
       "## Nothing in the graveyard matches this",
       "",
       "No company in the corpus is close enough to this idea to be worth citing.",
-      "That is a statement about our records, not a verdict on the idea — we hold",
+      "That is a statement about our records, not a verdict on the idea. We hold",
       "a curated set of failures, not every failure.",
     );
     return out.join("\n");
@@ -116,7 +117,7 @@ export function composeReport(query: string, matches: StartupMatch[]): string {
 
   out.push("## Who already tried it", "");
   for (const m of matches) {
-    const bullet = `- **${m.name}** (${lifespan(m)}) — ${sentence(m.tagline)}`;
+    const bullet = `- **${m.name}** (${lifespan(m)}). ${sentence(m.tagline)}`;
     out.push(
       known(m.rootCause)
         ? `${bullet} Died of: ${firstSentence(m.rootCause)}`
@@ -130,7 +131,7 @@ export function composeReport(query: string, matches: StartupMatch[]): string {
 
   if (matches.length === 1) {
     out.push(
-      "Only one company in the corpus matched, so there is no pattern to report —",
+      "Only one company in the corpus matched, so there is no pattern to report:",
       "one data point is an anecdote. Treat the entry above as a lead to research,",
       "not as evidence.",
     );
@@ -159,7 +160,7 @@ export function composeReport(query: string, matches: StartupMatch[]): string {
     } else {
       out.push(
         "These companies did not die of the same thing.",
-        `The causes on record are ${causes.map((c) => `*${c}*`).join(", ")} — no single trap explains them.`,
+        `The causes on record are ${causes.map((c) => `*${c}*`).join(", ")}. No single trap explains them.`,
         "",
         "That is worth knowing on its own: a space where everyone failed differently",
         "is a harder space than one with a single obvious trap to avoid.",
@@ -186,13 +187,13 @@ export function composeReport(query: string, matches: StartupMatch[]): string {
   const timing = matches.filter((m) => known(m.timingNote));
   if (timing.length > 0) {
     out.push("", "### On timing", "");
-    for (const m of timing) out.push(`- **${m.name}** — ${m.timingNote}`);
+    for (const m of timing) out.push(`- **${m.name}**. ${plainDashes(m.timingNote)}`);
   }
 
   const lessons = [...new Set(matches.filter((m) => known(m.lesson)).map((m) => m.lesson))];
   if (lessons.length > 0) {
     out.push("", "## What would have to be different", "");
-    for (const lesson of lessons) out.push(`- ${lesson}`);
+    for (const lesson of lessons) out.push(`- ${plainDashes(lesson)}`);
   }
 
   return out.join("\n");

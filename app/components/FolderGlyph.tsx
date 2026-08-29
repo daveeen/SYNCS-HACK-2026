@@ -11,6 +11,20 @@
 
 type Tone = "live" | "dead";
 
+/**
+ * Size the glyph through CSS rather than the SVG width and height attributes,
+ * so `size` can be a responsive length: the desktop icons pass a `clamp()` that
+ * tracks both viewport axes, and an attribute cannot take one.
+ *
+ * `height: auto` leaves the aspect ratio to the viewBox, which is also why the
+ * folder no longer needs its own `size * 0.8`: 60 by 48 is already in the box.
+ */
+const GLYPH = (size: number | string): React.CSSProperties => ({
+  width: size,
+  height: "auto",
+  display: "block",
+});
+
 const PAL: Record<Tone, { tab: string; faceTop: string; faceBot: string; edge: string }> = {
   live: { tab: "#7cc2f0", faceTop: "#6fbdee", faceBot: "#3f97d8", edge: "#2f83c2" },
   dead: { tab: "#c3b6a5", faceTop: "#bcae9c", faceBot: "#9c8d7b", edge: "#87796a" },
@@ -18,11 +32,11 @@ const PAL: Record<Tone, { tab: string; faceTop: string; faceBot: string; edge: s
 
 /* ---------- folder (trash contents) ---------- */
 
-export function FolderGlyph({ tone = "live", size = 54 }: { tone?: Tone; size?: number }) {
+export function FolderGlyph({ tone = "live", size = 54 }: { tone?: Tone; size?: number | string }) {
   const c = PAL[tone];
   const id = `fg-${tone}`;
   return (
-    <svg width={size} height={size * 0.8} viewBox="0 0 60 48" aria-hidden="true">
+    <svg viewBox="0 0 60 48" aria-hidden="true" style={GLYPH(size)}>
       <defs>
         <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor={c.faceTop} />
@@ -61,9 +75,9 @@ function Page({ children, accent }: { children?: React.ReactNode; accent: string
 }
 
 /** read_me: a plain text document. */
-export function DocGlyph({ size = 54 }: { size?: number }) {
+export function DocGlyph({ size = 54 }: { size?: number | string }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
+    <svg viewBox="0 0 64 64" aria-hidden="true" style={GLYPH(size)}>
       <Page accent="#4a90d9">
         {[30, 37, 44, 51].map((y, i) => (
           <path
@@ -78,9 +92,9 @@ export function DocGlyph({ size = 54 }: { size?: number }) {
 }
 
 /** method: a schematic. Same page, but it holds a flow instead of prose. */
-export function FlowGlyph({ size = 54 }: { size?: number }) {
+export function FlowGlyph({ size = 54 }: { size?: number | string }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
+    <svg viewBox="0 0 64 64" aria-hidden="true" style={GLYPH(size)}>
       <Page accent="#3fa38a">
         <path d="M22 33 h9 M35 33 h9 M22 33 v13 h22 v-13" stroke="#9aa3ab" strokeWidth="1.6" fill="none" strokeLinecap="round" />
         <circle cx="19" cy="33" r="3.4" fill="#3fa38a" />
@@ -111,9 +125,9 @@ function Tile({ from, to, id, children }: { from: string; to: string; id: string
 }
 
 /** causes: the symptom-versus-disease reading, as a vital sign that flatlines. */
-export function VitalsGlyph({ size = 54 }: { size?: number }) {
+export function VitalsGlyph({ size = 54 }: { size?: number | string }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
+    <svg viewBox="0 0 64 64" aria-hidden="true" style={GLYPH(size)}>
       <Tile id="tile-vitals" from="#e8785a" to="#b2402a">
         <path
           d="M13 34 h9 l4 -11 l6 22 l5 -13 h4"
@@ -127,9 +141,9 @@ export function VitalsGlyph({ size = 54 }: { size?: number }) {
 }
 
 /** team: the people who built it. */
-export function UsersGlyph({ size = 54 }: { size?: number }) {
+export function UsersGlyph({ size = 54 }: { size?: number | string }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
+    <svg viewBox="0 0 64 64" aria-hidden="true" style={GLYPH(size)}>
       <Tile id="tile-users" from="#7fb2e0" to="#3d6f9e">
         {/* back figure */}
         <circle cx="41" cy="26" r="7" fill="rgba(255,255,255,0.55)" />
@@ -143,9 +157,9 @@ export function UsersGlyph({ size = 54 }: { size?: number }) {
 }
 
 /** forum: a speech bubble, for the dock. */
-export function MessageGlyph({ size = 44 }: { size?: number }) {
+export function MessageGlyph({ size = 44 }: { size?: number | string }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
+    <svg viewBox="0 0 64 64" aria-hidden="true" style={GLYPH(size)}>
       <defs>
         <linearGradient id="tile-forum" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#7fd08a" />
@@ -165,11 +179,11 @@ export function MessageGlyph({ size = 44 }: { size?: number }) {
 
 /* ---------- trash ---------- */
 
-export function BinGlyph({ full = false, size = 44 }: { full?: boolean; size?: number }) {
+export function BinGlyph({ full = false, size = 44 }: { full?: boolean; size?: number | string }) {
   const metal = "#8e949a";
   const dark = "#6d747a";
   return (
-    <svg width={size} height={size} viewBox="0 0 44 44" aria-hidden="true">
+    <svg viewBox="0 0 44 44" aria-hidden="true" style={GLYPH(size)}>
       <defs>
         <linearGradient id="bin-body" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0" stopColor="#c9cdd1" />

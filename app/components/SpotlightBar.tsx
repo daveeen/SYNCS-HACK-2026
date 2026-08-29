@@ -62,9 +62,11 @@ export default function SpotlightBar({
         style={{
           display: "flex",
           alignItems: "center",
-          gap: "var(--gy-s-6)",
-          height: 60,
-          padding: "0 var(--gy-s-8)",
+          gap: "var(--gy-s-5)",
+          // Shrinks on a short screen, where 60px of bar plus the masthead and
+          // four icons is more than the ground has.
+          height: "clamp(48px, 7vh, 60px)",
+          padding: "0 clamp(var(--gy-s-6), 3vw, var(--gy-s-8))",
           borderRadius: 14,
           // The glass: dark, heavily blurred, letting the wallpaper through.
           background: "rgba(38, 40, 44, 0.52)",
@@ -75,7 +77,7 @@ export default function SpotlightBar({
             "0 16px 44px rgba(0, 18, 40, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.16)",
         }}
       >
-        <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style={{ flex: "0 0 auto" }}>
+        <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style={{ flex: "0 0 auto" }}>
           <circle cx="10.5" cy="10.5" r="6.6" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="2.1" />
           <path d="M15.6 15.6 L21 21" stroke="rgba(255,255,255,0.9)" strokeWidth="2.1" strokeLinecap="round" />
         </svg>
@@ -97,12 +99,17 @@ export default function SpotlightBar({
             outline: "none",
             color: "#ffffff",
             fontFamily: "var(--gy-font-ui)",
-            fontSize: 21,
+            // Never below 16px: iOS Safari zooms the whole page when a focused
+            // input's text is smaller than that, and the desktop metaphor does
+            // not survive being zoomed.
+            fontSize: "clamp(16px, 4.4vw, 21px)",
             letterSpacing: "-0.01em",
           }}
         />
 
+        {/* A keyboard hint is meaningless on a device with no keyboard. */}
         <kbd
+          className="gy-hide-narrow"
           style={{
             flex: "0 0 auto",
             fontFamily: "var(--gy-font-mono)",

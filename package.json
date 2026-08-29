@@ -13,6 +13,7 @@
     "pipeline:embed": "tsx scripts/pipeline/embed.ts",
     "pipeline": "pnpm pipeline:ingest && pnpm pipeline:enrich && pnpm pipeline:categorize && pnpm pipeline:embed && pnpm pipeline:wayback",
     "check": "tsx scripts/check.ts",
+    "smoke:cache": "tsx --env-file-if-exists=.env.local scripts/smoke-report-cache.ts",
     "fetch-model": "tsx scripts/fetch-model.ts",
     "pipeline:wayback": "tsx scripts/pipeline/wayback.ts",
     "pipeline:categorize": "tsx scripts/pipeline/categorize.ts"

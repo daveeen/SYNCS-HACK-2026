@@ -7,14 +7,25 @@
  * plain Node via tsx, where that package throws on import. Never import this
  * from a client component — nothing enforces that for you any more.
  *
- * No route handler calls Claude. /api/report composes its report from the
- * enriched fields by pure function (lib/report.ts). Claude is used only by
- * scripts/pipeline/enrich.ts, at build time, where Davin QAs the output.
+ * /api/report calls Claude when ANTHROPIC_API_KEY is set, and falls back to the
+ * pure composer in lib/report.ts when it is not. Both paths are real: the
+ * composer is not a stub, it is the deterministic version of the same document.
+ * scripts/pipeline/enrich.ts also calls Claude, at build time.
  */
 import Anthropic from "@anthropic-ai/sdk";
 
 /** Cheaper/faster model for bulk pipeline enrichment of ~50 startups. */
 export const ENRICH_MODEL = "claude-sonnet-5";
+
+/**
+ * The model that writes /api/report.
+ *
+ * Haiku, not Sonnet or Opus: the task is to reason over five records that are
+ * already researched and QA'd, not to know anything about them. It is on the
+ * request path, and every answer is cached in Postgres afterwards, so the
+ * ceiling on total spend is the number of distinct ideas anyone types.
+ */
+export const REPORT_MODEL = "claude-haiku-4-5-20251001";
 
 let client: Anthropic | null = null;
 

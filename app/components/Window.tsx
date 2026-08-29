@@ -22,6 +22,13 @@ export type WindowProps = {
   /** Stacking order within the window layer. */
   order: number;
   active: boolean;
+  /**
+   * True while the exit animation plays. Owned by Desktop, not here: the
+   * desktop is the thing that has to know a closing window is still in its
+   * list, so that re-opening it during those 120ms revives it rather than
+   * being swallowed as "already open" and then removed by the pending timer.
+   */
+  closing?: boolean;
   /** True when the window is filling the stage. */
   zoomed?: boolean;
   onFocus: (id: string) => void;
@@ -31,9 +38,12 @@ export type WindowProps = {
   children: React.ReactNode;
 };
 
+/** How long the exit animation runs. Desktop waits this long before unmounting. */
+export const WINDOW_CLOSE_MS = 120;
+
 export default function Window({
   id, title, meta, x, y, width, height, order,
-  active, zoomed = false, onFocus, onClose, onZoom, onMove, children,
+  active, zoomed = false, closing = false, onFocus, onClose, onZoom, onMove, children,
 }: WindowProps) {
   const [dragging, setDragging] = useState(false);
   // Amber rolls the window up to its titlebar. Local, because it is pure
@@ -41,6 +51,8 @@ export default function Window({
   const [collapsed, setCollapsed] = useState(false);
   const [lightsHot, setLightsHot] = useState(false);
   const grab = useRef({ dx: 0, dy: 0 });
+
+  const requestClose = useCallback(() => onClose(id), [id, onClose]);
 
   const onPointerDown = useCallback(
     (e: React.PointerEvent) => {
@@ -74,10 +86,10 @@ export default function Window({
 
   useEffect(() => {
     if (!active) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(id); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") requestClose(); };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [active, id, onClose]);
+  }, [active, requestClose]);
 
   return (
     <section
@@ -101,7 +113,11 @@ export default function Window({
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
-        animation: "gy-window-in 160ms var(--gy-ease) both",
+        animation: closing
+          ? `gy-window-out ${WINDOW_CLOSE_MS}ms var(--gy-ease) both`
+          : "gy-window-in 160ms var(--gy-ease) both",
+        // A window on its way out must not eat the click that opens the next.
+        pointerEvents: closing ? "none" : undefined,
         // Inactive windows stay fully opaque. Dimming them with opacity lets
         // the desktop show through the content, which reads as a rendering
         // bug on a light ground. Recession is carried by the greyed traffic
@@ -127,6 +143,9 @@ export default function Window({
           boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.55)",
           cursor: dragging ? "grabbing" : "grab",
           userSelect: "none",
+          // Without this a touch drag on the titlebar is claimed by the browser
+          // as a scroll gesture and the window never moves.
+          touchAction: "none",
         }}
       >
         <div
@@ -136,7 +155,7 @@ export default function Window({
         >
           {([
             { key: "close", color: "var(--gy-tl-close)", label: `Close ${title}`, mark: "\u00d7",
-              run: () => onClose(id) },
+              run: requestClose },
             { key: "min", color: "var(--gy-tl-min)", label: `${collapsed ? "Expand" : "Collapse"} ${title}`, mark: "\u2212",
               run: () => setCollapsed((v) => !v) },
             { key: "zoom", color: "var(--gy-tl-zoom)", label: `${zoomed ? "Restore" : "Zoom"} ${title}`, mark: "+",
@@ -193,7 +212,19 @@ export default function Window({
       </header>
 
       {!collapsed && (
-        <div style={{ flex: "1 1 auto", overflow: "auto", padding: "var(--gy-s-7)" }}>
+        <div
+          style={{
+            flex: "1 1 auto",
+            overflow: "auto",
+            // 16px a side is 8% of a 390px window. The content needs that width
+            // more than the chrome does.
+            padding: "clamp(var(--gy-s-5), 3vw, var(--gy-s-7))",
+            // A window body scrolls; the ground behind it must not scroll with
+            // it when the body hits its end.
+            overscrollBehavior: "contain",
+            WebkitOverflowScrolling: "touch",
+          }}
+        >
           {children}
         </div>
       )}

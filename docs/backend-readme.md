@@ -294,6 +294,70 @@ remains the answer for an arbitrary domain that was never in the corpus.
 
 ---
 
+## The report: three sources, in order
+
+`POST /api/report` answers from the first of these that can:
+
+| # | Source | Header | Cost |
+|---|---|---|---|
+| 1 | Postgres cache | `x-graveyard-report-source: cache` | free, instant |
+| 2 | Claude Haiku | `claude` | one model call |
+| 3 | `lib/report.ts` | `composed` | free, local |
+
+**The composer is not a stub.** It is the deterministic version of the same
+document, every sentence of it traceable to a field Davin QA'd, which is why it
+is the floor rather than an error page. It answers when `ANTHROPIC_API_KEY` is
+missing, when the model call fails, and when the spend limiter trips.
+
+**Haiku is what makes the report about YOUR idea.** The composer can name the
+pattern the corpus shows; it cannot say "fresh flowers are perishable, like
+Sprig's meals, and weekly delivery is a standing commitment, like Dinner Lab's
+dinners". That paragraph is the product.
+
+### The cache is also the log
+
+`report_cache` stores the report, the model, the exact startup ids it was shown,
+the token counts, and a hit counter. The key is
+`sha256(model + normalised query + sorted ids)`, so:
+
+- the same idea asked twice costs one call, and the second is instant
+- changing the model is a new row, never a stale hit
+- id order and query casing do not split the cache
+
+**Apply `supabase/schema.sql` before this works.** Until then the route logs
+`Could not find the table 'public.report_cache'` on every request and calls
+Haiku each time, which is the designed degradation, not a break. Verify with
+`pnpm smoke:cache`.
+
+### Three things that are enforced in code, not in the prompt
+
+**The records come from our corpus, never from the request.** The route takes
+only `id` and `similarity` from the body and looks the rest up with
+`getStartupById`. Validating the caller's fields by type was not enough: a
+crafted POST could put doctored prose under real ids, and because the cache key
+is query plus ids, the next honest visitor asking that question would have been
+served it under the byline "written by Claude Haiku".
+
+**Dashes are stripped after generation.** The system prompt asks for none and
+Haiku emits about twenty per report anyway. `lib/text.ts › plainDashes` runs
+before the cache write. Its whitespace class is `[^\S\r\n]`, not `\s`, because a
+dash at the end of a line would otherwise swallow the newline and pull the next
+`##` heading inline, permanently, in the cached copy.
+
+**A truncated report is thrown away.** `stop_reason === "max_tokens"` throws, so
+a report cut off mid-sentence falls back to the composer instead of being cached
+and served to everyone who asks that question from then on.
+
+### The spend limiter
+
+`/api/report` is unauthenticated and the caller picks the query, so the cache
+bounds repeat spend but not first-time spend. There is an in-memory limit of 12
+model calls per minute per IP on the **paid path only**: over the line, the
+request is answered by the composer rather than refused. It is per-instance, so
+it is a spend brake and not a security control; a real limit belongs at the edge.
+
+---
+
 ## Known gaps
 
 **`rootCauseCategory` is missing on all 173 records, so "The pattern" never

@@ -17,8 +17,11 @@ export type DesktopIconProps = {
       Desktop labels need a halo to stay legible over an arbitrary ground,
       the same trick the real OS uses. */
   onWallpaper?: boolean;
-  /** Glyph width. Desktop folders run large; trash contents stay compact. */
-  size?: number;
+  /**
+   * Glyph width. Desktop folders run large; trash contents stay compact.
+   * Accepts a CSS length so the caller can pass a responsive `clamp()`.
+   */
+  size?: number | string;
   /** Draw a specific icon instead of the default folder. */
   icon?: IconName;
   onOpen: () => void;
@@ -35,9 +38,28 @@ export default function DesktopIcon({
   const halo = onWallpaper ? "0 1px 3px rgba(0, 20, 40, 0.55)" : undefined;
   const labelColor = onWallpaper ? "#ffffff" : "var(--gy-ink)";
   const subColor = onWallpaper ? "rgba(255, 255, 255, 0.82)" : "var(--gy-ink-dim)";
+  // The label sits under a glyph of `size`, so the hit box has to track it.
+  // calc() rather than arithmetic, because size can be a responsive clamp().
+  const boxWidth = typeof size === "number" ? Math.round(size * 1.55) : `calc(${size} * 1.55)`;
+
   return (
     <button
-      onClick={onSelect}
+      // gy-press gives the press feedback; gy-icon the hover, gated behind a
+      // fine pointer so a tap does not leave the icon stuck lit. Neither can be
+      // expressed inline, which is why nothing in this shell reacted to a press
+      // before. See globals.css › Interaction states.
+      className={`gy-press ${onWallpaper ? "gy-icon" : "gy-icon-sunk"}`}
+      onClick={() => {
+        // Double click to open is a mouse convention that a touch screen does
+        // not have: on a phone the second tap lands as a new tap, and the
+        // folder never opens. One tap opens there, click-to-select stays on a
+        // pointer that can hover.
+        if (typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches) {
+          onOpen();
+          return;
+        }
+        onSelect?.();
+      }}
       onDoubleClick={onOpen}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(); }
@@ -48,7 +70,8 @@ export default function DesktopIcon({
         flexDirection: "column",
         alignItems: "center",
         gap: "var(--gy-s-2)",
-        width: Math.round(size * 1.55),
+        width: boxWidth,
+        maxWidth: "100%",
         padding: "var(--gy-s-3) var(--gy-s-2) var(--gy-s-4)",
         background: selected ? "rgba(109,143,125,0.12)" : "transparent",
         border: `1px solid ${selected ? "var(--gy-live-dim)" : "transparent"}`,
@@ -57,7 +80,10 @@ export default function DesktopIcon({
         font: "inherit",
         color: "inherit",
         textAlign: "center",
-        transition: "background var(--gy-dur-fast) var(--gy-ease), border-color var(--gy-dur-fast) var(--gy-ease)",
+        // A desktop icon opens on double click, but a touch screen has no such
+        // thing. Without this the browser waits 300ms and then zooms the page
+        // instead of opening the folder.
+        touchAction: "manipulation",
       }}
     >
       <span style={{ filter: "drop-shadow(0 3px 6px rgba(0,0,0,0.5))" }}>

@@ -33,38 +33,64 @@ export type DockItem = {
 
 export default function Dock({ items }: { items: DockItem[] }) {
   const rowRef = useRef<HTMLDivElement>(null);
-  const centers = useRef<number[]>([]);
+  // State, not a ref. The magnification is DERIVED from these during render, and
+  // reading a ref while rendering is exactly the thing that makes a component
+  // unsafe to re-run: React has no way to know the output changed. Measuring is
+  // rare (pointer enter and resize) so the extra render costs nothing.
+  const [centers, setCenters] = useState<number[]>([]);
   const [pointerX, setPointerX] = useState<number | null>(null);
   const [reduced, setReduced] = useState(false);
+  // Magnification only makes sense where there is a pointer to magnify toward.
+  const [fine, setFine] = useState(true);
 
   useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => setReduced(mq.matches);
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const pointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const sync = () => { setReduced(motion.matches); setFine(pointer.matches); };
     sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
+    motion.addEventListener("change", sync);
+    pointer.addEventListener("change", sync);
+    return () => {
+      motion.removeEventListener("change", sync);
+      pointer.removeEventListener("change", sync);
+    };
   }, []);
 
-  // Cache resting centres so pointermove does no layout reads.
-  const measure = useCallback(() => {
+  /**
+   * Cache resting centres so pointermove does no layout reads.
+   *
+   * Returns the fresh array as well as storing it. `setCenters` cannot update
+   * the `centers` binding the current render closed over, so a caller that
+   * measures and then reads `centers` on the next line gets the stale value the
+   * measure existed to replace. onFocus below is exactly that caller.
+   */
+  const measure = useCallback((): number[] => {
     const row = rowRef.current;
-    if (!row) return;
-    centers.current = Array.from(row.children).map((c) => {
+    if (!row) return [];
+    const next = Array.from(row.children).map((c) => {
       const r = (c as HTMLElement).getBoundingClientRect();
       return r.left + r.width / 2;
     });
+    setCenters((prev) =>
+      prev.length === next.length && prev.every((v, i) => v === next[i]) ? prev : next,
+    );
+    return next;
   }, []);
 
   useEffect(() => {
     measure();
     window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
+    window.addEventListener("orientationchange", measure);
+    return () => {
+      window.removeEventListener("resize", measure);
+      window.removeEventListener("orientationchange", measure);
+    };
   }, [measure, items.length]);
 
   const nearest = (() => {
     if (pointerX === null) return -1;
     let best = -1, bestD = Infinity;
-    centers.current.forEach((c, i) => {
+    centers.forEach((c, i) => {
       const d = Math.abs(pointerX - c);
       if (d < bestD) { bestD = d; best = i; }
     });
@@ -73,8 +99,8 @@ export default function Dock({ items }: { items: DockItem[] }) {
   })();
 
   const scaleFor = (i: number) => {
-    if (reduced || pointerX === null) return 1;
-    const c = centers.current[i];
+    if (reduced || !fine || pointerX === null) return 1;
+    const c = centers[i];
     if (c === undefined) return 1;
     const d = Math.abs(pointerX - c);
     if (d >= RADIUS) return 1;
@@ -123,7 +149,11 @@ export default function Dock({ items }: { items: DockItem[] }) {
             <button
               key={item.id}
               onClick={item.onOpen}
-              onFocus={() => { measure(); setPointerX(centers.current[i] ?? null); }}
+              // No gy-press here: the inline transform below carries the
+              // magnification, and an inline transform beats a class, so the
+              // :active scale would silently never apply. The dock's feedback
+              // is the magnification itself.
+              onFocus={() => { const fresh = measure(); setPointerX(fresh[i] ?? null); }}
               onBlur={() => setPointerX(null)}
               aria-label={item.badge ? `${item.label}, ${item.badge}` : item.label}
               style={{

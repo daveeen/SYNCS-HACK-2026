@@ -1,14 +1,31 @@
 "use client";
 
+import { plainDashes } from "@/lib/text";
 import type { FailedStartup } from "@/lib/types";
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({
+  label,
+  accent = false,
+  children,
+}: {
+  label: string;
+  /** Colour the LABEL, not the prose. See the root-cause block below. */
+  accent?: boolean;
+  children: React.ReactNode;
+}) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "var(--gy-s-2)" }}>
-      <span style={{ fontSize: "var(--gy-t-micro)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--gy-ink-faint)" }}>
+      <span
+        style={{
+          fontSize: "var(--gy-t-micro)",
+          letterSpacing: "0.1em",
+          textTransform: "uppercase",
+          color: accent ? "var(--gy-dead)" : "var(--gy-ink-faint)",
+        }}
+      >
         {label}
       </span>
-      <span style={{ fontSize: "var(--gy-t-body)", color: "var(--gy-ink)", lineHeight: 1.5 }}>{children}</span>
+      <span style={{ fontSize: "var(--gy-t-body)", color: "var(--gy-ink)", lineHeight: 1.6 }}>{children}</span>
     </div>
   );
 }
@@ -23,15 +40,16 @@ export default function StartupWindow({ s }: { s: FailedStartup }) {
             margin: 0,
             fontFamily: "var(--gy-font-display)",
             fontWeight: 400,
-            fontSize: "var(--gy-t-epitaph)",
+            fontSize: "clamp(26px, 7vw, var(--gy-t-epitaph))",
             lineHeight: 1.05,
             color: "var(--gy-ink)",
+            wordBreak: "break-word",
           }}
         >
           {s.name}
         </h1>
         <p style={{ margin: 0, fontSize: "var(--gy-t-lead)", color: "var(--gy-ink-dim)", lineHeight: 1.45 }}>
-          {s.tagline}
+          {plainDashes(s.tagline)}
         </p>
         <div
           style={{
@@ -48,29 +66,38 @@ export default function StartupWindow({ s }: { s: FailedStartup }) {
       </header>
 
       <p style={{ margin: 0, fontSize: "var(--gy-t-body)", lineHeight: 1.6, color: "var(--gy-ink-dim)" }}>
-        {s.description}
+        {plainDashes(s.description)}
       </p>
 
-      {/* The centrepiece: symptom next to disease. */}
+      {/* The centrepiece: symptom above disease.
+          Stacked, not side by side. Equal columns looked balanced in the
+          abstract and never in practice: proximateCause is a clause and
+          rootCause averages 440 characters, so one column ran eight lines
+          beside a column that ran one. Stacking also means it does not need to
+          reflow on a narrow window, because it was already one column. */}
       <div
         style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+          display: "flex",
+          flexDirection: "column",
           gap: "var(--gy-s-7)",
-          padding: "var(--gy-s-7)",
+          padding: "clamp(var(--gy-s-5), 3vw, var(--gy-s-7))",
           background: "var(--gy-surface-sink)",
           border: "1px solid var(--gy-line-soft)",
           borderRadius: "var(--gy-r-field)",
           boxShadow: "var(--gy-e-inset)",
         }}
       >
-        <Field label="Proximate cause (symptom)">{s.proximateCause}</Field>
-        <Field label="Root cause (disease)">
-          <span style={{ color: "var(--gy-dead)" }}>{s.rootCause}</span>
+        <Field label="Proximate cause (symptom)">{plainDashes(s.proximateCause)}</Field>
+        <span style={{ height: 1, background: "var(--gy-line-soft)" }} />
+        {/* The rust marks the heading, not the paragraph. An accent colour set
+            over eight lines of 13px body text is an accent doing body work, and
+            it reads as a warning rather than as prose. */}
+        <Field label="Root cause (disease)" accent>
+          {plainDashes(s.rootCause)}
         </Field>
       </div>
 
-      {s.timingNote && s.timingNote !== "unknown" && <Field label="Timing">{s.timingNote}</Field>}
+      {s.timingNote && s.timingNote !== "unknown" && <Field label="Timing">{plainDashes(s.timingNote)}</Field>}
 
       {s.lesson && (
         <blockquote
@@ -85,7 +112,7 @@ export default function StartupWindow({ s }: { s: FailedStartup }) {
             color: "var(--gy-ink)",
           }}
         >
-          {s.lesson}
+          {plainDashes(s.lesson)}
         </blockquote>
       )}
 

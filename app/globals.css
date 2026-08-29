@@ -68,6 +68,11 @@
   --gy-dead:          #9a4f2b;
   --gy-dead-dim:      rgba(154, 79, 43, 0.14);
 
+  /* Warn: the degraded-search banner. A third semantic colour, registered here
+     rather than hardcoded in the component, so a re-theme cannot miss it. */
+  --gy-warn:          #8a6a1f;
+  --gy-warn-dim:      rgba(190, 150, 40, 0.13);
+
   /* macOS window controls. A recognised OS convention, not decorative
      rainbow colouring. */
   --gy-tl-close:  #ff5f57;
@@ -193,6 +198,62 @@ html, body {
   border-radius: var(--gy-r-field);
 }
 
+/* ==========================================================================
+   Interaction states.
+   --------------------------------------------------------------------------
+   These live in CSS because an inline style cannot express :hover or :active,
+   and every component here styles inline. Without them nothing in the shell
+   responds to being pressed, which is the difference between an interface that
+   feels alive and one that feels like a screenshot.
+   ========================================================================== */
+
+/* Anything you can press. Scale is subtle on purpose: enough to register as
+   feedback, not enough to read as a bouncing card (CLAUDE.md item 28). */
+.gy-press {
+  transition: transform var(--gy-dur-fast) var(--gy-ease),
+              background-color var(--gy-dur-fast) var(--gy-ease),
+              border-color var(--gy-dur-fast) var(--gy-ease);
+}
+.gy-press:active { transform: scale(0.97); }
+
+/* Hover is gated: a touch device fires it on tap and leaves the element stuck
+   in the hovered state after the finger lifts.
+
+   !important is load-bearing here, not laziness. Every component in this shell
+   styles inline, and an inline declaration beats a class selector at ANY
+   specificity: `style="border: 1px solid ..."` silently wins over
+   `.gy-row:hover { border-color }`, so without this the whole block is inert.
+   The alternative is moving each element's resting colours out of its inline
+   style, which spreads one component's appearance across two files. */
+@media (hover: hover) and (pointer: fine) {
+  .gy-icon:hover      { background: rgba(255, 255, 255, 0.16) !important; }
+  .gy-icon-sunk:hover { background: var(--gy-surface-sink) !important; }
+  .gy-row:hover       { border-color: var(--gy-line) !important; }
+  .gy-chip:hover      { border-color: var(--gy-line) !important; color: var(--gy-ink) !important; }
+}
+
+/* Menubar furniture that is nice to have but not worth crowding out the
+   clock and the focused window's title on a phone. */
+@media (max-width: 560px) {
+  .gy-hide-narrow { display: none; }
+}
+
+/* The four desktop documents.
+   An explicit column count, not auto-fit. auto-fit picks whatever number the
+   track size allows, and with four items that lands on three plus a widow on
+   its own row at both phone and tablet widths. Four, then two, always divides
+   evenly. */
+.gy-desk-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, max-content));
+  justify-content: center;
+  gap: clamp(var(--gy-s-5), 2.5vw, var(--gy-s-8));
+  width: 100%;
+}
+@media (max-width: 620px) {
+  .gy-desk-grid { grid-template-columns: repeat(2, minmax(0, max-content)); }
+}
+
 /* Windows come up from slightly under and behind, the way an OS opens one.
    Short enough to feel like response, not choreography. */
 @keyframes gy-window-in {
@@ -200,9 +261,19 @@ html, body {
   to   { opacity: 1; transform: none; }
 }
 
+/* Closing is faster than opening. The system responding should always outrun
+   the system presenting. */
+@keyframes gy-window-out {
+  from { opacity: 1; transform: none; }
+  to   { opacity: 0; transform: translateY(4px) scale(0.985); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+  /* The blanket rule above kills the duration, not the transform, so a press
+     would still snap to 97% and back with no easing. */
+  .gy-press:active { transform: none; }
 }
