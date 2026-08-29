@@ -45,6 +45,9 @@ next-env.d.ts
 /.cache
 /node_modules/.cache
 
+# Fact-check patches: agent scratch, superseded once apply-audit.ts merges them
+data/.audit/
+
 # Site-clone study output: ~91MB, and it contains another person's
 # copyrighted assets (photos, resume, case studies). Never commit this.
 /output/

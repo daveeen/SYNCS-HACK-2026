@@ -3,7 +3,10 @@
 > Paste a startup idea. Meet the real companies that already tried it — and find
 > out what actually killed them.
 
-SYNCS Hack 2026. Read **[CLAUDE.md](CLAUDE.md)** (the rules) and
+SYNCS Hack 2026. **Backend: [docs/backend-readme.md](docs/backend-readme.md)** —
+every endpoint, the pipeline, setup and the traps.
+
+Read **[CLAUDE.md](CLAUDE.md)** (the rules) and
 **[GRAVEYARD_TEAM_PLAN.md](GRAVEYARD_TEAM_PLAN.md)** (the plan) before writing code.
 
 ## Setup

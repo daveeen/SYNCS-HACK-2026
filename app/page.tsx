@@ -1,20 +1,16 @@
-import { readFile } from "node:fs/promises";
-import path from "node:path";
-import type { FailedStartup } from "@/lib/types";
+import { loadStartups } from "@/lib/data";
 import Desktop from "@/app/components/Desktop";
 
 /**
  * Server component: load the record set once, hand it to the shell.
  *
- * Reading the committed JSON directly keeps the demo path free of a fetch on
- * first paint. lib/data.ts is the right home for this once it settles.
+ * Goes through lib/data.ts rather than reading the JSON with fs, for the two
+ * reasons that module documents. It STATICALLY imports the data, so Vercel's
+ * file tracer is guaranteed to ship it (an fs.readFile of data/ can be traced
+ * out of the bundle: works locally, 404s the data in production). And it
+ * coerces any record whose rootCauseCategory predates the field to "unknown",
+ * so the shell and /api/report read the same corpus rather than two.
  */
-async function loadStartups(): Promise<FailedStartup[]> {
-  const file = path.join(process.cwd(), "data", "startups.enriched.json");
-  return JSON.parse(await readFile(file, "utf8")) as FailedStartup[];
-}
-
 export default async function Page() {
-  const startups = await loadStartups();
-  return <Desktop startups={startups} />;
+  return <Desktop startups={loadStartups()} />;
 }

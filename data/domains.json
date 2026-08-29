@@ -1,0 +1,16 @@
+{
+  "_comment": "Real historical domains, where the company name was never the domain. pipeline:wayback checks here before falling back to guessing name+.com. Researched and verified against Wayback captures; do not add a guess.",
+  "domains": {
+    "secret": "secret.ly",
+    "thalmic-labs": "thalmic.com",
+    "lily-robotics": "lily.camera",
+    "pearl-automation": "pearlauto.com",
+    "vdio": "vdio.com",
+    "thredup-goody-box": "thredup.com",
+    "twitter-fabric": "get.fabric.io",
+    "imercive": "imercive.com",
+    "tradesy": "tradesy.com",
+    "hulu-japan": "hulu.jp",
+    "poshmark-uk": "poshmark.co.uk"
+  }
+}

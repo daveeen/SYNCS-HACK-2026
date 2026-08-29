@@ -5,27 +5,20 @@ import { useEffect, useRef, useState } from "react";
 /* ==========================================================================
    SPOTLIGHT — the entry point for the core product flow.
    --------------------------------------------------------------------------
-   Presentation only, on purpose. A founder types their idea here; the
-   semantic search that answers it is Yeriel's (`POST /api/search`, see
-   lib/types.ts › SearchRequest / SearchResponse).
+   WIRED. `Desktop.tsx` passes `onSubmit={runSearch}`, which calls
+   POST /api/search and then POST /api/report, and renders both into
+   ResultsWindow. This file is still presentation only: it owns the input and
+   nothing else, and the `onSubmit`-absent branch below stays as the honest
+   fallback for any surface that mounts the bar without a handler.
 
-   WIRING IT UP (the only change needed):
-   Desktop.tsx passes `onSubmit`. Replace that handler's body with:
+   Two things a future reader needs, because the old note here was wrong:
 
-     const res = await fetch("/api/search", {
-       method: "POST",
-       headers: { "content-type": "application/json" },
-       body: JSON.stringify({ query, limit: 5 } satisfies SearchRequest),
-     });
-     const data: SearchResponse = await res.json();
-     // then open a results window with data.matches and data.report
-
-   Check `x-graveyard-stub` on the response before showing anything: while
-   that header is present the route is returning invented data and must not
-   be demoed (app/api/README.md).
-
-   This component deliberately renders NO results and fakes nothing. Until
-   the route is real, submitting says so.
+   - /api/search returns `report: ""` ALWAYS. The write-up comes from the
+     separate /api/report call, which streams text/plain Markdown rather than
+     returning JSON. Do not read `data.report`.
+   - The rails to check are `x-graveyard-mock-data` and `x-graveyard-degraded`.
+     There is no `x-graveyard-stub` header; no route has ever emitted one.
+     app/api/README.md is the spec for both of the real ones.
    ========================================================================== */
 
 export default function SpotlightBar({

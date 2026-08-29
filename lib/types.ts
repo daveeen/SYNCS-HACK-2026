@@ -8,6 +8,31 @@
  * and every UI component depend on them.
  */
 
+/**
+ * The controlled vocabulary for grouping failures, from the CB Insights
+ * taxonomy (see docs/research.md and the team plan's appendix).
+ *
+ * This exists because `/api/report` groups matches to find a shared pattern,
+ * and you cannot group free text. `rootCause` stays free text because it reads
+ * better on a tombstone card; `rootCauseCategory` is what the grouping runs on.
+ * Both, not either — the choice docs/research.md posed as either/or costs one
+ * field to have both ways.
+ */
+export const ROOT_CAUSE_CATEGORIES = [
+  "no market need",
+  "ran out of cash",
+  "wrong team",
+  "out-competed",
+  "pricing or unit economics",
+  "poor product",
+  "no business model",
+  "bad timing",
+  "regulatory",
+  "unknown",
+] as const;
+
+export type RootCauseCategory = (typeof ROOT_CAUSE_CATEGORIES)[number];
+
 /** One dead startup. Matches every record in data/startups.*.json. */
 export type FailedStartup = {
   id: string;
@@ -22,8 +47,10 @@ export type FailedStartup = {
   fundingRaised: string;
   /** The symptom, e.g. "ran out of cash". */
   proximateCause: string;
-  /** The disease, e.g. "no product-market fit". */
+  /** The disease, in the record's own words. Free text — reads well on a card. */
   rootCause: string;
+  /** The same disease, bucketed. What /api/report groups on. */
+  rootCauseCategory: RootCauseCategory;
   /** Was it timing? e.g. "too early — pre-smartphone". */
   timingNote: string;
   /** The one-line takeaway. */
@@ -36,6 +63,17 @@ export type FailedStartup = {
 
 /** A match is a startup plus how close it is to the user's idea (0..1). */
 export type StartupMatch = FailedStartup & { similarity: number };
+
+/**
+ * Precomputed corpus vectors, keyed by startup id. Lives in its own file
+ * (data/startups.vectors.json) rather than joined onto FailedStartup: ~55 x 384
+ * floats is around 420KB, and keeping it separate leaves the enriched file
+ * readable for QA and makes it impossible to leak vectors to the browser.
+ */
+export type StartupVectors = Record<string, number[]>;
+
+/** Where a Wayback snapshot came from. */
+export type ReconstructSource = "baked" | "live" | "none";
 
 /** Response shape of POST /api/search. */
 export type SearchResponse = {
@@ -85,6 +123,39 @@ export type ReconstructResponse = {
   /** Wayback timestamp, e.g. "20160421075323". */
   timestamp: string | null;
   available: boolean;
+  /** Baked into the record at pipeline time, resolved live, or absent. */
+  source: ReconstructSource;
+};
+
+/* ------------------------------------------------------------------ *
+ * Forum. Rows as stored in Supabase; snake_case because that is what
+ * PostgREST returns and translating it would only create two vocabularies.
+ * ------------------------------------------------------------------ */
+
+/** A forum account's public identity. auth.users holds the credentials. */
+export type Profile = {
+  id: string;
+  handle: string;
+  created_at: string;
+};
+
+/** A forum post as stored. */
+export type ForumPost = {
+  id: string;
+  author_id: string;
+  title: string;
+  body: string;
+  created_at: string;
+};
+
+/** A forum comment. `parent_id` gives one level of nesting. */
+export type ForumComment = {
+  id: string;
+  post_id: string;
+  author_id: string;
+  parent_id: string | null;
+  body: string;
+  created_at: string;
 };
 
 /** Every route handler returns this shape on failure. */

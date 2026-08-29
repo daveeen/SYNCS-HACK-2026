@@ -1,48 +1,87 @@
 /**
- * POST /api/report — Claude's diligence write-up for one idea. Owner: Yeriel.
+ * POST /api/report — the diligence write-up for one idea. Owner: Yeriel.
  *
- * Contract: ReportRequest in, ReportResponse out. See app/api/README.md.
+ * Contract: ReportRequest in, a text/plain stream of Markdown out. See
+ * docs/backend-spec.md §7.
  *
- * STATUS: STUB. Returns canned Markdown built from whatever matches it is
- * handed. Does not call Claude. Sets `x-graveyard-stub: true`.
+ * NO LLM AT REQUEST TIME. The report is composed by a pure function over the
+ * matched records (lib/report.ts). Claude still does the reasoning, but in
+ * scripts/pipeline/enrich.ts at build time, where Davin QAs every field against
+ * its sources. Every sentence here traces to a reviewed field.
+ *
+ * The wire contract is unchanged on purpose — still text/plain, still chunked —
+ * so the frontend does not have to be rewritten a second time. It simply
+ * arrives in one chunk now, and instantly.
  */
 import { NextResponse } from "next/server";
-import type { ApiError, ReportRequest, ReportResponse } from "@/lib/types";
+import { composeReport } from "@/lib/report";
+import { ROOT_CAUSE_CATEGORIES } from "@/lib/types";
+import type {
+  ApiError,
+  ReportRequest,
+  RootCauseCategory,
+  StartupMatch,
+} from "@/lib/types";
 
 export const runtime = "nodejs";
 
-/** Reports can take a while once Claude is real. Give it room. */
-export const maxDuration = 60;
+/** No model call, so no reason for the old 60s budget. */
+export const maxDuration = 10;
 
-function stubReport(query: string, names: string[]): string {
-  return [
-    "> **Stubbed report.** `/api/report` does not call Claude yet.",
-    "",
-    "## The idea",
-    "",
-    query,
-    "",
-    "## Who already tried it",
-    "",
-    names.length > 0
-      ? names.map((n) => `- ${n}`).join("\n")
-      : "- (no matches were passed to this endpoint)",
-    "",
-    "## Root cause pattern",
-    "",
-    "TODO(Yeriel): prompt Claude with the matched startups and ask for the",
-    "*root* cause these failures share, the specific trap this founder is",
-    "walking into, and what would have to be true for this attempt to differ.",
-    "",
-    "## What would have to be different",
-    "",
-    "TODO.",
-  ].join("\n");
+const MAX_QUERY_CHARS = 500;
+const MAX_MATCHES = 20;
+
+const STREAM_HEADERS = {
+  "content-type": "text/plain; charset=utf-8",
+  "cache-control": "no-store",
+};
+
+/**
+ * Does this match carry everything composeReport() reads?
+ *
+ * The body is client-supplied, so a caller can post `{id, name}` and nothing
+ * else. Checking only those two produced "2000–undefined" lifespans and
+ * "died of the same thing: **undefined**" — the fabricated output the whole
+ * pure-function design exists to make impossible. A partial match is dropped
+ * rather than rendered, because a report is only as trustworthy as its worst
+ * line.
+ */
+function isRenderable(m: unknown): m is StartupMatch {
+  if (!m || typeof m !== "object") return false;
+  const r = m as Record<string, unknown>;
+  return (
+    typeof r.id === "string" &&
+    typeof r.name === "string" &&
+    typeof r.tagline === "string" &&
+    typeof r.rootCause === "string" &&
+    // Must be a MEMBER of the vocabulary, not merely a string. The matches come
+    // from the request body, and this value is interpolated into Markdown as
+    // `died of the same thing: **X**` — so an arbitrary string is a content
+    // injection into a document we tell the user is derived from our records.
+    ROOT_CAUSE_CATEGORIES.includes(r.rootCauseCategory as RootCauseCategory) &&
+    typeof r.timingNote === "string" &&
+    typeof r.lesson === "string" &&
+    typeof r.fundingRaised === "string" &&
+    typeof r.foundedYear === "number" &&
+    typeof r.diedYear === "number" &&
+    typeof r.similarity === "number"
+  );
 }
 
-export async function POST(
-  request: Request,
-): Promise<NextResponse<ReportResponse | ApiError>> {
+function streamString(text: string): Response {
+  const encoder = new TextEncoder();
+  return new Response(
+    new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(encoder.encode(text));
+        controller.close();
+      },
+    }),
+    { headers: STREAM_HEADERS },
+  );
+}
+
+export async function POST(request: Request): Promise<Response | NextResponse<ApiError>> {
   let body: ReportRequest;
   try {
     body = (await request.json()) as ReportRequest;
@@ -54,12 +93,18 @@ export async function POST(
   if (!query) {
     return NextResponse.json({ error: "query is required" }, { status: 400 });
   }
+  if (query.length > MAX_QUERY_CHARS) {
+    return NextResponse.json(
+      { error: `query must be ${MAX_QUERY_CHARS} characters or fewer` },
+      { status: 400 },
+    );
+  }
 
-  const names = Array.isArray(body.matches)
-    ? body.matches.map((m) => m?.name).filter(Boolean)
-    : [];
+  if (!Array.isArray(body.matches)) {
+    return NextResponse.json({ error: "matches must be an array" }, { status: 400 });
+  }
 
-  const payload: ReportResponse = { query, report: stubReport(query, names) };
+  const matches: StartupMatch[] = body.matches.slice(0, MAX_MATCHES).filter(isRenderable);
 
-  return NextResponse.json(payload, { headers: { "x-graveyard-stub": "true" } });
+  return streamString(composeReport(query, matches));
 }

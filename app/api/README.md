@@ -2,25 +2,28 @@
 
 Owner: **Yeriel**. Tie-breaker on changes: **Darryl**.
 
-Three route handlers, all `POST`, all `runtime = "nodejs"`, all JSON in / JSON
-out. **This document is the contract.** The frontend is built against it before
+Three route handlers, all `POST`, all `runtime = "nodejs"`. Two take JSON and
+return JSON; `/api/report` takes JSON and returns a `text/plain` stream.
+
+**This document is the contract.** The frontend is built against it before
 the implementations exist, so changing a request or response shape breaks other
 people's work — announce it in team chat first (CLAUDE.md rule 5).
 
 Types live in [`lib/types.ts`](../../lib/types.ts). Import them; don't retype them.
 
-## Stub headers
+## Response headers
 
-Every endpoint is currently a stub. While that is true the response carries:
+`/api/search` sets:
 
 | Header | Meaning |
 |---|---|
-| `x-graveyard-stub: true` | This response was faked. Do not demo it. |
-| `x-graveyard-mock-data: true` | The startups are the 10 invented companies in `data/startups.mock.json`, not real ones. |
+| `x-graveyard-mock-data` | `"true"` or `"false"`, always present. `"true"` means the startups are the 10 invented companies in `data/startups.mock.json`, not real ones. |
+| `x-graveyard-degraded` | Present and `"true"` only when `embed()` threw and the matches came from the BM25 keyword fallback instead of cosine similarity over real vectors. |
+| `x-graveyard-degraded-reason` | The error name that triggered the fallback. Present only alongside `x-graveyard-degraded`. |
 
-The headers disappear as each piece goes real. **The UI should surface a visible
-badge while `x-graveyard-stub` is present** — it is the thing that stops us
-demoing fake output to a judge by accident.
+**The UI should surface a visible badge while `x-graveyard-degraded` is
+present** — it is the thing that stops a keyword match being shown to a judge
+as a semantic one.
 
 ## Errors
 
@@ -50,29 +53,33 @@ The core endpoint: idea in, matched graveyard + report out.
   "matches": [
     { "id": "mock-001", "name": "Fetchly", "similarity": 0.62, "...": "every FailedStartup field" }
   ],
-  "report": "## What the graveyard says...  (Markdown)"
+  "report": ""
 }
 ```
 
 - `matches` — `FailedStartup & { similarity: number }`, similarity in `[0,1]`,
   sorted highest first.
-- `report` — **Markdown**. Render it as Markdown, not plain text.
+- `report` — **always `""`**. This route never calls Claude. Fetch the report
+  separately from `/api/report` once the tombstones are on screen.
 
-**Now:** keyword-ranked matches (`lib/search.ts`) + a canned report.
-**Later:** `embed(query)` + cosine over precomputed vectors, and the report
-either inlined here or fetched separately from `/api/report`.
+`embed(query)` (local MiniLM) against the precomputed vectors in
+`data/startups.vectors.json`, cosine-ranked. If `embed()` throws, matches fall
+back to BM25 keyword ranking (`lib/search.ts`) and the response is marked
+`x-graveyard-degraded` — see **Response headers** above.
 
-> **Open question for the team:** should `/api/search` return the report inline
-> (one round trip, slower first paint) or should the UI call `/api/report`
-> separately (tombstones appear instantly, report streams in after)? The
-> contract currently allows both. Darryl to decide by Phase 1 — the second is
-> almost certainly the better demo.
+**Decided:** the report is a separate call, not inlined. Tombstones paint
+immediately; the report streams in after. This is why `report` above is always
+`""` — it is not a placeholder, it is the contract.
 
 ---
 
 ## `POST /api/report`
 
-Claude's diligence write-up for one idea, given the matches.
+The diligence write-up for one idea, given the matches. **No LLM at request
+time** — the report is composed by a pure function (`lib/report.ts`) over
+fields Claude already wrote in `scripts/pipeline/enrich.ts`, where Davin QAs
+every field against its sources. Every sentence in the output traces to a
+reviewed field.
 
 **Request** — `ReportRequest`
 
@@ -80,16 +87,39 @@ Claude's diligence write-up for one idea, given the matches.
 { "query": "an app for same-day grocery delivery in the suburbs", "matches": [ /* StartupMatch[] */ ] }
 ```
 
-**Response** — `ReportResponse`
+**Response** — a `text/plain; charset=utf-8` **stream**, not JSON. No envelope
+— the body is one chunked Markdown document, nothing else. Consume it as:
 
-```json
-{ "query": "...", "report": "## The idea ... (Markdown)" }
+```ts
+const res = await fetch("/api/report", { method: "POST", body: /* ReportRequest */ });
+if (!res.ok) {
+  const { error } = await res.json(); // ApiError — this path is still JSON
+  // handle error
+} else {
+  let report = "";
+  for await (const chunk of res.body) {
+    report += new TextDecoder().decode(chunk);
+    // append to the UI as it arrives
+  }
+}
 ```
 
-`maxDuration = 60` — Claude Opus on a long prompt is not fast.
+An error before the first byte is a normal `4xx`/`5xx` `ApiError` JSON body —
+bad `query`/`matches` input is a `400`. There is no `ANTHROPIC_API_KEY` to be
+missing: this route imports nothing from `lib/claude.ts`. A failure
+**mid-stream** cannot change the status; the stream just ends early and the
+UI shows what it received.
 
-**Now:** canned Markdown listing the match names.
-**Later:** Claude, called server-side only.
+`maxDuration = 10` — no model call, so no reason for the old 60s budget. The
+wire contract is unchanged on purpose, still `text/plain`, still chunked, so
+the frontend never had to be rewritten for the switch — the response just
+arrives in one chunk now, and instantly.
+
+**Tradeoff, stated plainly:** this names the pattern the corpus shows — which
+companies died of the same thing, from `rootCauseCategory` — but it cannot
+reason about the founder's specific idea the way a model at request time
+could. It composes what was already written and checked; it does not invent
+an insight.
 
 ---
 
@@ -110,17 +140,44 @@ Pull the dead company's old homepage out of the Internet Archive. The demo's
 **Response** — `ReconstructResponse`
 
 ```json
-{ "url": "webvan.com", "snapshotUrl": "https://web.archive.org/web/2016.../http://webvan.com", "timestamp": "20160421075323", "available": true }
+{ "url": "webvan.com", "snapshotUrl": "https://web.archive.org/web/20160421075323if_/http://webvan.com", "timestamp": "20160421075323", "available": true, "source": "baked" }
 ```
+
+- `source` — `"baked"` (the record's own `waybackUrl`, zero network — the demo
+  path), `"live"` (resolved from the Availability API this request), or
+  `"none"` (nothing found; `available: false` at HTTP `200`).
 
 `available: false` with `snapshotUrl: null` is a normal, expected answer — most
 dead startups have no usable snapshot. **The UI must handle it gracefully**;
 this endpoint failing must never break the results page.
 
-**Now:** always returns `available: false`.
-**Later:** `https://archive.org/wayback/available?url=…&timestamp=…`.
+Resolution order: the record's baked `waybackUrl` (zero network, the demo path),
+then `https://archive.org/wayback/available?url=…&timestamp=…` live with a 3s
+timeout and one retry, then `available: false`. `waybackUrl` is filled by
+`pnpm pipeline:wayback`.
 
 > Two known traps, flagged early: many archived pages send `X-Frame-Options` and
 > refuse to render in an `<iframe>`, and the Availability API is flaky under
 > load. Plan a cached screenshot fallback for the planted demo ideas — do not
 > bet the live demo on a third-party API responding on stage.
+
+---
+
+## Forum and auth routes
+
+Live under `app/api/auth/*` and `app/api/forum/*`. They are documented in
+**[docs/forum-reads.md](../../docs/forum-reads.md)** rather than here, because
+the frontend also needs the read queries and the Realtime setup, and splitting
+that across two files is how documentation drifts.
+
+Two things about them that belong in this document, because they are
+departures from the contract it describes:
+
+- **Forum READS do not go through route handlers.** The browser queries
+  Supabase directly under Row Level Security. Writes still come through
+  `app/api/forum/*`, because the graveyard auto-match needs `embedOne()`,
+  which is Node-only.
+- **These routes need a session.** The three Graveyard routes above take
+  anonymous requests and always will; every forum write returns 401 without
+  one, and `author_id` always comes from the verified session, never the
+  request body.

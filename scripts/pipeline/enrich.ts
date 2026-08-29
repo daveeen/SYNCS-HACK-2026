@@ -36,9 +36,24 @@ const OUT = path.join(process.cwd(), "data", "startups.enriched.json");
  *    proximateCause come back identical, the enrichment failed: retry or flag.
  *  - Checkpoint to disk as you go. Do not lose an hour of API calls to a crash.
  */
+/**
+ * NOTE(Yeriel -> Asher): `rootCauseCategory` is new and required.
+ *
+ * /api/report no longer calls Claude at request time — it composes the report
+ * from these fields by pure function, which means the "what pattern do these
+ * failures share" section groups on a category. You cannot group free text, so
+ * the prompt now has to emit BOTH: `rootCause` free text (it reads better on a
+ * tombstone card) and `rootCauseCategory` from the fixed list in lib/types.ts
+ * (`ROOT_CAUSE_CATEGORIES`, the CB Insights taxonomy).
+ *
+ * Validate it against that list before writing. A category outside the list is
+ * a failed enrichment, same as rootCause === proximateCause. Use "unknown" when
+ * the sources do not support a category — the report skips those rather than
+ * guessing, which is the behaviour we want.
+ */
 type Enrichment = Pick<
   FailedStartup,
-  "proximateCause" | "rootCause" | "timingNote" | "lesson"
+  "proximateCause" | "rootCause" | "rootCauseCategory" | "timingNote" | "lesson"
 >;
 
 async function enrichOne(row: RawStartup): Promise<Enrichment> {
