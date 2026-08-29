@@ -44,3 +44,8 @@ next-env.d.ts
 # @xenova/transformers caches ~90MB of model weights here on first run
 /.cache
 /node_modules/.cache
+
+# Site-clone study output: ~91MB, and it contains another person's
+# copyrighted assets (photos, resume, case studies). Never commit this.
+/output/
+/site-clone/
