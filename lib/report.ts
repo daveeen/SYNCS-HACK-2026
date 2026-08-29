@@ -23,6 +23,38 @@ function known(value: string): boolean {
   return Boolean(value) && value.trim().toLowerCase() !== "unknown";
 }
 
+/**
+ * Exactly one trailing full stop. Some taglines in the corpus already carry
+ * one, and appending blindly produced "…tried to beat.." in the output.
+ */
+function sentence(text: string): string {
+  const t = text.trim().replace(/[.!?]+$/, "");
+  return `${t}.`;
+}
+
+/**
+ * The lead sentence of a cause, for the summary list.
+ *
+ * `rootCause` in the real corpus averages ~440 characters and runs to 700 —
+ * genuinely good analysis, and completely unreadable as five stacked bullets.
+ * The list answers "who died and roughly why"; the full text belongs on the
+ * tombstone card, where there is room for it.
+ *
+ * Capped at 170 characters: long enough to carry a real cause, short enough
+ * that five of them stack into something a judge will actually read.
+ *
+ * Splits on sentence-ending punctuation followed by a space, so decimals and
+ * "Inc." survive. Falls back to a hard truncation if the text is one long
+ * sentence, which most of these are.
+ */
+function firstSentence(text: string): string {
+  const trimmed = text.trim();
+  const match = trimmed.match(/^.*?[.!?](?=\s|$)/);
+  const lead = (match?.[0] ?? trimmed).trim();
+  if (lead.length <= 170) return lead.endsWith(".") ? lead : `${lead}.`;
+  return `${lead.slice(0, 167).trimEnd()}…`;
+}
+
 function lifespan(m: StartupMatch): string {
   const years = `${m.foundedYear}–${m.diedYear}`;
   return known(m.fundingRaised) ? `${years}, ${m.fundingRaised}` : years;
@@ -75,9 +107,11 @@ export function composeReport(query: string, matches: StartupMatch[]): string {
 
   out.push("## Who already tried it", "");
   for (const m of matches) {
-    const bullet = `- **${m.name}** (${lifespan(m)}) — ${m.tagline}.`;
+    const bullet = `- **${m.name}** (${lifespan(m)}) — ${sentence(m.tagline)}`;
     out.push(
-      known(m.rootCause) ? `${bullet} Died of: ${m.rootCause}.` : `${bullet} Cause unrecorded.`,
+      known(m.rootCause)
+        ? `${bullet} Died of: ${firstSentence(m.rootCause)}`
+        : `${bullet} Cause unrecorded.`,
     );
   }
   out.push("");
