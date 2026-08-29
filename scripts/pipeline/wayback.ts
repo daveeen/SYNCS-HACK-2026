@@ -21,24 +21,34 @@ import type { FailedStartup } from "../../lib/types";
 import { resolveLiveSnapshot } from "../../lib/wayback";
 
 const FILE = path.join(process.cwd(), "data", "startups.enriched.json");
+const DOMAINS = path.join(process.cwd(), "data", "domains.json");
 
 /** Politeness delay between archive.org calls. */
 const DELAY_MS = 1000;
 
 /**
- * Best guess at a dead company's domain. FailedStartup has no domain field and
- * `sources` are article URLs, not the company's own site, so the name is all we
- * have. A wrong guess costs one wasted request and leaves waybackUrl empty —
- * a legal value the UI already handles.
+ * The domain a company actually used.
+ *
+ * `FailedStartup` has no domain field and `sources` are article URLs, not the
+ * company's own site — so the fallback is to guess `name + ".com"`. That works
+ * for most and fails completely whenever the site differed from the name:
+ * ContextLogic traded as wish.com, Twitter Fabric as get.fabric.io, Lily
+ * Robotics as lily.camera.
+ *
+ * Those are researched by hand into data/domains.json and looked up first.
+ * Only add an entry you have actually verified has a Wayback capture: a wrong
+ * domain does not fail safely, it resolves to some unrelated company's archived
+ * homepage, and we would show a judge the wrong website.
  */
-function guessDomain(s: FailedStartup): string {
-  return `${s.name.toLowerCase().replace(/[^a-z0-9]/g, "")}.com`;
+function domainFor(s: FailedStartup, known: Record<string, string>): string {
+  return known[s.id] ?? `${s.name.toLowerCase().replace(/[^a-z0-9]/g, "")}.com`;
 }
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function main(): Promise<void> {
   const records = JSON.parse(await readFile(FILE, "utf8")) as FailedStartup[];
+  const known = (JSON.parse(await readFile(DOMAINS, "utf8")) as { domains: Record<string, string> }).domains;
 
   if (records.length === 0) {
     console.log("wayback: nothing to do — run pnpm pipeline:enrich first.");
@@ -51,7 +61,7 @@ async function main(): Promise<void> {
   for (const record of records) {
     if (record.waybackUrl) continue;
 
-    const domain = guessDomain(record);
+    const domain = domainFor(record, known);
     // Aim at the year they died: that is the site as it last actually looked.
     const snapshot = await resolveLiveSnapshot(domain, record.diedYear);
 

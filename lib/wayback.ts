@@ -45,6 +45,12 @@ export async function resolveLiveSnapshot(url: string, year?: number): Promise<L
   const endpoint = `${AVAILABILITY_API}?${params.toString()}`;
 
   for (let attempt = 0; attempt < 2; attempt++) {
+    // Back off before retrying. Retrying a 429 immediately is pointless — the
+    // response is literally "you are going too fast" — and archive.org does
+    // throttle hard once you have made a few hundred requests, which a corpus
+    // backfill reaches easily.
+    if (attempt > 0) await new Promise((r) => setTimeout(r, 1500));
+
     try {
       const res = await fetch(endpoint, { signal: AbortSignal.timeout(3000) });
       if (!res.ok) {
