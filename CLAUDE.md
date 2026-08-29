@@ -78,3 +78,95 @@ app/components/ and the design tokens; Darryl owns page composition and routing
   these closely. They exist so an arbitrary judge-typed idea finds a real match
   instead of a 0.19 similarity to something irrelevant.
 Both land in data/startups.enriched.json in the same FailedStartup shape.
+
+## Design: do not build AI slop (Sam's list — she owns the visual system)
+
+Judges have seen forty of these this weekend. Every item below is a tell that
+the page was generated rather than designed. Avoid them:
+
+1. Harsh gradients
+2. Lucide icons
+3. Pure white background
+4. Rainbow colouring
+5. Drop shadows
+6. 3 feature cards in a row
+7. Emojis
+8. Liquid Glass
+9. Em dashes (this one is about COPY, not layout — applies to all UI text)
+10. Inter / Geist / Space Grotesk
+11. Coloured left stripe
+12. Fake testimonials
+13. Bento grids
+14. Terminal window
+15. "It's not x, it's y"
+16. Checkmark bullets
+17. 3 pricing tiers
+19. Soft corner radius
+20. Purple and black
+22. Radial orbs
+23. Dot grids
+24. Sparkle icons
+25. Animated arrows
+28. Gratuitous hover animation (cards scaling, glowing, lifting) — this is NOT a
+    ban on hover and focus states themselves, see clarification below
+29. Neon colours
+30. Basic pastel colours
+
+### The inverted four — slop LACKS these, so we must HAVE them
+Items 18, 21, 26 and 27 on Sam's list are things AI-generated sites are missing.
+Do not read them as bans:
+
+- **18. Real product demos** — the live semantic match IS the demo. Never
+  replace it with a static mockup or a video.
+- **21. Skeleton loaders** — a real Claude report takes 5-8s. Show real loading
+  state. A frozen screen reads as broken.
+- **26/27. TOS + privacy policy** — no auth, no accounts, no data collected, so
+  there is nothing to write a policy about. If we ever add a footer, an honest
+  "we store nothing" line beats a fabricated policy. Never generate fake legal text.
+
+### Two clarifications so the list doesn't backfire
+- **28. Hover animations** — the tell is gratuitous motion (cards scaling,
+  glowing, lifting). Interactive elements still need a visible hover and focus
+  state, or the page fails accessibility. Kill decoration, keep affordance.
+- **5 / 19. Drop shadows and corner radius** — the tell is uniformity: the same
+  soft shadow and the same `rounded-lg` on every surface. A deliberate, varied
+  treatment is a design choice. Blanket-default is the slop.
+
+### Consequence for existing code
+There is no longer any frontend to fix. The whole surface was stripped to zero
+in commit f30cd2d: the landing page, the /graveyard results page and
+ResultsClient, app/layout.tsx and app/globals.css are all deleted, so nothing
+survives that violates this list. app/api/*, lib/ and the data pipeline were
+left untouched. Whatever replaces the UI starts from a clean slate, and should
+not inherit Geist (item 10) the way the Next.js template did.
+
+---
+
+## Asher's data-cleaning progress (working notes)
+
+Base dataset: CB Insights Kaggle "startup failures" dump, `data/raw/archive (5)/`
+— one bare index file (`Startup Failures.csv`, 815 rows, no failure detail) plus
+6 sector-specific CSVs (Finance and Insurance, Food and services / Accommodation,
+Health Care, Manufactures, Retail Trade, Information) that carry the real detail:
+`what_they_did`, `how_much_they_raised`, `why_they_failed`, `takeaway`, plus 14
+one-hot failure-cause flags (competition, overhype, regulatory pressure, etc.).
+
+Pipeline so far:
+- `data/clean/startups_base.csv` — the 6 sector CSVs combined, column names
+  standardized to snake_case. 409 rows.
+- `data/clean/startups_clean.csv` — same, plus parsed fields via `src/clean.py`:
+  - `funding_musd` (float, millions USD) — parsed from `how_much_they_raised`,
+    parenthetical annotations (acquirer names, "(est.)") stripped and ignored.
+    1 unparseable value (`$lowM`) left null.
+  - `founded_year`, `shutdown_year`, `duration_years` (ints) and
+    `duration_mismatch` (bool) — parsed from `years_of_operation`, which mixes
+    `YYYY-YYYY` and `N (YYYY-YYYY)` formats. 0 mismatches found across 272 rows
+    with a stated duration prefix.
+- `data/clean/unenriched_names.csv` — 489 of the 815 base-index names have no
+  matching row in the 6 sector CSVs (matched on normalized name). This is the
+  candidate list for the enrichment scraper if we need to grow past 409 rows
+  toward the ~50 BREADTH target.
+
+Open question: 409 enriched rows is well short of the 483 CB Insights figure —
+worth checking with the team whether the 6 sector CSVs are the complete enriched
+set or partial.
