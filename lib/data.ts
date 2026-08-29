@@ -18,6 +18,7 @@
  */
 import "server-only";
 
+import { ROOT_CAUSE_CATEGORIES } from "@/lib/types";
 import type { FailedStartup, StartupVectors } from "@/lib/types";
 
 import enriched from "@/data/startups.enriched.json";
@@ -30,10 +31,37 @@ export function isUsingMockData(): boolean {
 }
 
 /** Every startup available to the app. Never returns an empty array. */
+/**
+ * Records whose `rootCauseCategory` is missing or outside the vocabulary are
+ * coerced to "unknown".
+ *
+ * The field arrived after the first 173 records were enriched, so real data can
+ * legitimately predate it. Without this, `/api/report` groups on `undefined`
+ * and can announce that N companies "died of the same thing: **undefined**" —
+ * a fabricated pattern, which is the one output the report is built to never
+ * produce. Coercing to "unknown" makes it say the causes are unrecorded, which
+ * is true.
+ *
+ * Fix the data with `pnpm pipeline:categorize`; this is the safety net, not the
+ * cure.
+ */
+const VALID_CATEGORIES = new Set<string>(ROOT_CAUSE_CATEGORIES);
+
+function normalise(records: FailedStartup[]): FailedStartup[] {
+  return records.map((r) =>
+    VALID_CATEGORIES.has(r.rootCauseCategory)
+      ? r
+      : { ...r, rootCauseCategory: "unknown" as const },
+  );
+}
+
+let cached: FailedStartup[] | null = null;
+
 export function loadStartups(): FailedStartup[] {
+  if (cached) return cached;
   const real = enriched as FailedStartup[];
-  if (real.length > 0) return real;
-  return mock as FailedStartup[];
+  cached = normalise(real.length > 0 ? real : (mock as FailedStartup[]));
+  return cached;
 }
 
 export function getStartupById(id: string): FailedStartup | undefined {

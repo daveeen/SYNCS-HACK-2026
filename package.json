@@ -11,10 +11,11 @@
     "pipeline:ingest": "tsx scripts/pipeline/ingest.ts",
     "pipeline:enrich": "tsx scripts/pipeline/enrich.ts",
     "pipeline:embed": "tsx scripts/pipeline/embed.ts",
-    "pipeline": "pnpm pipeline:ingest && pnpm pipeline:enrich && pnpm pipeline:embed && pnpm pipeline:wayback",
+    "pipeline": "pnpm pipeline:ingest && pnpm pipeline:enrich && pnpm pipeline:categorize && pnpm pipeline:embed && pnpm pipeline:wayback",
     "check": "tsx scripts/check.ts",
     "fetch-model": "tsx scripts/fetch-model.ts",
-    "pipeline:wayback": "tsx scripts/pipeline/wayback.ts"
+    "pipeline:wayback": "tsx scripts/pipeline/wayback.ts",
+    "pipeline:categorize": "tsx scripts/pipeline/categorize.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.122.0",
