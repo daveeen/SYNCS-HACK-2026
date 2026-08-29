@@ -8,6 +8,31 @@
  * and every UI component depend on them.
  */
 
+/**
+ * The controlled vocabulary for grouping failures, from the CB Insights
+ * taxonomy (see docs/research.md and the team plan's appendix).
+ *
+ * This exists because `/api/report` groups matches to find a shared pattern,
+ * and you cannot group free text. `rootCause` stays free text because it reads
+ * better on a tombstone card; `rootCauseCategory` is what the grouping runs on.
+ * Both, not either — the choice docs/research.md posed as either/or costs one
+ * field to have both ways.
+ */
+export const ROOT_CAUSE_CATEGORIES = [
+  "no market need",
+  "ran out of cash",
+  "wrong team",
+  "out-competed",
+  "pricing or unit economics",
+  "poor product",
+  "no business model",
+  "bad timing",
+  "regulatory",
+  "unknown",
+] as const;
+
+export type RootCauseCategory = (typeof ROOT_CAUSE_CATEGORIES)[number];
+
 /** One dead startup. Matches every record in data/startups.*.json. */
 export type FailedStartup = {
   id: string;
@@ -22,8 +47,10 @@ export type FailedStartup = {
   fundingRaised: string;
   /** The symptom, e.g. "ran out of cash". */
   proximateCause: string;
-  /** The disease, e.g. "no product-market fit". */
+  /** The disease, in the record's own words. Free text — reads well on a card. */
   rootCause: string;
+  /** The same disease, bucketed. What /api/report groups on. */
+  rootCauseCategory: RootCauseCategory;
   /** Was it timing? e.g. "too early — pre-smartphone". */
   timingNote: string;
   /** The one-line takeaway. */

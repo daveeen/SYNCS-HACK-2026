@@ -10,9 +10,12 @@
     "fundingRaised": "$21M",
     "proximateCause": "ran out of cash",
     "rootCause": "unit economics never worked at low population density — the cost to serve a suburban drop never fell below the delivery fee customers would pay",
+    "rootCauseCategory": "pricing or unit economics",
     "timingNote": "not a timing problem; the density maths was wrong from day one and would be wrong today",
     "lesson": "In delivery, geography is the business model. Test your worst route, not your best one.",
-    "sources": ["https://example.com/mock/fetchly-postmortem"],
+    "sources": [
+      "https://example.com/mock/fetchly-postmortem"
+    ],
     "waybackUrl": ""
   },
   {
@@ -26,9 +29,12 @@
     "fundingRaised": "$8.5M",
     "proximateCause": "out-competed",
     "rootCause": "sold hardware into a problem software solved for free — the value was in the sync, not the board, and the board carried all the cost",
+    "rootCauseCategory": "out-competed",
     "timingNote": "too late — cheap tablets and free collaborative canvases arrived mid-build",
     "lesson": "If the software half of your product is the valuable half, do not fund it with a hardware margin.",
-    "sources": ["https://example.com/mock/lumenboard-postmortem"],
+    "sources": [
+      "https://example.com/mock/lumenboard-postmortem"
+    ],
     "waybackUrl": ""
   },
   {
@@ -42,9 +48,12 @@
     "fundingRaised": "$3.2M",
     "proximateCause": "could not raise a Series A",
     "rootCause": "disintermediation — once a tutor and student matched once, they moved off-platform, so the marketplace only ever earned the first transaction",
+    "rootCauseCategory": "no business model",
     "timingNote": "timing was fine; the leak was structural",
     "lesson": "A marketplace that adds no value after the first match will be cut out after the first match.",
-    "sources": ["https://example.com/mock/coursewell-postmortem"],
+    "sources": [
+      "https://example.com/mock/coursewell-postmortem"
+    ],
     "waybackUrl": ""
   },
   {
@@ -58,9 +67,12 @@
     "fundingRaised": "$34M",
     "proximateCause": "regulatory action",
     "rootCause": "built a consumer product on top of a clinical claim it had not validated, so growth and compliance pulled in opposite directions from launch",
+    "rootCauseCategory": "regulatory",
     "timingNote": "unknown",
     "lesson": "In regulated markets the regulator is a co-founder. Bring them in before launch, not after.",
-    "sources": ["https://example.com/mock/nyla-postmortem"],
+    "sources": [
+      "https://example.com/mock/nyla-postmortem"
+    ],
     "waybackUrl": ""
   },
   {
@@ -74,9 +86,12 @@
     "fundingRaised": "$5.1M",
     "proximateCause": "shut down voluntarily",
     "rootCause": "supply side was a hobby, not a job — hosts churned as soon as it stopped being fun, so liquidity never compounded in any city",
+    "rootCauseCategory": "no market need",
     "timingNote": "not timing; the same product fails whenever the supply side cannot earn a living from it",
     "lesson": "Check whether your supply side can make rent from you. Hobbyist supply does not survive contact with scale.",
-    "sources": ["https://example.com/mock/hearthside-postmortem"],
+    "sources": [
+      "https://example.com/mock/hearthside-postmortem"
+    ],
     "waybackUrl": ""
   },
   {
@@ -90,9 +105,12 @@
     "fundingRaised": "$12M",
     "proximateCause": "acqui-hired for less than capital raised",
     "rootCause": "sold to a buyer (head office) who was not the user (shift workers), so deals closed but usage never did, and renewals died at year two",
+    "rootCauseCategory": "no market need",
     "timingNote": "unknown",
     "lesson": "When the buyer is not the user, your renewal is decided by someone who never logs in.",
-    "sources": ["https://example.com/mock/vantyr-postmortem"],
+    "sources": [
+      "https://example.com/mock/vantyr-postmortem"
+    ],
     "waybackUrl": ""
   },
   {
@@ -106,9 +124,12 @@
     "fundingRaised": "$2.4M",
     "proximateCause": "ran out of cash",
     "rootCause": "no pricing power in a category where the two largest competitors gave the core product away as a loss leader",
+    "rootCauseCategory": "out-competed",
     "timingNote": "too late — the browser vendors bundled the same feature for free in year three",
     "lesson": "Do not build a standalone product that a platform can ship as a checkbox.",
-    "sources": ["https://example.com/mock/padlock-postmortem"],
+    "sources": [
+      "https://example.com/mock/padlock-postmortem"
+    ],
     "waybackUrl": ""
   },
   {
@@ -122,9 +143,12 @@
     "fundingRaised": "unknown",
     "proximateCause": "unknown",
     "rootCause": "underestimated that the incumbent brokers also supplied the farmers' credit, so switching to Grainline meant losing a credit line no app could replace",
+    "rootCauseCategory": "out-competed",
     "timingNote": "unknown",
     "lesson": "Find out what else the middleman provides before you promise to remove them.",
-    "sources": ["https://example.com/mock/grainline-postmortem"],
+    "sources": [
+      "https://example.com/mock/grainline-postmortem"
+    ],
     "waybackUrl": ""
   },
   {
@@ -138,9 +162,12 @@
     "fundingRaised": "$48M",
     "proximateCause": "ran out of cash",
     "rootCause": "burned the entire runway on a certification timeline it did not control, leaving no capital for the commercial phase that was supposed to prove demand",
+    "rootCauseCategory": "regulatory",
     "timingNote": "too early — the airspace rules it needed were still years from finalisation at launch",
     "lesson": "If a regulator owns your critical path, budget for their calendar, not yours.",
-    "sources": ["https://example.com/mock/orbital-post-postmortem"],
+    "sources": [
+      "https://example.com/mock/orbital-post-postmortem"
+    ],
     "waybackUrl": ""
   },
   {
@@ -154,9 +181,12 @@
     "fundingRaised": "$9.7M",
     "proximateCause": "licensing costs exceeded revenue",
     "rootCause": "sold a flat-fee all-you-can-eat plan on top of per-listen licensing, so its best customers were its biggest losses and growth accelerated the bleed",
+    "rootCauseCategory": "pricing or unit economics",
     "timingNote": "not timing; the cost structure inverted the usual economics of scale",
     "lesson": "If your heaviest users lose you the most money, growth is not a fix — it is the accelerant.",
-    "sources": ["https://example.com/mock/chapterhouse-postmortem"],
+    "sources": [
+      "https://example.com/mock/chapterhouse-postmortem"
+    ],
     "waybackUrl": ""
   }
 ]

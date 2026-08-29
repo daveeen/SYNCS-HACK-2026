@@ -18,7 +18,14 @@ import {
 } from "../lib/embed";
 import { rankByVector, rankByBM25 } from "../lib/search";
 import { toEmbeddableSnapshot } from "../lib/wayback";
-import type { FailedStartup, StartupVectors } from "../lib/types";
+import { composeReport } from "../lib/report";
+import type { FailedStartup, StartupMatch, StartupVectors } from "../lib/types";
+
+/** Mock records as matches, so the report checks need no data and no key. */
+async function loadMatches(n: number): Promise<StartupMatch[]> {
+  const mock = await loadMock();
+  return mock.slice(0, n).map((s, i) => ({ ...s, similarity: 0.9 - i * 0.05 }));
+}
 
 /** The 10 invented companies. Used so checks run without Asher's data or a key. */
 async function loadMock(): Promise<FailedStartup[]> {
@@ -114,6 +121,47 @@ async function main(): Promise<void> {
 
   await check("bm25: empty corpus returns [] rather than throwing", () => {
     assert.deepEqual(rankByBM25("anything", [], 5), []);
+  });
+
+  await check("report: names a shared root cause when two or more agree", async () => {
+    const matches = await loadMatches(10);
+    const md = composeReport("grocery delivery", matches);
+    // mock has 3 x out-competed, the largest cluster
+    assert.match(md, /3 of your 10 matches died of the same thing: \*\*out-competed\*\*/);
+  });
+
+  await check("report: refuses to invent a pattern when causes all differ", async () => {
+    const matches = (await loadMatches(3)).map((m, i) => ({
+      ...m,
+      rootCauseCategory: (["no market need", "regulatory", "wrong team"] as const)[i],
+    }));
+    const md = composeReport("anything", matches);
+    assert.match(md, /did not die of the same thing/);
+    assert.doesNotMatch(md, /died of the same thing: \*\*/);
+  });
+
+  await check("report: one match is called an anecdote, not a pattern", async () => {
+    const md = composeReport("anything", await loadMatches(1));
+    assert.match(md, /one data point is an anecdote/);
+  });
+
+  await check("report: zero matches says so instead of fabricating", async () => {
+    const md = composeReport("something nobody tried", []);
+    assert.match(md, /Nothing in the graveyard matches this/);
+    assert.doesNotMatch(md, /Who already tried it/);
+  });
+
+  await check("report: never prints an \"unknown\" field as though it were a fact", async () => {
+    const matches = (await loadMatches(2)).map((m) => ({
+      ...m,
+      rootCause: "unknown",
+      lesson: "unknown",
+      timingNote: "unknown",
+      fundingRaised: "unknown",
+    }));
+    const md = composeReport("anything", matches);
+    assert.doesNotMatch(md, /unknown/i);
+    assert.match(md, /Cause unrecorded/);
   });
 
   await check("wayback: snapshot URL becomes https and gains the if_ flag", () => {

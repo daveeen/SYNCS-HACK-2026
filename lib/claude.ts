@@ -1,20 +1,17 @@
 /**
  * The Anthropic client. Owner: Yeriel.
  *
- * SERVER ONLY. ANTHROPIC_API_KEY must never reach the browser, so this module
- * is only ever imported from app/api/* route handlers (CLAUDE.md rule 4).
+ * SERVER ONLY in the sense that matters: ANTHROPIC_API_KEY must never reach the
+ * browser (CLAUDE.md rule 4). There is no `server-only` guard, though, because
+ * this module's only consumer is now scripts/pipeline/enrich.ts running under
+ * plain Node via tsx, where that package throws on import. Never import this
+ * from a client component — nothing enforces that for you any more.
  *
- * STATUS: scaffold. No route calls Claude yet — they all return mock data.
+ * No route handler calls Claude. /api/report composes its report from the
+ * enriched fields by pure function (lib/report.ts). Claude is used only by
+ * scripts/pipeline/enrich.ts, at build time, where Davin QAs the output.
  */
-import "server-only";
 import Anthropic from "@anthropic-ai/sdk";
-
-/**
- * The plan says "claude-opus" for report quality. That is the family name,
- * not a callable id — the API needs a concrete one. Change this in ONE place.
- * Swap to "claude-sonnet-5" if report latency hurts the live demo.
- */
-export const REPORT_MODEL = "claude-opus-5";
 
 /** Cheaper/faster model for bulk pipeline enrichment of ~50 startups. */
 export const ENRICH_MODEL = "claude-sonnet-5";
