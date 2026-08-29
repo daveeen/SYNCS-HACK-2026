@@ -127,5 +127,36 @@ export type ReconstructResponse = {
   source: ReconstructSource;
 };
 
+/* ------------------------------------------------------------------ *
+ * Forum. Rows as stored in Supabase; snake_case because that is what
+ * PostgREST returns and translating it would only create two vocabularies.
+ * ------------------------------------------------------------------ */
+
+/** A forum account's public identity. auth.users holds the credentials. */
+export type Profile = {
+  id: string;
+  handle: string;
+  created_at: string;
+};
+
+/** A forum post as stored. */
+export type ForumPost = {
+  id: string;
+  author_id: string;
+  title: string;
+  body: string;
+  created_at: string;
+};
+
+/** A forum comment. `parent_id` gives one level of nesting. */
+export type ForumComment = {
+  id: string;
+  post_id: string;
+  author_id: string;
+  parent_id: string | null;
+  body: string;
+  created_at: string;
+};
+
 /** Every route handler returns this shape on failure. */
 export type ApiError = { error: string };
