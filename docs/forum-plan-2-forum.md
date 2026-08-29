@@ -377,10 +377,13 @@ Create `lib/forum/ratelimit.ts`:
  * start and is bypassed outright by concurrency. The database is the one thing
  * every lambda shares.
  *
+ * No `server-only` guard: isOverLimit is pure and scripts/check.ts asserts it
+ * under plain Node, where that package throws. There is nothing secret here —
+ * countRecentWrites takes the client as an argument rather than building one.
+ *
  * This is the ONLY abuse control. There is no content moderation — see
  * forum-spec.md §11. Rate limiting slows a script down; it does not stop one.
  */
-import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export const LIMITS = {

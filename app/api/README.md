@@ -160,3 +160,24 @@ timeout and one retry, then `available: false`. `waybackUrl` is filled by
 > refuse to render in an `<iframe>`, and the Availability API is flaky under
 > load. Plan a cached screenshot fallback for the planted demo ideas — do not
 > bet the live demo on a third-party API responding on stage.
+
+---
+
+## Forum and auth routes
+
+Live under `app/api/auth/*` and `app/api/forum/*`. They are documented in
+**[docs/forum-reads.md](../../docs/forum-reads.md)** rather than here, because
+the frontend also needs the read queries and the Realtime setup, and splitting
+that across two files is how documentation drifts.
+
+Two things about them that belong in this document, because they are
+departures from the contract it describes:
+
+- **Forum READS do not go through route handlers.** The browser queries
+  Supabase directly under Row Level Security. Writes still come through
+  `app/api/forum/*`, because the graveyard auto-match needs `embedOne()`,
+  which is Node-only.
+- **These routes need a session.** The three Graveyard routes above take
+  anonymous requests and always will; every forum write returns 401 without
+  one, and `author_id` always comes from the verified session, never the
+  request body.

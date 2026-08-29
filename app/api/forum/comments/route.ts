@@ -1,0 +1,108 @@
+/**
+ * POST /api/forum/comments — reply to a post, or to one comment. Owner: Yeriel.
+ *
+ * Same shape as the posts route minus the matcher: a comment does not get its
+ * own tombstones, because the post it hangs under already has them.
+ */
+import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { getCaller } from "@/lib/forum/session";
+import { countRecentWrites, isOverLimit, LIMITS } from "@/lib/forum/ratelimit";
+import { parseMentions } from "@/lib/forum/mentions";
+import { loadStartups } from "@/lib/data";
+import type { ApiError, ForumComment } from "@/lib/types";
+
+export const runtime = "nodejs";
+export const maxDuration = 15;
+
+type CreateCommentRequest = { postId?: string; parentId?: string | null; body?: string };
+
+export async function POST(
+  request: Request,
+): Promise<NextResponse<ForumComment | ApiError>> {
+  const caller = await getCaller();
+  if (!caller) {
+    return NextResponse.json({ error: "you must be signed in to comment" }, { status: 401 });
+  }
+
+  let payload: CreateCommentRequest;
+  try {
+    payload = (await request.json()) as CreateCommentRequest;
+  } catch {
+    return NextResponse.json({ error: "body must be valid JSON" }, { status: 400 });
+  }
+
+  const postId = typeof payload.postId === "string" ? payload.postId : "";
+  const parentId = typeof payload.parentId === "string" ? payload.parentId : null;
+  const body = typeof payload.body === "string" ? payload.body.trim() : "";
+
+  if (!postId) {
+    return NextResponse.json({ error: "postId is required" }, { status: 400 });
+  }
+  if (body.length < 1 || body.length > 5000) {
+    return NextResponse.json(
+      { error: "body must be between 1 and 5000 characters" },
+      { status: 400 },
+    );
+  }
+
+  const supabase = await createClient();
+
+  // The schema cannot express "parent must belong to the same post", so the
+  // route must. Without it a reply can be grafted onto an unrelated thread.
+  if (parentId) {
+    const { data: parent } = await supabase
+      .from("comments")
+      .select("post_id")
+      .eq("id", parentId)
+      .single();
+    if (!parent || parent.post_id !== postId) {
+      return NextResponse.json(
+        { error: "parentId does not belong to that post" },
+        { status: 400 },
+      );
+    }
+  }
+
+  const recent = await countRecentWrites(supabase, "comment", caller.userId);
+  if (isOverLimit(recent, "comment")) {
+    return NextResponse.json(
+      {
+        error: `you can comment ${LIMITS.comment.max} times every ${LIMITS.comment.windowMinutes} minutes`,
+      },
+      { status: 429 },
+    );
+  }
+
+  const { data: comment, error } = await supabase
+    .from("comments")
+    .insert({ post_id: postId, author_id: caller.userId, parent_id: parentId, body })
+    .select()
+    .single();
+
+  if (error || !comment) {
+    console.error("comments: insert failed:", error?.message);
+    return NextResponse.json({ error: "could not create the comment" }, { status: 500 });
+  }
+
+  // Derived, fails soft. Same reasoning as the posts route.
+  try {
+    const startupIds = parseMentions(body, loadStartups());
+    if (startupIds.length > 0) {
+      await createAdminClient()
+        .from("mentions")
+        .insert(
+          startupIds.map((startup_id) => ({
+            source_type: "comment" as const,
+            source_id: comment.id,
+            startup_id,
+          })),
+        );
+    }
+  } catch (err) {
+    console.error("comments: mentions failed for", comment.id, err);
+  }
+
+  return NextResponse.json(comment as ForumComment, { status: 201 });
+}
