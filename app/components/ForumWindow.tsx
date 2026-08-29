@@ -126,8 +126,8 @@ function MentionRow({ mentions }: { mentions: string[] }) {
             padding: "1px var(--gy-s-3)",
             fontFamily: "var(--gy-font-mono)",
             fontSize: "var(--gy-t-micro)",
-            color: "var(--gy-dead)",
-            background: "var(--gy-dead-dim)",
+            color: "var(--gy-mention)",
+            background: "var(--gy-mention-dim)",
             borderRadius: "var(--gy-r-pill)",
           }}
         >

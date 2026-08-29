@@ -68,6 +68,13 @@
   --gy-dead:          #9a4f2b;
   --gy-dead-dim:      rgba(154, 79, 43, 0.14);
 
+  /* A deeper, less saturated rust for the forum's @mention pill. Same
+     family as --gy-dead (still reads "dead company"), but the like-heart
+     turns --gy-dead when active, so the mention chip needed its own shade
+     to stay visually distinct from a like at a glance. */
+  --gy-mention:       #7a3d20;
+  --gy-mention-dim:   rgba(122, 61, 32, 0.16);
+
   /* macOS window controls. A recognised OS convention, not decorative
      rainbow colouring. */
   --gy-tl-close:  #ff5f57;
