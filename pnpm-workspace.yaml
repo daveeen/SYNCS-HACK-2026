@@ -1,10 +1,16 @@
 ignoredBuiltDependencies:
-  - sharp
   - unrs-resolver
 
 # esbuild ships tsx's compiler binary; protobufjs is pulled in by
 # onnxruntime (via @xenova/transformers). Both need their install scripts,
 # and approving them here stops pnpm prompting every teammate on first install.
+#
+# sharp is NOT optional here, however much it looks like it should be:
+# @xenova/transformers declares it a hard dependency and imports it at module
+# load in utils/image.js, even though we only ever embed text. Left unbuilt,
+# `require('sharp')` throws for its missing native binary and every import of
+# @xenova/transformers dies — on a teammate's fresh clone and on Vercel alike.
 onlyBuiltDependencies:
   - esbuild
   - protobufjs
+  - sharp
