@@ -1,0 +1,10 @@
+ignoredBuiltDependencies:
+  - sharp
+  - unrs-resolver
+
+# esbuild ships tsx's compiler binary; protobufjs is pulled in by
+# onnxruntime (via @xenova/transformers). Both need their install scripts,
+# and approving them here stops pnpm prompting every teammate on first install.
+onlyBuiltDependencies:
+  - esbuild
+  - protobufjs

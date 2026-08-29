@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+/*
+ * PLACEHOLDER THEME — owner: Sam.
+ * These are neutral scaffolding tokens so the app is legible on day one, not
+ * the brand. Replace the whole block with the real graveyard visual system.
+ * Constraint from the plan: graveyard aesthetic, but high contrast and
+ * accessible. Design is 15 of 70 points; unreadable dark-on-dark loses them.
+ */
+:root {
+  --background: #0b0b0d;
+  --foreground: #e8e8ea;
+  --muted: #9a9aa2;
+  --border: #26262c;
+  --accent: #7dd3a0;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}

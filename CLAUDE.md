@@ -1,25 +1,111 @@
-# Project: Startup Post-Mortem Matching Tool
+# Graveyard — Claude Project Rules
+
+Read this fully before writing any code. The detailed plan is in
+GRAVEYARD_TEAM_PLAN.md — read it, then your assigned section.
 
 ## What we're building
-A tool that matches failed/struggling startups against a base dataset of
-historical startup outcomes, surfacing similar prior post-mortems to draw
-lessons from.
-
-## Data
-- **Base dataset**: CB Insights Kaggle dataset, 483 companies (startup
-  outcomes / post-mortems).
-- **Enrichment**: handled by a separate backend component — an automated
-  scraper that augments the base dataset with additional fields.
-
-## Roles
-- **Backend**: owns the enrichment scraper.
-- **Me (this workspace)**: cleaning, matching, and analysis.
-
-## Folder structure
-- `data/raw/` — untouched source data (base Kaggle dataset, raw scraper output)
-- `data/clean/` — cleaned/normalized data ready for matching
-- `data/enriched/` — enriched data (post backend scraper + any joins)
-- `src/` — cleaning, matching, and analysis code
+Graveyard: a founder pastes a startup idea -> we match it to REAL failed startups
+that tried the same thing and explain, with Claude, WHY they died (root cause, not
+just symptom) and how to avoid it. We connect existing failed-startup data +
+Claude reasoning to reach founders excluded from that knowledge.
 
 ## Stack
-pandas, numpy, requests, beautifulsoup4, sentence-transformers
+- Single Next.js (App Router) + TypeScript + Tailwind. One codebase.
+- Server logic = Route Handlers in app/api/ only.
+- LLM: Anthropic Claude (@anthropic-ai/sdk), called ONLY server-side in route
+  handlers. Model: claude-opus.
+- Embeddings: LOCAL @xenova/transformers (Xenova/all-MiniLM-L6-v2). No embeddings
+  API key.
+- Data: data/startups.enriched.json is the source of truth. No database for demo.
+- Deploy: Vercel.
+
+## The data contract — DO NOT change without announcing to the team
+Defined in lib/types.ts; import from there, never redefine:
+
+type FailedStartup = {
+  id: string; name: string; tagline: string; description: string;
+  industry: string; foundedYear: number; diedYear: number; fundingRaised: string;
+  proximateCause: string;  // symptom, e.g. "ran out of cash"
+  rootCause: string;       // disease, e.g. "no product-market fit"
+  timingNote: string; lesson: string;
+  sources: string[];       // real URLs — never empty
+  waybackUrl: string;
+}
+type SearchResponse = {
+  query: string;
+  matches: Array<FailedStartup & { similarity: number }>;
+  report: string;
+}
+
+## Rules (non-negotiable)
+1. Ask, don't guess. If a decision is ambiguous or hard to reverse (contract
+   changes, adding a DB, auth, data shape), STOP and ask the human.
+2. Ask for resources you don't have. Need an API key, dataset, source URL, or
+   design asset? STOP and ask — never fake it, stub silently, or hardcode secrets.
+3. Never fabricate failure data. Every real startup entry needs a real sources[]
+   URL. If unverifiable, set the field to "unknown" — do not invent reasons.
+4. Keys stay server-side. Claude is called only from app/api/* — never the browser.
+5. Stay in your lane. Flag before editing shared files (lib/types.ts, the JSON
+   data, the API contract) or another person's area.
+6. Build frontend against the mock JSON first. Never block on backend or real data.
+7. Small PRs off `develop`, branch feat/<area>-<short>. Verify `pnpm dev` still
+   runs and the demo path still works before merging.
+8. Simplest thing that demos wins. No auth, no accounts, no premature abstraction.
+   We have 24-36h.
+9. When you finish a task, print a one-line summary of what changed, whether the
+   demo still runs, and what you need next.
+
+## Ownership
+- Darryl: app flow + page composition/routing, integration, deploy. Owns develop
+  merges. Tie-breaker on contract changes.
+- Sam: frontend + branding/visual system (graveyard aesthetic, readable+accessible).
+  Owns app/components/ and the tokens in globals.css.
+- Yeriel: route handlers (/api/search, /api/report, /api/reconstruct) + lib/types.ts
+  + the embed() wrapper.
+- Asher: data pipeline + enriched JSON quality (the cargo). NO database — the
+  source of truth is the committed JSON file. Owns the ~50 breadth entries.
+- Davin: research/PM + pitch + demo script. Curates the 5 HERO startups (deepest
+  paper trail, best Wayback snapshots) and QAs data accuracy.
+
+Darryl and Sam both work on the frontend. To avoid collisions: Sam owns
+app/components/ and the design tokens; Darryl owns page composition and routing
+(app/page.tsx, app/graveyard/page.tsx). Same design conversation, different files.
+
+## Seed data is two tiers — do not conflate them
+- 5 HERO startups (Davin): deeply researched, verified sources, good Wayback
+  snapshots. These carry the planted demo ideas and the reconstruction reveal.
+- ~50 BREADTH startups (Asher): bulk-ingested, lighter enrichment. Nobody reads
+  these closely. They exist so an arbitrary judge-typed idea finds a real match
+  instead of a 0.19 similarity to something irrelevant.
+Both land in data/startups.enriched.json in the same FailedStartup shape.
+
+---
+
+## Asher's data-cleaning progress (working notes)
+
+Base dataset: CB Insights Kaggle "startup failures" dump, `data/raw/archive (5)/`
+— one bare index file (`Startup Failures.csv`, 815 rows, no failure detail) plus
+6 sector-specific CSVs (Finance and Insurance, Food and services / Accommodation,
+Health Care, Manufactures, Retail Trade, Information) that carry the real detail:
+`what_they_did`, `how_much_they_raised`, `why_they_failed`, `takeaway`, plus 14
+one-hot failure-cause flags (competition, overhype, regulatory pressure, etc.).
+
+Pipeline so far:
+- `data/clean/startups_base.csv` — the 6 sector CSVs combined, column names
+  standardized to snake_case. 409 rows.
+- `data/clean/startups_clean.csv` — same, plus parsed fields via `src/clean.py`:
+  - `funding_musd` (float, millions USD) — parsed from `how_much_they_raised`,
+    parenthetical annotations (acquirer names, "(est.)") stripped and ignored.
+    1 unparseable value (`$lowM`) left null.
+  - `founded_year`, `shutdown_year`, `duration_years` (ints) and
+    `duration_mismatch` (bool) — parsed from `years_of_operation`, which mixes
+    `YYYY-YYYY` and `N (YYYY-YYYY)` formats. 0 mismatches found across 272 rows
+    with a stated duration prefix.
+- `data/clean/unenriched_names.csv` — 489 of the 815 base-index names have no
+  matching row in the 6 sector CSVs (matched on normalized name). This is the
+  candidate list for the enrichment scraper if we need to grow past 409 rows
+  toward the ~50 BREADTH target.
+
+Open question: 409 enriched rows is well short of the 483 CB Insights figure —
+worth checking with the team whether the 6 sector CSVs are the complete enriched
+set or partial.
