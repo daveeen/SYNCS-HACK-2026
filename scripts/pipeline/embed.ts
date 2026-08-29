@@ -4,62 +4,52 @@
  *   ingest.ts  ->  enrich.ts  ->  embed.ts
  *
  * Precomputes one vector per startup so /api/search only has to embed the
- * user's query at request time. Writes the vectors back into the enriched
- * JSON, in place.
+ * user's query at request time.
  *
  * Run:  pnpm pipeline:embed
- * In:   data/startups.enriched.json
- * Out:  data/startups.enriched.json  (+ an `embedding` field per record)
+ * In:   data/startups.enriched.json   (never modified)
+ * Out:  data/startups.vectors.json    { "<id>": number[384] }
  *
- * STATUS: NOT IMPLEMENTED — blocked on embed() in lib/embed.ts.
+ * Writes to a SEPARATE file rather than back into the enriched JSON: ~55 x 384
+ * floats is roughly 420KB, and Davin's QA pass needs the enriched file to stay
+ * readable and diffable. It also means a crash here can never corrupt Asher's
+ * work — this script only ever reads its input.
  */
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import type { FailedStartup } from "../../lib/types";
+import type { FailedStartup, StartupVectors } from "../../lib/types";
+import { embed, embeddingText } from "../../lib/embed";
 
-const FILE = path.join(process.cwd(), "data", "startups.enriched.json");
+const IN = path.join(process.cwd(), "data", "startups.enriched.json");
+const OUT = path.join(process.cwd(), "data", "startups.vectors.json");
 
-/**
- * The enriched record plus its precomputed vector.
- *
- * NOTE for whoever wires this up: `embedding` is an ADDITIVE field. It is not
- * in the FailedStartup contract, and it must never be sent to the browser —
- * 384 floats per record would dwarf the actual content. Strip it in
- * /api/search before responding.
- */
-export type EmbeddedStartup = FailedStartup & { embedding: number[] };
+/** Small enough to checkpoint often, large enough to amortise model overhead. */
+const BATCH = 16;
 
-/**
- * What text represents a startup for matching purposes. This choice is the
- * single biggest lever on match quality — more than the model is.
- *
- * TODO(Yeriel/Asher): tune this together, and use the SAME shape for the
- * query side. Matching a full description against a one-line user idea is an
- * asymmetry that quietly degrades results.
- */
-function embeddingText(s: FailedStartup): string {
-  return [s.name, s.tagline, s.description, s.industry].join(". ");
-}
+async function main(): Promise<void> {
+  const records = JSON.parse(await readFile(IN, "utf8")) as FailedStartup[];
 
-async function main() {
-  const records = JSON.parse(await readFile(FILE, "utf8")) as FailedStartup[];
   if (records.length === 0) {
-    console.log("embed: nothing to do — run pipeline:enrich first.");
+    console.log("embed: nothing to do — run pnpm pipeline:enrich first.");
     return;
   }
 
-  // TODO: const vectors = await embed(records.map(embeddingText));
-  void embeddingText;
-  throw new Error(
-    "embed.ts is not implemented yet — blocked on embed() in lib/embed.ts. Owner: Yeriel.",
-  );
+  const out: StartupVectors = {};
 
-  // const out: EmbeddedStartup[] = records.map((r, i) => ({ ...r, embedding: vectors[i] }));
-  // await writeFile(FILE, JSON.stringify(out, null, 2) + "\n", "utf8");
-  // console.log(`embed: wrote ${out.length} vectors -> ${FILE}`);
+  for (let i = 0; i < records.length; i += BATCH) {
+    const slice = records.slice(i, i + BATCH);
+    const vectors = await embed(slice.map(embeddingText));
+    slice.forEach((record, j) => {
+      out[record.id] = vectors[j];
+    });
+
+    // Checkpoint every batch. Losing an interrupted run costs one batch, not all of them.
+    await writeFile(OUT, JSON.stringify(out) + "\n", "utf8");
+    console.log(`embed: ${Object.keys(out).length}/${records.length}`);
+  }
+
+  console.log(`embed: wrote ${Object.keys(out).length} vectors -> ${OUT}`);
 }
-
-void writeFile; // referenced by the commented-out write above
 
 main().catch((err) => {
   console.error(err instanceof Error ? err.message : err);
