@@ -647,6 +647,27 @@ three.
 | needs `ANTHROPIC_API_KEY` | no | **yes** | no |
 | external calls | none | api.anthropic.com | archive.org (fallback only) |
 
+### Region — `vercel.json`
+
+```json
+{ "regions": ["syd1"] }
+```
+
+Functions default to `iad1` (Washington DC). We demo in Sydney, so the default
+costs roughly 200ms of Pacific round trip on every API call, for nothing. Hobby
+allows exactly one region, and `syd1` is it.
+
+Measured locally, the embedding itself is not the bottleneck — 262ms cold
+(model load plus first inference), **5ms warm**, 90ms to embed all 55 corpus
+records. At 5ms of compute, a 200ms network penalty is 40x the actual work.
+
+Cold start remains ~500ms on a Lambda that has gone idle, which it will have
+between rehearsal and the pitch. If the judge's first query feels slow, warm the
+function with a ping when the landing page loads rather than trying to make the
+model load faster.
+
+### Limits
+
 Vercel Hobby: 60s function ceiling, 250MB unzipped bundle. Neither is raisable
 without upgrading the plan.
 
