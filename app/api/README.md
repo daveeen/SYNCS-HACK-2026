@@ -75,7 +75,11 @@ immediately; the report streams in after. This is why `report` above is always
 
 ## `POST /api/report`
 
-Claude's diligence write-up for one idea, given the matches.
+The diligence write-up for one idea, given the matches. **No LLM at request
+time** — the report is composed by a pure function (`lib/report.ts`) over
+fields Claude already wrote in `scripts/pipeline/enrich.ts`, where Davin QAs
+every field against its sources. Every sentence in the output traces to a
+reviewed field.
 
 **Request** — `ReportRequest`
 
@@ -100,18 +104,22 @@ if (!res.ok) {
 }
 ```
 
-An error before the first byte is a normal `4xx`/`5xx` `ApiError` JSON body — a
-missing `ANTHROPIC_API_KEY` is a `500`, never a canned report standing in for a
-real one. A failure **mid-stream** cannot change the status; the stream just
-ends early and the UI shows what it received.
+An error before the first byte is a normal `4xx`/`5xx` `ApiError` JSON body —
+bad `query`/`matches` input is a `400`. There is no `ANTHROPIC_API_KEY` to be
+missing: this route imports nothing from `lib/claude.ts`. A failure
+**mid-stream** cannot change the status; the stream just ends early and the
+UI shows what it received.
 
-`data/reports.planted.json` (keyed by the lowercased, whitespace-collapsed
-query) is checked before Claude is called at all — a planted report wins and
-is served through the same streaming interface. Swapping one in for the demo
-is a data edit, not a code change.
+`maxDuration = 10` — no model call, so no reason for the old 60s budget. The
+wire contract is unchanged on purpose, still `text/plain`, still chunked, so
+the frontend never had to be rewritten for the switch — the response just
+arrives in one chunk now, and instantly.
 
-`maxDuration = 60` — Claude on a long prompt is not fast. This is Hobby's
-ceiling; raising it does nothing without a plan upgrade.
+**Tradeoff, stated plainly:** this names the pattern the corpus shows — which
+companies died of the same thing, from `rootCauseCategory` — but it cannot
+reason about the founder's specific idea the way a model at request time
+could. It composes what was already written and checked; it does not invent
+an insight.
 
 ---
 

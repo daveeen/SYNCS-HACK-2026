@@ -10,7 +10,6 @@ This directory is the source of truth for the demo. There is no database.
 | `startups.raw.json` | Output of `ingest.ts`. Normalised seed rows, no Claude analysis yet. | yes (small) |
 | `startups.enriched.json` | Output of `enrich.ts`, with `waybackUrl` filled in by `wayback.ts`. **The real source of truth.** Starts as `[]`. | yes |
 | `startups.vectors.json` | Output of `embed.ts`. `{ "<id>": number[384] }`, one vector per record, keyed by id. Starts as `{}`. | yes |
-| `reports.planted.json` | Hand-written diligence reports for the planted demo ideas, keyed by lowercased/whitespace-collapsed query. `/api/report` serves one of these instead of calling Claude when the query matches. Starts as `{}`. | yes |
 
 The app reads whichever of the two it can (see [`lib/data.ts`](../lib/data.ts)):
 `startups.enriched.json` if it has records, otherwise `startups.mock.json`.
@@ -25,7 +24,7 @@ seed CSV / scraped pages
       ▼  pnpm pipeline:ingest      normalise, dedupe, drop uncitable rows
 data/startups.raw.json
       │
-      ▼  pnpm pipeline:enrich      Claude: proximate vs ROOT cause, timing, lesson
+      ▼  pnpm pipeline:enrich      Claude: proximate vs ROOT cause + category, timing, lesson
 data/startups.enriched.json
       │
       ▼  pnpm pipeline:embed       local MiniLM: one 384-d vector per record
@@ -69,9 +68,17 @@ invented answer costs us the Idea and Pitch marks outright.
 3. **`proximateCause` ≠ `rootCause`.** Nearly every dead startup "ran out of
    cash"; that's the symptom. If the two fields come back identical, the
    enrichment failed — retry or flag it, don't ship it.
-4. **Spot-check before merging** (Davin). Failure narratives in the wild are
+4. **`rootCauseCategory` must come from `ROOT_CAUSE_CATEGORIES` in
+   [`lib/types.ts`](../lib/types.ts).** `"unknown"` is a legal value when the
+   sources don't support a category — the report skips those rather than
+   guessing. A value outside the list is a failed enrichment, same as
+   `rootCause === proximateCause`. This exists because `/api/report` groups
+   matches to find a shared pattern, and you cannot group free text:
+   `rootCause` stays free text because it reads better on a tombstone card,
+   `rootCauseCategory` is what the grouping runs on.
+5. **Spot-check before merging** (Davin). Failure narratives in the wild are
    unreliable and often self-serving. Sample ~10 entries against their sources.
-5. **`waybackUrl` is `""` when there's no snapshot.** Never a fabricated URL.
+6. **`waybackUrl` is `""` when there's no snapshot.** Never a fabricated URL.
    The UI already handles the empty case.
 
 ## Adding a record by hand

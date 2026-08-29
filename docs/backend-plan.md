@@ -1128,7 +1128,20 @@ git commit -m "feat(api): real /api/search — cosine primary, BM25 degraded, st
 
 ---
 
-## Task 8: `POST /api/report` — streamed
+## Task 8: `POST /api/report` — SUPERSEDED
+
+> **This task built the Claude-backed version. That decision was reversed.**
+>
+> `/api/report` no longer calls an LLM at request time. It composes the report
+> with a pure function over the enriched fields — Claude still does the
+> reasoning, in `pipeline:enrich` at build time, where Davin QAs it. See
+> [backend-spec.md §7](backend-spec.md) for what actually ships.
+>
+> The steps below are kept because they are still the record of how the
+> streaming wire contract and the validation boundary were built, both of which
+> survived unchanged. Ignore the Claude call, the system prompt, and
+> `data/reports.planted.json`, which was deleted.
+
 
 **Files:**
 - Modify: `app/api/report/route.ts` (full rewrite)
@@ -1860,62 +1873,21 @@ git push
 Open a PR into `develop` (or `main` if `develop` still does not exist).
 
 - [ ] **Step 6: Post the contract changes to team chat**
+Required by CLAUDE.md rule 5, before merge. One message.
 
-Required by CLAUDE.md rule 5, before merge. One message, all six:
+The canonical list is **[backend-spec.md §9](backend-spec.md)** — ten items with
+the reasoning attached. Paste that, not a copy: an announcement duplicated into
+two files drifts, and the whole point of the message is that it is accurate.
 
-```
-Backend routes are real. Six contract changes, all in docs/backend-spec.md §9:
+Two of them need a decision rather than a heads-up:
 
-1. /api/search now always returns report: "" — reports come from /api/report.
-   Type unchanged, semantics moved. This resolves the open question in
-   app/api/README.md.  → Darryl
-2. /api/report returns a text/plain STREAM of Markdown, not ReportResponse JSON.
-   Read it with `for await (const chunk of res.body)`.  → Darryl
-3. New header x-graveyard-degraded: true (+ -reason) when matches came from the
-   BM25 fallback instead of embeddings. Needs a visible badge, same as the stub
-   badge — it is what stops us showing keyword matches as semantic ones.  → Sam
-4. next.config.ts gains outputFileTracingIncludes so the model weights ship.
-   Shared root file.  → everyone
-5. ReconstructResponse gains source: "baked" | "live" | "none". Additive.  → Sam
-6. pipeline:embed now writes data/startups.vectors.json instead of adding an
-   embedding field to startups.enriched.json. Enriched file stays readable for
-   QA and is never modified by the embed step.  → Asher, Davin
-7. New pipeline step: pnpm pipeline:wayback, which fills the waybackUrl field
-   on enriched records (and ONLY that field). It is the last step in
-   `pnpm pipeline`, idempotent, and skips records that already have one — so
-   hand-filled hero URLs are never overwritten. It guesses the domain from the
-   company name, so expect misses; it prints them at the end for hand-filling.
-   Without this, /api/reconstruct hits archive.org live on every request during
-   the pitch.  → Asher, Davin
+- **Item 7** changes the FROZEN `FailedStartup` contract (adds a required
+  `rootCauseCategory`). Darryl is tie-breaker; Asher has to emit it.
+- **Item 4** in the forum spec adds Supabase, which the team plan lists as cut
+  #1. Not part of this branch, but the same conversation.
 
-8. pnpm-workspace.yaml: sharp moved from ignoredBuiltDependencies to
-   onlyBuiltDependencies. @xenova/transformers declares sharp a HARD dependency
-   and imports it at module load, so with its native binary unbuilt every import
-   of transformers threw. This broke on a fresh clone and would have broken the
-   Vercel build. Pull and reinstall.  → everyone
-9. @anthropic-ai/sdk bumped 0.71 -> 0.122. The pinned version had no
-   output_config on the non-beta messages surface and no adaptive variant of
-   thinking, so /api/report could not compile. budget_tokens is a 400 on Opus 5,
-   so there was no older-style config to fall back to.  → everyone
-
-Also: models/ adds ~23MB to the repo, so your next clone is slower.
-
-Darryl — app/graveyard/ResultsClient.tsx needs two changes and I did not make
-them, it is your file:
-  - line ~47 reads the x-graveyard-stub header to decide whether to show the
-    "do not demo this" badge. That header is gone now. Key the badge off
-    x-graveyard-degraded instead, so it fires when matches came from the BM25
-    fallback rather than from embeddings.
-  - line ~109 renders {report} from the search response, which is now always "".
-    The report comes from POST /api/report as a text/plain stream. Until you
-    wire that up the report section renders blank. Everything else on the page
-    works.
-
-And Asher — heads up, lib/claude.ts has `import "server-only"`, which throws
-under plain Node. If enrich.ts imports it the script dies on import. Construct
-the Anthropic client directly in the script instead. I hit the same thing with
-lib/embed.ts.
-```
+And one that is pure heads-up but will surprise someone: **`models/` adds ~23MB
+to the repo**, so everyone's next clone is slower.
 
 ---
 
@@ -1926,7 +1898,7 @@ lib/embed.ts.
 - [ ] `pnpm lint` — clean
 - [ ] `/api/search` returns cosine-ranked matches, no stub header
 - [ ] Killing `models/` produces a degraded-but-working search with the header set
-- [ ] `/api/report` streams Markdown from Claude, and 500s honestly without a key
+- [ ] `/api/report` returns a composed report instantly, with no API key set
 - [ ] `/api/reconstruct` returns an `if_` snapshot URL for a known dead domain
 - [ ] `/api/reconstruct` returns `source: "baked"` for a record with a `waybackUrl`
 - [ ] `pnpm pipeline:wayback` resolves a snapshot for at least one real dead company

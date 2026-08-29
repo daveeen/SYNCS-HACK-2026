@@ -20,10 +20,10 @@ in team chat first.
 |---|---|---|
 | Query encoder | **Local MiniLM inside the Vercel function** | Supabase Edge blocks Asher's pipeline on a deployed service; Railway splits the deploy; browser-side moves 23MB and its loading UI into Sam and Darryl's files |
 | Vector store | **A JSON file and a `for` loop** | At n≈55, cosine is microseconds. pgvector's index does not engage below thousands of rows. A vector DB earns nothing |
-| Report delivery | **Separate call, streamed** | Inline means nothing renders for 5–15s and no headroom under Hobby's 60s ceiling |
+| Report delivery | **Separate call** | Inline would recompute matches on every render; separate keeps the endpoint swappable if an LLM ever comes back |
 | Wayback | **Baked at pipeline time, live only as fallback** | Betting a 90-second pitch on a third-party API with no posted rate limit |
 | `embed()` failure | **BM25 fallback, loudly flagged** | Hard-fail loses the reveal to one cold start; silent fallback demos keyword matches as if they were semantic |
-| Report model | **`claude-opus-5`** | Already set in `lib/claude.ts`. Streaming removes the latency argument for Sonnet |
+| Report generation | **Pure function over the enriched fields** | An LLM at request time costs latency, money and a hallucination surface, to restate analysis Claude already wrote at pipeline time |
 
 **The MiniLM choice is provisional until the hour-2 spike (§12) passes.** If the
 function blows Vercel's 250MB unzipped limit, §12 says exactly what to do instead.
@@ -43,10 +43,10 @@ POST /api/search  {query, limit}                        target <300ms warm
   |
   +- { query, matches, report: "" }         report deliberately empty
 
-POST /api/report  {query, matches}          text/plain stream, maxDuration 60
+POST /api/report  {query, matches}          text/plain, maxDuration 10
   |
-  +- planted-report lookup (normalized query) --> hit: stream from disk
-  +- miss --> claude-opus-5, streamed text deltas
+  +- composeReport()   pure function over the matched records
+                       no network, no model, no key
 
 POST /api/reconstruct  {url, year}                      target <50ms
   |
@@ -54,9 +54,10 @@ POST /api/reconstruct  {url, year}                      target <50ms
   +- empty ---> archive.org availability, 3s timeout, 1 retry, never throws
 ```
 
-**Isolation is the point.** `/api/search` never touches Anthropic.
-`/api/report` never touches ONNX. `/api/reconstruct` blocks neither. One route
-down is a degraded demo, never a dead one.
+**Isolation is the point.** No route handler calls an LLM at all, so nothing
+here can be taken down by an Anthropic outage. `/api/search` is the only route
+that touches ONNX, and `/api/reconstruct` is the only one that makes an
+outbound request. One route failing is a degraded demo, never a dead one.
 
 ---
 
@@ -68,7 +69,8 @@ down is a degraded demo, never a dead one.
 | `lib/embed.ts` | text → vector, and cosine | implement `embed()`; **`embeddingText()` moves here** |
 | `lib/search.ts` | ranking | `rankByVector` (primary) + `rankByBM25` (fallback) |
 | `lib/data.ts` | load records and vectors | add `loadVectors()`, add `import "server-only"` |
-| `lib/claude.ts` | Anthropic client + model ids | none — already correct |
+| `lib/claude.ts` | Anthropic client, for the pipeline only | drop `REPORT_MODEL` and the `server-only` guard |
+| `lib/report.ts` | compose the report from enriched fields | **new** — pure, no I/O |
 | `scripts/pipeline/embed.ts` | write vectors | imports `embeddingText` from `lib/embed.ts`; writes a **separate** file |
 | `scripts/check.ts` | one runnable check | new |
 
@@ -100,9 +102,8 @@ export function cosineSimilarity(a: number[], b: number[]): number;  // already 
 ### Implementation
 
 ```ts
-import "server-only";
 import path from "node:path";
-import { pipeline, env, type FeatureExtractionPipeline } from "@xenova/transformers";
+import { pipeline, env } from "@xenova/transformers";
 
 // Weights ship in the repo. The default (allowRemoteModels = true) makes a cold
 // lambda pull ~90MB from huggingface.co into /tmp on the judge's first query,
@@ -111,11 +112,14 @@ env.allowRemoteModels = false;
 env.localModelPath = path.join(process.cwd(), "models");
 
 // Loading the model is slow. Cache across invocations; never per request.
-let extractor: FeatureExtractionPipeline | null = null;
+// Structural type rather than the library's exported one — pins the surface we
+// use and survives a types reshuffle in the package.
+type Extractor = (t: string[], o: { pooling: "mean"; normalize: boolean }) => Promise<{ tolist(): number[][] }>;
+let extractor: Extractor | null = null;
 
-async function getExtractor(): Promise<FeatureExtractionPipeline> {
+async function getExtractor(): Promise<Extractor> {
   if (!extractor) {
-    extractor = await pipeline("feature-extraction", EMBEDDING_MODEL, { quantized: true });
+    extractor = (await pipeline("feature-extraction", EMBEDDING_MODEL, { quantized: true })) as unknown as Extractor;
   }
   return extractor;
 }
@@ -318,8 +322,28 @@ milliseconds.
 
 ## 7. `POST /api/report`
 
-`runtime = "nodejs"` · `maxDuration = 60` (Hobby's ceiling — no headroom, do not
-raise it expecting more)
+`runtime = "nodejs"` · `maxDuration = 10`
+
+**No LLM at request time.** The report is a pure function over the matched
+records — `composeReport()` in `lib/report.ts`.
+
+Claude still does the reasoning. It happens in `scripts/pipeline/enrich.ts`, at
+build time, once per startup, where Davin QAs every field against its sources.
+This endpoint composes what was already written and checked.
+
+### Why it is built this way
+
+| | |
+|---|---|
+| **Instant** | No streaming pause, no first-token wait, no 60s ceiling to worry about |
+| **Free** | No per-query cost, and no key needed to run or demo the app |
+| **Cannot fail on stage** | A pure function has no network, no rate limit, and no outage |
+| **Cannot fabricate** | Every sentence traces to a field a human reviewed. CLAUDE.md rule 3 stops being a prompt instruction a model might ignore and becomes structurally true |
+
+What it gives up, stated plainly: a template names the pattern the corpus shows,
+but it cannot reason about the founder's *specific* idea — no "here is the trap
+you personally are walking into". That sentence was the most quotable thing the
+model produced, and it is gone. That was a deliberate trade, not an oversight.
 
 ### Request
 
@@ -332,119 +356,59 @@ raise it expecting more)
 | `query` | string, trimmed, 1–500 | `400` |
 | `matches` | array, capped at 20, each needs `id` + `name` | `400` |
 
-### Response — a stream, not JSON
+### Response
 
-`Content-Type: text/plain; charset=utf-8`, chunked Markdown. Darryl reads it with
-`for await (const chunk of res.body)`.
+`Content-Type: text/plain; charset=utf-8`, chunked Markdown.
 
-Not SSE, not JSON-lines: the payload is one Markdown document and the client
-appends chunks to a string. Any envelope is ceremony the demo does not need.
+**The wire contract is deliberately unchanged.** It was a stream when Claude
+wrote it and it is a stream now — it simply arrives in one chunk, instantly.
+Darryl's `for await (const chunk of res.body)` keeps working untouched. Churning
+the frontend contract twice in one day to save one `await` is not a trade worth
+making mid-sprint.
 
-**Errors before the first byte** return `4xx/5xx { error }` as normal. Once
-streaming starts the status is committed, so a mid-stream Anthropic failure ends
-the stream early. The UI renders what it received and shows a "report cut short"
-note — it must never blank the tombstones, which are already on screen from
-`/api/search`.
-
-### Planted reports
-
-Checked **before** Claude:
-
-```ts
-const key = query.toLowerCase().replace(/\s+/g, " ").trim();
-const planted = (plantedReports as Record<string, string>)[key];
-if (planted) return streamString(planted);   // still text/plain, still chunked
-```
-
-`data/reports.planted.json`, shape `{ "<normalized query>": "<markdown>" }`,
-starts as `{}`. Content is Davin's (his three planted ideas); the lookup is
-Yeriel's. This is the plan's own fallback #3, pre-wired for about 15 lines, so
-adopting it on stage is a data edit rather than a code change.
-
-### The Claude call
-
-```ts
-const stream = client.messages.stream({
-  model: REPORT_MODEL,                    // claude-opus-5
-  max_tokens: 4096,
-  thinking: { type: "adaptive" },
-  output_config: { effort: "medium" },
-  system: REPORT_SYSTEM,
-  messages: [{ role: "user", content: buildUserMessage(query, matches) }],
-});
-```
-
-- `max_tokens: 4096` — the report is 600–900 words. Streaming means no HTTP
-  timeout risk, so this is a ceiling, not a target.
-- `effort: "medium"` — balances depth against the pre-text pause. Thinking
-  `display` defaults to omitted on Opus 5, so adaptive thinking shows up on stage
-  as silence before the first token. If that gap is too long in rehearsal, drop
-  to `effort: "low"`. If you would rather turn the gap into a feature, set
-  `thinking: { type: "adaptive", display: "summarized" }` and stream the
-  reasoning above the report.
-- **No `cache_control`.** The system prompt is roughly 400 tokens and the
-  minimum cacheable prefix is about 1024, so a breakpoint here would silently do
-  nothing. (Caching would matter if the whole corpus were in the prompt. It is
-  not — only the matches are.)
-
-### Fields sent to Claude
-
-`id, name, tagline, description, industry, foundedYear, diedYear, fundingRaised,
-proximateCause, rootCause, timingNote, lesson, similarity`.
-
-Excluded: `sources` (URLs are pure token cost, the cards already display them,
-and a model handed URLs will eventually emit a subtly wrong one), `waybackUrl`,
-and anything vector-shaped.
-
-### System prompt
+### What it composes
 
 ```
-You are a diligence analyst writing for a founder who has just described a
-startup idea. You are given real failed startups matched to that idea. Tell them
-what the graveyard says — specifically, and without flattery.
-
-RULES
-- Reason ONLY from the records in the user message. You have no other knowledge
-  of these companies.
-- A field reading "unknown" is unknown. Never fill a gap with a plausible guess.
-- Name the companies. "Several startups have failed here" is worthless.
-  "Webvan and Kozmo both died on the same density maths" is the product.
-- Separate symptom from disease. Almost every dead startup ran out of cash. Say
-  what made the cash run out.
-- If the matches are weak or off-topic, say so in one sentence and write a
-  shorter report. A manufactured pattern is worse than admitting there isn't one.
-- No hedging, no "it's important to note", no closing pep talk.
-
-OUTPUT
-Markdown, exactly these four H2 sections, in order:
-
-## The idea as we read it
-One or two sentences, plainest possible terms. If the idea is ambiguous, say
-which reading you took.
-
-## Who already tried it
-One bullet per matched company: name, years, what they actually did, what killed
-them. Only companies from the supplied records.
-
-## The pattern
-The root cause these failures share, if they share one. If timing was the real
-story, say so and say what has changed since. If they died of different things,
-say that — a false pattern is worse than none.
-
-## What would have to be different
-The specific trap this founder is walking into, and what would have to be true
-for their attempt to end differently. Concrete and testable, never "focus on
-execution".
+## The idea as we read it        the query, echoed
+## Who already tried it          one line per match, from the enriched fields
+## The pattern                   grouped on rootCauseCategory
+### On timing                    only when a match has a real timingNote
+## What would have to be different   deduplicated lesson fields
 ```
 
-### No key, no lies
+### The pattern section, and why `rootCauseCategory` exists
 
-`hasClaudeKey()` false, or `getClaude()` throws → `500 { error }`. Never a
-canned report dressed as a real one. The tombstones are already rendered; the
-report area shows an error state. That is a degraded demo. A fabricated
-diligence report presented as Claude's is a lost Idea score.
+You cannot group free text. `rootCause` stays free text because it reads better
+on a tombstone card; `rootCauseCategory` is a fixed vocabulary
+(`ROOT_CAUSE_CATEGORIES` in `lib/types.ts`, the CB Insights taxonomy) that the
+grouping runs on. Both, not either — the question `docs/research.md` posed as a
+choice costs one field to have both ways.
 
----
+It degrades honestly, which matters more than it sounds:
+
+- **Two or more matches share a category** → names it, counts it, lists them.
+- **All causes differ** → says so. A manufactured pattern is worse than none; it
+  is the moment a judge stops trusting the rest of the page. The output for that
+  case is itself informative — a space where everyone failed differently is
+  harder than one with a single obvious trap.
+- **One match** → calls it an anecdote, not a pattern.
+- **No matches** → says nothing matched, and does not print a "who tried it"
+  section at all.
+- **Any field reading `"unknown"`** → omitted, never printed as though it were a
+  fact. `rootCause: "unknown"` renders as "Cause unrecorded".
+
+Each of those five branches has an assert in `scripts/check.ts` (§10). They are
+the whole reason this file is a pure function.
+
+### No key, no planted reports
+
+This endpoint needs no `ANTHROPIC_API_KEY` and has no fallback file.
+`data/reports.planted.json` was deleted along with its lookup: a pure function
+cannot fail, so an override for when it does was dead weight.
+
+If Davin ever wants a hand-written report for a planted idea, the fix is better
+data or a better composer — not a file that shadows the real output, which is
+exactly the kind of thing that gets demoed by accident.
 
 ## 8. `POST /api/reconstruct`
 
@@ -521,7 +485,7 @@ looks entirely successful.
 
 ## 9. Contract changes — announce before merging
 
-Per CLAUDE.md rule 5. All six, in one message to the team.
+Per CLAUDE.md rule 5. One message to the team.
 
 1. **`SearchResponse.report` is always `""` from `/api/search`.** The type is
    unchanged and still valid; the semantics moved. Reports come from
@@ -534,6 +498,21 @@ Per CLAUDE.md rule 5. All six, in one message to the team.
 5. **`ReconstructResponse` gains `source`.** Additive, non-breaking.
 6. **Vectors go to `data/startups.vectors.json`, not into the enriched file.**
    Touches Asher's pipeline output and `data/README.md`.
+7. **`FailedStartup` gains a required `rootCauseCategory`.** A change to the
+   FROZEN contract — Darryl decides. It is additive rather than a redefinition:
+   `rootCause` stays free text for the card, the category is what `/api/report`
+   groups on. **Asher's enrichment prompt must emit it**, validated against
+   `ROOT_CAUSE_CATEGORIES`. This also closes the open question in
+   `docs/research.md` about free text vs a controlled vocabulary: both.
+8. **`/api/report` no longer calls Claude.** The wire contract is unchanged —
+   still `text/plain`, still chunked, so no frontend change. It is now instant,
+   free, and needs no key.
+9. **`data/reports.planted.json` deleted**, along with its lookup. A pure
+   function has nothing to fall back from.
+10. **`lib/claude.ts` loses `REPORT_MODEL` and its `server-only` guard.** The
+   guard had to go: its only remaining consumer is `scripts/pipeline/enrich.ts`
+   under plain Node, where `server-only` throws on import. **Asher — this is
+   the thing that would have blocked your script.**
 
 Also worth saying out loud, though it changes no code: **`models/` adds ~23MB to
 the repo.** Everyone's next clone is slower, and it is not revertable in a way
@@ -553,6 +532,14 @@ One file, `assert`-based, no framework. `pnpm check` → `tsx scripts/check.ts`.
 | 4 | a known mock query ranks its intended record #1 **through the full vector path** | `embeddingText` drift |
 | 5 | `rankByBM25` returns descending, and `[]` on an empty corpus without throwing | fallback that fails when it is needed |
 | 6 | `toEmbeddableSnapshot` emits the `if_` form and https | silent iframe breakage |
+| 7 | a shared `rootCauseCategory` across 2+ matches is named and counted | the pattern section, the whole reason the category exists |
+| 8 | matches with all-different causes produce no pattern claim | inventing a pattern, which is what makes a judge stop trusting the page |
+| 9 | one match is called an anecdote | a single data point dressed up as evidence |
+| 10 | zero matches says so and prints no "who tried it" section | fabricating content from an empty list |
+| 11 | a record whose fields read `"unknown"` never prints the word | CLAUDE.md rule 3, enforced rather than hoped for |
+
+Checks 7–11 are cheap because `composeReport` is pure — no database, no network,
+no key. That is most of the argument for building it that way.
 
 Check 4 is the one that earns the file. Every other failure here is loud; a
 drifted `embeddingText` presents as "the matches are mysteriously bad", at hour
@@ -568,8 +555,8 @@ and needs no API key.
 | Fails | `/api/search` | `/api/report` | `/api/reconstruct` | Demo |
 |---|---|---|---|---|
 | `embed()` throws | BM25 + degraded badge | fine | fine | survives, visibly flagged |
-| `ANTHROPIC_API_KEY` missing | fine | `500`, error state | fine | tombstones only |
-| Anthropic mid-stream error | fine | truncated report | fine | partial report, cards intact |
+
+| Anthropic down | fine | fine | fine | nothing at request time calls it |
 | archive.org 429 / down | fine | fine | `available: false` | no reveal, nothing breaks |
 | `startups.vectors.json` empty | every score 0 → BM25 quality | fine | fine | ugly but alive |
 | `startups.enriched.json` empty | mock data + amber banner | fine | fine | must not reach a judge |
@@ -644,7 +631,7 @@ three.
 | `runtime` | nodejs | nodejs | nodejs |
 | `maxDuration` | 30 | 60 | 15 |
 | target latency | <300ms warm | first token <3s | <50ms baked |
-| needs `ANTHROPIC_API_KEY` | no | **yes** | no |
+| needs `ANTHROPIC_API_KEY` | no | no | no |
 | external calls | none | api.anthropic.com | archive.org (fallback only) |
 
 ### Region — `vercel.json`
@@ -671,5 +658,6 @@ model load faster.
 Vercel Hobby: 60s function ceiling, 250MB unzipped bundle. Neither is raisable
 without upgrading the plan.
 
-Environment: `ANTHROPIC_API_KEY` only. No embeddings key — that is the point of
-running MiniLM locally.
+Environment: none at request time. `ANTHROPIC_API_KEY` is needed only by
+`pnpm pipeline:enrich`, which runs on a laptop. No embeddings key either — that
+is the point of running MiniLM locally.
