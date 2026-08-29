@@ -146,7 +146,10 @@
     "timingNote": "not a timing issue — the niche itself was structurally small and tied to in-person behavior; waiting longer wouldn't have grown the addressable market",
     "lesson": "Niche lending needs demand",
     "sources": [
-      "https://www.crunchbase.com/organization/pawngo"
+      "https://www.crunchbase.com/organization/pawngo",
+      "https://www.businesswire.com/news/home/20200213005156/en/Luxury-Asset-Capital-Acquires-and-Re-Launches-Borro-Private-Finance",
+      "https://www.prnewswire.com/news-releases/dewey-burke-named-president-and-ceo-of-pawngolux-exchange-300397289.html",
+      "https://www.businesswire.com/news/home/20180129005288/en/Luxury-Asset-Capital-Launches-Lux-Exchange-to-Serve-Middle-and-Upper-Income-Segments-with-Targeted-Collateralized-Financing-Services"
     ],
     "waybackUrl": "https://web.archive.org/web/20171204184848if_/https://pawngo.com/"
   },
@@ -1133,7 +1136,9 @@
     "timingNote": "Not primarily a timing problem — it was a small niche tool absorbed into a much bigger platform (Firebase) as an acquihire rather than a company that missed a market window.",
     "lesson": "Small exits quick",
     "sources": [
-      "https://techcrunch.com/2015/10/13/google-acquires-divshot-to-join-its-firebase-team-will-shut-down-in-december/"
+      "https://techcrunch.com/2015/10/13/google-acquires-divshot-to-join-its-firebase-team-will-shut-down-in-december/",
+      "https://www.businessinsider.com/google-buys-divshot-for-mobile-app-development-and-moves-it-to-firebase-2015-10",
+      "https://9to5google.com/2015/10/13/divshot-google-acquistion/"
     ],
     "waybackUrl": "https://web.archive.org/web/20160126165234if_/https://divshot.com/"
   },
@@ -1208,7 +1213,9 @@
     "timingNote": "A timing and competitive problem more than anything — it launched right as Foursquare was becoming the dominant check-in app, leaving little room for a similarly-scoped rival to build independent scale before being swallowed for its team.",
     "lesson": "Early exits end",
     "sources": [
-      "https://techcrunch.com/2010/08/20/facebook-buys-hot-potato/"
+      "https://techcrunch.com/2010/08/20/facebook-buys-hot-potato/",
+      "https://www.theguardian.com/technology/pda/2010/aug/23/facebook-hot-potato",
+      "https://www.businessinsider.com/heres-why-hot-potato-is-a-better-buy-for-facebook-than-foursquare-would-have-been-2010-7"
     ],
     "waybackUrl": "https://web.archive.org/web/20100924075030if_/http://hotpotato.com/"
   },
@@ -1339,7 +1346,9 @@
     "timingNote": "Not a timing problem — it was a narrow adjacent-market experiment that Udacity abandoned quickly once it decided the freelance-marketplace business wasn't core to its education mission.",
     "lesson": "Extensions need traction",
     "sources": [
-      "https://www.classcentral.com/report/udacity-blitz-shutdown/"
+      "https://www.classcentral.com/report/udacity-blitz-shutdown/",
+      "https://venturebeat.com/2016/11/17/udacity-blitz-engineers-gig-economy/",
+      "https://www.edsurge.com/news/2016-12-01-what-universities-can-learn-from-udacity-s-gig-economy-service"
     ],
     "waybackUrl": "https://web.archive.org/web/20220710165403if_/https://udacityblitz.com/"
   },
@@ -1698,7 +1707,9 @@
     "timingNote": "Partly a timing problem: EyeEm's stock-photography niche was squeezed from both ends — free platforms like Unsplash undercut casual demand, while AI image generation began eating into stock-photo licensing just as the company was trying to recover from bankruptcy.",
     "lesson": "Scale beats niche",
     "sources": [
-      "https://en.wikipedia.org/wiki/EyeEm"
+      "https://en.wikipedia.org/wiki/EyeEm",
+      "https://petapixel.com/2025/12/11/eyeem-is-shutting-down/",
+      "https://www.diyphotography.net/eyeem-closure-2026-migrate-freepik/"
     ],
     "waybackUrl": "https://web.archive.org/web/20260117232909if_/https://www.eyeem.com/"
   },
@@ -1716,7 +1727,10 @@
     "timingNote": "Not primarily a timing problem — Path's core failure was self-inflicted privacy scandals during a period when trust was cheap to lose and hard to win back, compounded by Instagram and Snapchat's growth in the same market.",
     "lesson": "Privacy's tightrope",
     "sources": [
-      "https://en.wikipedia.org/wiki/Path_(social_network)"
+      "https://en.wikipedia.org/wiki/Path_(social_network)",
+      "https://techcrunch.com/2018/09/17/rip-path/",
+      "https://www.engadget.com/2018-09-17-path-private-social-network-stickers-dead.html",
+      "https://venturebeat.com/ai/social-networking-app-path-will-close-down-october-18"
     ],
     "waybackUrl": "https://web.archive.org/web/20200830133103if_/http://path.com/"
   },
@@ -1734,7 +1748,10 @@
     "timingNote": "This was more an execution failure than a timing one: GoPro entered the consumer drone market at a reasonable moment, but a rushed, defective launch handed the advantage straight to DJI before Karma had a chance to compete on merits.",
     "lesson": "Drones need perfection",
     "sources": [
-      "https://en.wikipedia.org/wiki/GoPro"
+      "https://en.wikipedia.org/wiki/GoPro",
+      "https://techcrunch.com/2018/01/08/gopro-confirms-layoffs-exit-from-drone-business",
+      "https://gearjunkie.com/news/gopro-ends-karma-drone",
+      "https://fortune.com/2018/01/08/gopro-layoffs-drones/"
     ],
     "waybackUrl": "https://web.archive.org/web/20160315202105if_/http://goprokarma.com:80/"
   },
@@ -1752,7 +1769,9 @@
     "timingNote": "This was a bad-timing story: Pearl launched premium aftermarket backup cameras right as federal regulation was about to make built-in cameras standard on nearly every new car, closing its market window before the company could scale.",
     "lesson": "Auto tech must beat OEMs",
     "sources": [
-      "https://en.wikipedia.org/wiki/Pearl_Automation"
+      "https://en.wikipedia.org/wiki/Pearl_Automation",
+      "https://www.macrumors.com/2017/06/25/pearl-automation-shuts-down/",
+      "https://www.sfgate.com/news/article/Pearl-automation-founded-by-Apple-veterans-11253979.php"
     ],
     "waybackUrl": ""
   },
@@ -1770,7 +1789,9 @@
     "timingNote": "This was a timing and resourcing problem: Rdio launched a capital-intensive video service while its core music business was already struggling to compete with Spotify, leaving no room to give the new bet the multi-year runway video-on-demand typically needs.",
     "lesson": "Timing's everything",
     "sources": [
-      "https://en.wikipedia.org/wiki/Rdio"
+      "https://en.wikipedia.org/wiki/Rdio",
+      "https://techcrunch.com/2013/12/27/rdio-shuts-down-vdio/",
+      "https://variety.com/2013/digital/news/rdio-shuts-down-vdio-internet-video-store-1201003460/"
     ],
     "waybackUrl": ""
   },
@@ -1788,7 +1809,10 @@
     "timingNote": "Not a timing problem at all — this was a straightforward fraud case in which the core technology simply never worked, regardless of market conditions.",
     "lesson": "Transparency is key",
     "sources": [
-      "https://en.wikipedia.org/wiki/Theranos"
+      "https://en.wikipedia.org/wiki/Theranos",
+      "https://www.npr.org/644844174",
+      "https://www.sec.gov/news/press-release/2018-41",
+      "https://www.nbcnews.com/news/crime-courts/theranos-ceo-elizabeth-holmes-indicted-wire-fraud-charges-step-down-n883791"
     ],
     "waybackUrl": "https://web.archive.org/web/20181224082234if_/https://www.theranos.com/"
   },
@@ -1806,7 +1830,9 @@
     "timingNote": "This was more an execution-speed problem than a timing one — Wesabe and Mint launched around the same time, but Mint's faster, easier onboarding won the category outright.",
     "lesson": "Timing matters",
     "sources": [
-      "https://en.wikipedia.org/wiki/Wesabe"
+      "https://en.wikipedia.org/wiki/Wesabe",
+      "https://news.ycombinator.com/item?id=1746832",
+      "https://www.nytimes.com/2009/09/15/technology/internet/15mint.html"
     ],
     "waybackUrl": "https://web.archive.org/web/20100727235751if_/http://www.wesabe.com:80/"
   },
@@ -1824,7 +1850,9 @@
     "timingNote": "This was a timing problem: Airware raised big money on the assumption that industrial drone software would scale quickly, but enterprise adoption lagged years behind the funding cycle that backed it.",
     "lesson": "Drones need simplicity",
     "sources": [
-      "https://en.wikipedia.org/wiki/Airware"
+      "https://en.wikipedia.org/wiki/Airware",
+      "https://techcrunch.com/2018/10/29/fresh-drones-of-delair/",
+      "https://dronelife.com/2018/09/15/drone-company-airware-crashes/"
     ],
     "waybackUrl": "https://web.archive.org/web/20190115041132if_/https://www.airware.com/"
   },
@@ -1842,7 +1870,9 @@
     "timingNote": "This was mostly a scale problem rather than timing — Foodler had a first-mover advantage for over a decade, but consolidation in food delivery ultimately rewarded whichever platform could out-fund and out-expand the others, which wasn't Foodler.",
     "lesson": "Aggregators need scale",
     "sources": [
-      "https://en.wikipedia.org/wiki/Foodler"
+      "https://en.wikipedia.org/wiki/Foodler",
+      "https://about.grubhub.com/news/grubhub-enters-into-agreement-to-acquire-foodler/",
+      "https://www.bizjournals.com/boston/inno/stories/inno-insights/2017/12/26/we-found-out-how-much-grubhub-red-hat-citrix-paid.html"
     ],
     "waybackUrl": "https://web.archive.org/web/20171015084444if_/https://www.foodler.com/"
   },
@@ -1860,7 +1890,9 @@
     "timingNote": "Not primarily a timing issue — this was a straightforward post-acquisition product consolidation, where the acquiring company had no strategic reason to keep a redundant tool alive.",
     "lesson": "Debt tools need edge",
     "sources": [
-      "https://en.wikipedia.org/wiki/ReadyForZero"
+      "https://en.wikipedia.org/wiki/ReadyForZero",
+      "https://www.crowdfundinsider.com/2016/11/92251-avant-quietly-shuts-readyforzero-credit-monitoring-debt-management-site/",
+      "https://www.chicagotribune.com/2016/11/15/executive-out-at-online-lender-avant-readyforzero-debt-tracker-killed/"
     ],
     "waybackUrl": "https://web.archive.org/web/20170107051402if_/https://www.readyforzero.com/"
   },
@@ -2049,7 +2081,9 @@
     "timingNote": "Not primarily a timing problem — flash-sale e-commerce worked for contemporaries like Gilt and HauteLook in the same window; Fab's failure was self-inflicted through unsustainable growth spending and strategic whiplash.",
     "lesson": "Growth needs profit",
     "sources": [
-      "https://en.wikipedia.org/wiki/Fab.com"
+      "https://en.wikipedia.org/wiki/Fab.com",
+      "https://www.theverge.com/2015/3/3/8140367/fab-acquired-pch-jason-goldberg",
+      "https://www.businessinsider.com/how-billion-dollar-startup-fab-died-2015-2"
     ],
     "waybackUrl": "https://web.archive.org/web/20160112051811if_/http://fabcom.com/"
   },
@@ -2086,7 +2120,9 @@
     "timingNote": "Not really a timing problem — the novelty of 'everything is free' drove interest regardless of market conditions; the issue was monetization, not market readiness.",
     "lesson": "Samples need reach",
     "sources": [
-      "https://www.pdxmonthly.com/style-and-shopping/2016/02/samplinglab-the-store-where-everything-is-free-closes-permanently"
+      "https://www.pdxmonthly.com/style-and-shopping/2016/02/samplinglab-the-store-where-everything-is-free-closes-permanently",
+      "https://www.wsj.com/articles/marketers-wonder-how-will-it-play-in-portland-1436983102",
+      "https://www.kgw.com/article/money/business/everythings-free-at-the-new-portland-sampling-lab/283-67291961"
     ],
     "waybackUrl": "https://web.archive.org/web/20170222203023if_/http://www.samplinglab.com:80/"
   },
@@ -2161,7 +2197,9 @@
     "timingNote": "Timing was fatal — Clinkle spent years failing to ship while the mobile-payments category it hoped to define got solved by better-resourced, faster-moving competitors.",
     "lesson": "Execution over promises",
     "sources": [
-      "https://en.wikipedia.org/wiki/Clinkle"
+      "https://en.wikipedia.org/wiki/Clinkle",
+      "https://www.forbes.com/sites/ryanmac/2016/01/22/clinkle-up-in-smoke-as-investors-want-their-money-back/",
+      "https://techcrunch.com/2015/05/15/clunk/"
     ],
     "waybackUrl": "https://web.archive.org/web/20170105132318if_/http://www.clinkle.com:80/"
   },
@@ -2179,7 +2217,8 @@
     "timingNote": "Not primarily a timing problem — Fabric was technically successful and widely adopted; it died because its owner's strategic priorities shifted twice, not because the market moved past it.",
     "lesson": "Focus drifts kill",
     "sources": [
-      "https://en.wikipedia.org/wiki/Crashlytics"
+      "https://en.wikipedia.org/wiki/Crashlytics",
+      "https://www.vox.com/2017/1/18/14313164/google-twitter-acquisition-fabric-crashlytics"
     ],
     "waybackUrl": ""
   },
@@ -2197,7 +2236,9 @@
     "timingNote": "Timing and platform dependency were the whole story — BranchOut's rise and fall tracked Facebook's platform policy changes almost exactly.",
     "lesson": "Platforms don't mix",
     "sources": [
-      "https://techcrunch.com/2014/09/15/branchout-tries-to-sell-out/"
+      "https://techcrunch.com/2014/09/15/branchout-tries-to-sell-out/",
+      "https://www.cnbc.com/2012/06/14/is-branchout-a-linkedin-killer.html",
+      "https://www.businessinsider.com/in-april-linkedin-killer-branchout-raised-25-million-since-then-its-traffic-has-plummeted-2012-6"
     ],
     "waybackUrl": "https://web.archive.org/web/20141227041436if_/https://branchout.com/"
   },
@@ -2272,7 +2313,9 @@
     "timingNote": "A clear timing problem — live streaming for ordinary users didn't go mainstream until platforms like Periscope, Twitch, and Instagram/Facebook Live arrived years later, once mobile bandwidth and camera quality caught up.",
     "lesson": "Timing's critical",
     "sources": [
-      "https://en.wikipedia.org/wiki/Yahoo_Live"
+      "https://en.wikipedia.org/wiki/Yahoo_Live",
+      "https://techcrunch.com/2008/02/07/yahoo-live-fails-to-scale/",
+      "https://wiki.archiveteam.org/index.php/Deathwatch/Dead_as_a_Doornail"
     ],
     "waybackUrl": "https://web.archive.org/web/20051125044537if_/http://yahoolive.com:80/"
   },
@@ -2366,7 +2409,9 @@
     "timingNote": "Not a timing problem — this was an execution and ethics failure. The underlying microbiome-testing market kept growing via competitors; uBiome specifically died because of fraud.",
     "lesson": "Ethics are non-negotiable",
     "sources": [
-      "https://en.wikipedia.org/wiki/UBiome"
+      "https://en.wikipedia.org/wiki/UBiome",
+      "https://www.justice.gov/usao-ndca/pr/ubiome-co-founders-charged-federal-securities-health-care-fraud-conspiracies",
+      "https://www.fiercebiotech.com/medtech/ubiome-co-founders-charged-fraud-by-sec"
     ],
     "waybackUrl": "https://web.archive.org/web/20191017061557if_/https://ubiome.com/"
   },
@@ -2535,7 +2580,9 @@
     "timingNote": "Not a timing problem - Essential entered the premium smartphone market with real engineering credibility, but hardware distribution and brand loyalty in that category are moats that take years and marketing budgets Essential never had.",
     "lesson": "Smartphone giants are unbeatable",
     "sources": [
-      "https://en.wikipedia.org/wiki/Essential_Products"
+      "https://en.wikipedia.org/wiki/Essential_Products",
+      "https://www.engadget.com/2020-02-12-andy-rubin-essential-shutting-down.html",
+      "https://techcrunch.com/2020/02/12/andy-rubins-essential-shuts-down"
     ],
     "waybackUrl": "https://web.archive.org/web/20260310123335if_/http://essentialproducts.com/"
   },
@@ -2553,7 +2600,9 @@
     "timingNote": "Not really a timing problem - Cake launched into a reasonable early wave of personal-finance web apps; it was a niche-versus-mass-market problem, since it never broadened past portfolio-sharing the way Mint broadened past budgeting.",
     "lesson": "Finance tools need scale",
     "sources": [
-      "https://en.wikipedia.org/wiki/Cake_Financial"
+      "https://en.wikipedia.org/wiki/Cake_Financial",
+      "https://techcrunch.com/2010/01/14/cake-financial-acquired-etrade/",
+      "https://gigaom.com/2010/01/14/e-trade-swallows-cake-financial-shuts-it-down/"
     ],
     "waybackUrl": "https://web.archive.org/web/20130310000753if_/http://www.cakefinancial.com:80/"
   },
@@ -2590,7 +2639,9 @@
     "timingNote": "This was a timing problem in the sense that Netscape peaked before browsers were bundled with operating systems became the norm - once Microsoft made that move, Netscape's early lead couldn't survive Windows' distribution advantage.",
     "lesson": "Titans tilt field",
     "sources": [
-      "https://en.wikipedia.org/wiki/Netscape"
+      "https://en.wikipedia.org/wiki/Netscape",
+      "https://techcrunch.com/2007/12/28/a-sad-milestone-aol-to-discontinue-netscape-browser-development/",
+      "https://www.computerworld.com/article/1573224/rip-aol-kills-netscape.html"
     ],
     "waybackUrl": "https://web.archive.org/web/20081007134657if_/http://www.netscape.com/"
   },
@@ -2608,7 +2659,10 @@
     "timingNote": "Partly a timing problem - Rethink pioneered collaborative robotics years before the ROI case was proven for most manufacturers, giving lower-cost fast-followers time to catch up on capability while undercutting it on price.",
     "lesson": "Robotics demands ROI",
     "sources": [
-      "https://en.wikipedia.org/wiki/Rethink_Robotics"
+      "https://en.wikipedia.org/wiki/Rethink_Robotics",
+      "https://www.therobotreport.com/rethink-robotics-shutdown/",
+      "https://www.massdevice.com/hahn-group-acquires-rethink-robotics-ip/",
+      "https://www.cnbc.com/2022/09/01/for-industrial-cobot-its-been-a-decade-in-search-of-a-permanent-job-.html"
     ],
     "waybackUrl": "https://web.archive.org/web/20181231173416if_/https://www.rethinkrobotics.com/"
   },
@@ -2626,7 +2680,9 @@
     "timingNote": "A timing problem in the sense that a feature-layer startup sitting on top of a platform is only as durable as that platform's willingness to leave the feature unbuilt - Spotify eventually decided to build it in-house.",
     "lesson": "Crowds beat cults",
     "sources": [
-      "https://techcrunch.com/2016/01/20/spotify-buys-cord-project-and-soundwave/"
+      "https://techcrunch.com/2016/01/20/spotify-buys-cord-project-and-soundwave/",
+      "https://musically.com/2016/01/20/spotify-buys-soundwave-cord-project/",
+      "https://tech.eu/2016/01/20/spotify-acquires-soundwave/"
     ],
     "waybackUrl": "https://web.archive.org/web/20161229150225if_/http://hello@soundwave.com/"
   },
@@ -2644,7 +2700,9 @@
     "timingNote": "Not primarily a timing problem - Mozido had capital and years to execute against Square; the fatal blow was a governance and fraud problem at the top, not being early or late to mobile payments.",
     "lesson": "Payments need execution",
     "sources": [
-      "https://en.wikipedia.org/wiki/Mozido"
+      "https://en.wikipedia.org/wiki/Mozido",
+      "https://www.forbes.com/sites/nathanvardi/2018/04/02/sec-charges-mozido-founder-michael-liberty-of-defrauding-200-investors/",
+      "https://www.fintechfutures.com/2018/04/sec-charges-mozido-founder-with-investment-fraud/"
     ],
     "waybackUrl": "https://web.archive.org/web/20190128193231if_/http://www.mozido.com/"
   },
@@ -2681,7 +2739,9 @@
     "timingNote": "A timing and localization problem more than a pure market one: Hulu entered Japan before it had the licensing footprint to compete with domestic broadcasters, and exited even before Netflix arrived in the market.",
     "lesson": "Local beats generic",
     "sources": [
-      "https://techcrunch.com/2014/02/27/hulu-says-sayonara-sells-off-japanese-unit-to-nippon-tv"
+      "https://techcrunch.com/2014/02/27/hulu-says-sayonara-sells-off-japanese-unit-to-nippon-tv",
+      "https://variety.com/2014/biz/global/hulu-japan-to-be-acquired-by-nippon-tv-1201122915/",
+      "https://www.broadbandtvnews.com/2014/02/28/nippon-tv-acquires-hulu-in-japan/"
     ],
     "waybackUrl": ""
   },
@@ -2756,7 +2816,9 @@
     "timingNote": "Not primarily a timing problem: the UK resale market itself was healthy (Depop and Vinted were both thriving there), but Poshmark launched without the brand recognition or local seller base to compete and pulled out before it could build either.",
     "lesson": "Resale needs local",
     "sources": [
-      "https://techcrunch.com/2023/10/19/poshmark-international/"
+      "https://techcrunch.com/2023/10/19/poshmark-international/",
+      "https://inc42.com/buzz/social-shopping-platform-poshmark-to-shut-india-shop/",
+      "https://www.valueaddedresource.net/poshmark-closes-uk-australia-india-marketplaces/"
     ],
     "waybackUrl": ""
   },
@@ -2774,7 +2836,8 @@
     "timingNote": "Less a timing issue than a scale ceiling: Quibb launched into a market LinkedIn already dominated for professional networking, and its curated, invite-only model that made it appealing to early users was the same thing that kept it from ever growing large.",
     "lesson": "Niche needs scale",
     "sources": [
-      "https://medium.com/hackernoon/farewell-to-quibb-55943d523b56"
+      "https://medium.com/hackernoon/farewell-to-quibb-55943d523b56",
+      "https://techcrunch.com/2014/04/23/quibb-the-news-reader-for-professionals-taps-alphaworks-to-close-a-750k-seed-round"
     ],
     "waybackUrl": "https://web.archive.org/web/20171009090527if_/http://quibb.com:80/"
   },
@@ -2792,7 +2855,9 @@
     "timingNote": "A clear timing story: Houseparty's growth was almost entirely a byproduct of pandemic lockdowns, and once that unusual demand condition ended, the app had no independent reason for people to keep opening it.",
     "lesson": "Peaks don't last",
     "sources": [
-      "https://techcrunch.com/2021/09/09/epic-games-to-shut-down-houseparty-in-october-including-the-video-chat-fortnite-mode-feature/"
+      "https://techcrunch.com/2021/09/09/epic-games-to-shut-down-houseparty-in-october-including-the-video-chat-fortnite-mode-feature/",
+      "https://www.bloomberg.com/news/articles/2021-09-09/epic-games-is-shutting-down-its-group-chatting-app-houseparty",
+      "https://www.washingtonpost.com/video-games/2021/09/09/houseparty-shut-down-epic-games-metaverse/"
     ],
     "waybackUrl": "https://web.archive.org/web/20220101020032if_/https://houseparty.com/"
   },
@@ -2848,7 +2913,9 @@
     "timingNote": "More a quality-erosion problem than a timing one: Yahoo Answers had a long, slow decline over more than a decade rather than a sudden market shift, as unmoderated content quality gradually pushed serious users toward better-curated alternatives.",
     "lesson": "Quality beats chaos",
     "sources": [
-      "https://en.wikipedia.org/wiki/Yahoo!_Answers"
+      "https://en.wikipedia.org/wiki/Yahoo!_Answers",
+      "https://www.cnn.com/2021/04/06/tech/yahoo-answers-shutting-down-trnd/",
+      "https://www.searchenginejournal.com/yahoo-answers-shutting-down-may-4-content-will-not-be-archived/401553/"
     ],
     "waybackUrl": "https://web.archive.org/web/20070703023100if_/http://www.yahooanswers.com:80/"
   },
@@ -2866,7 +2933,9 @@
     "timingNote": "A neglect story more than a timing one: Yahoo Groups didn't lose to a single better competitor at one moment, it was slowly abandoned by its own owner over more than a decade while alternatives matured around it.",
     "lesson": "Neglect kills legacy",
     "sources": [
-      "https://en.wikipedia.org/wiki/Yahoo!_Groups"
+      "https://en.wikipedia.org/wiki/Yahoo!_Groups",
+      "https://www.searchenginejournal.com/yahoo-groups-to-fully-shut-down-on-december-15-2020/384313/",
+      "https://www.ghacks.net/2020/10/14/farewell-yahoo-groups-shutting-down-on-december-15-2020/"
     ],
     "waybackUrl": "https://web.archive.org/web/20210211155439if_/http://www.euskadi-ireland@yahoogroups.com/"
   },
@@ -2884,7 +2953,9 @@
     "timingNote": "More a business-model problem than a timing one: group payments was a real and growing category, but Tilt's specific product never differentiated enough from free alternatives to justify its venture-scale valuation.",
     "lesson": "Crowdfunding needs mass",
     "sources": [
-      "https://techcrunch.com/tag/tilt/"
+      "https://techcrunch.com/tag/tilt/",
+      "https://www.fastcompany.com/3068446/airbnb-buys-tilt-signaling-its-growing-interest-in-group-travel",
+      "https://skift.com/2017/02/23/airbnb-buys-payments-company-tilt-travelers-split-trip-costs/"
     ],
     "waybackUrl": "https://web.archive.org/web/20180101031930if_/https://www.tilt.com/"
   },
@@ -2902,7 +2973,9 @@
     "timingNote": "Partly a timing problem: Babylon rode the pandemic-era telehealth boom to a public listing right as investor enthusiasm for unprofitable healthtech SPACs was cresting, then had no cushion once that funding environment reversed sharply in 2022-2023.",
     "lesson": "Quality must match scale",
     "sources": [
-      "https://en.wikipedia.org/wiki/Babylon_Health"
+      "https://en.wikipedia.org/wiki/Babylon_Health",
+      "https://www.healthcaredive.com/news/Babylon-Chapter-7-bankruptcy/691218/",
+      "https://techcrunch.com/2023/08/31/the-fall-of-babylon-failed-tele-health-startup-once-valued-at-nearly-2b-goes-bankrupt-and-sold-for-parts/"
     ],
     "waybackUrl": "https://web.archive.org/web/20231109022213if_/https://www.babylonhealth.com/"
   },
@@ -2920,7 +2993,9 @@
     "timingNote": "Less a timing issue than an operational-scale ceiling: the underlying need for student financing in developing countries was real and durable, but Vittana's model needed years of local infrastructure-building per market that its funding runway couldn't support.",
     "lesson": "Microloans need reach",
     "sources": [
-      "https://en.wikipedia.org/wiki/Vittana"
+      "https://en.wikipedia.org/wiki/Vittana",
+      "https://www.geekwire.com/2014/vitanna-closing-doors/",
+      "https://nextbillion.net/vittana-to-cease-to-exist-as-a-standalone-organization/"
     ],
     "waybackUrl": "https://web.archive.org/web/20160319053338if_/http://www.vittana.com/"
   },
@@ -2938,7 +3013,9 @@
     "timingNote": "A timing and platform-shift story: WhoSay launched when social platforms hadn't yet built out celebrity verification and brand-partnership tools themselves, and it lost its reason to exist once Instagram and Twitter absorbed those functions natively.",
     "lesson": "Middlemen get cut",
     "sources": [
-      "https://en.wikipedia.org/wiki/WhoSay"
+      "https://en.wikipedia.org/wiki/WhoSay",
+      "https://www.hollywoodreporter.com/business/business-news/viacom-acquire-influencer-platform-whosay-1072134/",
+      "https://variety.com/2018/digital/news/viacom-acquires-whosay-influencer-marketing-1202653055/"
     ],
     "waybackUrl": "https://web.archive.org/web/20190103202455if_/https://www.whosay.com/"
   },
@@ -3146,7 +3223,9 @@
     "timingNote": "More a unit-economics problem than a timing problem — the meal-delivery boom was in full swing when Sprig operated, but its vertically-integrated cook-and-deliver model was structurally more expensive than marketplace-style competitors.",
     "lesson": "Organic's pricey",
     "sources": [
-      "https://www.failory.com/cemetery/sprig"
+      "https://www.failory.com/cemetery/sprig",
+      "https://techcrunch.com/2017/05/26/on-demand-food-startup-sprig-is-shutting-down-today/",
+      "https://www.fortune.com/2017/05/27/sprig-shuts-down"
     ],
     "waybackUrl": "https://web.archive.org/web/20170519004316if_/https://www.sprig.com/"
   },
@@ -3183,7 +3262,8 @@
     "timingNote": "A pure hype-cycle timing story — Yo rode a wave of \"minimalist app\" virality in 2014 that had nowhere to go once the joke stopped being novel; there was never a durable use case underneath the buzz.",
     "lesson": "Gimmicks don't last",
     "sources": [
-      "https://en.wikipedia.org/wiki/Yo_(app)"
+      "https://en.wikipedia.org/wiki/Yo_(app)",
+      "https://www.producthunt.com/stories/the-lessons-i-learned-after-shutting-down-my-viral-app-yo"
     ],
     "waybackUrl": "https://web.archive.org/web/20160817025722if_/http://www.yo.com:80/"
   },
@@ -3201,7 +3281,9 @@
     "timingNote": "A genuine timing failure — Xmarks solved a real problem in 2006-2010, but browser makers eventually built the same sync capability natively, making a third-party tool redundant by the late 2010s.",
     "lesson": "Tech shifts bury",
     "sources": [
-      "https://en.wikipedia.org/wiki/Xmarks"
+      "https://en.wikipedia.org/wiki/Xmarks",
+      "https://betanews.com/2018/04/01/xmarks-to-close/",
+      "https://www.ghacks.net/2018/03/31/logmein-to-shut-down-xmarks-on-may-1-2018/"
     ],
     "waybackUrl": "https://web.archive.org/web/20180429143902if_/https://www.xmarks.com/"
   },
@@ -3219,7 +3301,9 @@
     "timingNote": "Not primarily a timing failure — home e-commerce and decor were durable categories — but a business-model failure: flash-sale economics never generated the margins needed to justify its early valuation, which compounded through two ownership changes into eventual bankruptcy.",
     "lesson": "Scale beats decor",
     "sources": [
-      "https://en.wikipedia.org/wiki/One_Kings_Lane"
+      "https://en.wikipedia.org/wiki/One_Kings_Lane",
+      "https://www.onekingslane.com",
+      "https://www.marketscreener.com/quote/stock/BED-BATH-BEYOND-INC-4852/news/CSC-Generation-Inc-acquired-One-Kings-Lane-Inc-from-Bed-Bath-Beyond-Inc--33913972/"
     ],
     "waybackUrl": "https://web.archive.org/web/20231231231337if_/https://www.onekingslane.com/"
   },
@@ -3237,7 +3321,9 @@
     "timingNote": "A classic technology-shift timing failure — VisiCalc dominated the 8-bit Apple II era but was architecturally unable to take advantage of the 16-bit IBM PC wave that Lotus 1-2-3 rode to dominance.",
     "lesson": "Innovate or die",
     "sources": [
-      "https://en.wikipedia.org/wiki/VisiCalc"
+      "https://en.wikipedia.org/wiki/VisiCalc",
+      "https://retrotechreads.substack.com/p/visicalc",
+      "https://history-computer.com/software/visicalc-of-dan-bricklin-and-bob-frankston-guide/"
     ],
     "waybackUrl": "https://web.archive.org/web/20000311145017if_/http://www.visicalc.com:80/"
   }

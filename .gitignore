@@ -44,3 +44,4 @@ next-env.d.ts
 # @xenova/transformers caches ~90MB of model weights here on first run
 /.cache
 /node_modules/.cache
+data/.audit/
