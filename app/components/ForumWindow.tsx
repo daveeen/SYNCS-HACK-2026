@@ -21,7 +21,7 @@
 
 import { useMemo, useState } from "react";
 import { isValidHandle } from "@/lib/forum/handle";
-import { BackGlyph, BubbleGlyph, HeartGlyph, PersonGlyph } from "./ForumGlyphs";
+import { BackGlyph, BubbleGlyph, HeartGlyph } from "./ForumGlyphs";
 import {
   MOCK_COMMENTS,
   MOCK_LIKES,
@@ -45,13 +45,16 @@ const inputStyle: React.CSSProperties = {
   outline: "none",
 };
 
+// Primary action (Post, Reply, Sign in, Create account): the same blue as
+// the wallpaper's ground tone (--gy-ground, the base of the landing page's
+// gradient) rather than a generic accent — one fewer colour in the palette.
 const buttonStyle: React.CSSProperties = {
   padding: "var(--gy-s-4) var(--gy-s-6)",
   fontFamily: "var(--gy-font-ui)",
   fontSize: "var(--gy-t-ui)",
   fontWeight: 600,
   color: "#fdfdfb",
-  background: "var(--gy-live)",
+  background: "var(--gy-ground)",
   border: "none",
   borderRadius: "var(--gy-r-field)",
   cursor: "pointer",
@@ -93,61 +96,53 @@ function Avatar({ handle, size = 26 }: { handle: string; size?: number }) {
   );
 }
 
-function MentionChip({ name }: { name: string }) {
+/**
+ * A resolved @mention of a DEAD startup from the corpus — never the post's
+ * author. The two look alike ("@word") so they're kept on separate lines
+ * wherever both appear: the plain grey "@handle · time" line always names
+ * who wrote the post; this rust-coloured pill, only present when the body
+ * actually mentions a company, links out to the graveyard. See "Rendering
+ * @mentions" in docs/forum-reads.md.
+ */
+function MentionRow({ mentions }: { mentions: string[] }) {
+  if (mentions.length === 0) return null;
   return (
-    <span
-      style={{
-        display: "inline-flex",
-        padding: "1px var(--gy-s-3)",
-        fontFamily: "var(--gy-font-mono)",
-        fontSize: "var(--gy-t-micro)",
-        color: "var(--gy-dead)",
-        background: "var(--gy-dead-dim)",
-        borderRadius: "var(--gy-r-pill)",
-      }}
-    >
-      {name}
-    </span>
+    <div style={{ display: "flex", alignItems: "center", gap: "var(--gy-s-3)" }}>
+      <span
+        style={{
+          fontSize: "var(--gy-t-micro)",
+          letterSpacing: "0.08em",
+          textTransform: "uppercase",
+          color: "var(--gy-ink-faint)",
+        }}
+      >
+        mentions
+      </span>
+      {mentions.map((m) => (
+        <span
+          key={m}
+          style={{
+            display: "inline-flex",
+            padding: "1px var(--gy-s-3)",
+            fontFamily: "var(--gy-font-mono)",
+            fontSize: "var(--gy-t-micro)",
+            color: "var(--gy-dead)",
+            background: "var(--gy-dead-dim)",
+            borderRadius: "var(--gy-r-pill)",
+          }}
+        >
+          {m}
+        </span>
+      ))}
+    </div>
   );
 }
 
-/** Top-right account control: sign-in prompt, or the signed-in handle with a
-    sign-out menu. The only "top right" real estate this canvas has. */
-function AccountControl({
-  handle,
-  onSignIn,
-  onSignOut,
-}: {
-  handle: string | null;
-  onSignIn: () => void;
-  onSignOut: () => void;
-}) {
+/** Top-right account control, shown only once someone is signed in: the
+    handle plus a sign-out menu. Signed-out visitors have no button here —
+    they sign in via the inline prompts in the feed and post view instead. */
+function AccountControl({ handle, onSignOut }: { handle: string; onSignOut: () => void }) {
   const [open, setOpen] = useState(false);
-
-  if (!handle) {
-    return (
-      <button
-        onClick={onSignIn}
-        aria-label="Sign in"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "var(--gy-s-3)",
-          padding: "var(--gy-s-2) var(--gy-s-4) var(--gy-s-2) var(--gy-s-3)",
-          background: "transparent",
-          border: "1px solid var(--gy-line)",
-          borderRadius: "var(--gy-r-pill)",
-          color: "var(--gy-ink-dim)",
-          cursor: "pointer",
-          font: "inherit",
-          fontSize: "var(--gy-t-ui)",
-        }}
-      >
-        <PersonGlyph size={15} />
-        Sign in
-      </button>
-    );
-  }
 
   return (
     <div style={{ position: "relative" }}>
@@ -258,14 +253,22 @@ export default function ForumWindow() {
     // TODO real version: POST /api/forum/like {targetType:"post", targetId},
     // returns {liked, count} — this optimistic toggle is what that response
     // replaces, not what triggers it.
+    //
+    // The two setState calls stay siblings, not nested. Calling setLikes
+    // *inside* setLikedByMe's updater was the cause of the double-counting
+    // bug: React 18's dev server (Strict Mode, on by default for the App
+    // Router) invokes a state updater function twice to check it's pure, and
+    // discards one result — harmless when the updater only reads its own
+    // `prev`, but a setLikes call nested inside it fired on both
+    // invocations, so every click applied the like twice.
+    const wasLiked = likedByMe.has(postId);
     setLikedByMe((prev) => {
       const next = new Set(prev);
-      const wasLiked = next.has(postId);
       if (wasLiked) next.delete(postId);
       else next.add(postId);
-      setLikes((ls) => ({ ...ls, [postId]: (ls[postId] ?? 0) + (wasLiked ? -1 : 1) }));
       return next;
     });
+    setLikes((prev) => ({ ...prev, [postId]: (prev[postId] ?? 0) + (wasLiked ? -1 : 1) }));
   }
 
   function submitPost(e: React.FormEvent) {
@@ -356,9 +359,9 @@ export default function ForumWindow() {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "var(--gy-s-7)" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "var(--gy-s-7)", height: "100%" }}>
       {/* ---- top row: back (in a post) or the forum eyebrow, plus account ---- */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <div style={{ flex: "0 0 auto", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         {view === "post" ? (
           <button
             onClick={() => setView("feed")}
@@ -390,12 +393,11 @@ export default function ForumWindow() {
           </span>
         )}
 
-        {view !== "signin" && view !== "signup" && (
-          <AccountControl
-            handle={handle}
-            onSignIn={() => { resetAuthForm(); setView("signin"); }}
-            onSignOut={signOut}
-          />
+        {/* Signed-out visitors get exactly one way in: the "sign in to
+            start/comment" prompts inline in the feed and post view. A second
+            entry point up here would be redundant chrome. */}
+        {handle && view !== "signin" && view !== "signup" && (
+          <AccountControl handle={handle} onSignOut={signOut} />
         )}
       </div>
 
@@ -486,19 +488,14 @@ export default function ForumWindow() {
                     </span>
                     <span
                       style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "var(--gy-s-3)",
                         fontFamily: "var(--gy-font-mono)",
                         fontSize: "var(--gy-t-meta)",
                         color: "var(--gy-ink-faint)",
                       }}
                     >
                       @{p.author} · {timeAgo(p.createdAt)}
-                      {p.mentions.map((m) => (
-                        <MentionChip key={m} name={m} />
-                      ))}
                     </span>
+                    <MentionRow mentions={p.mentions} />
                     <span
                       style={{
                         fontSize: "var(--gy-t-body)",
@@ -574,7 +571,6 @@ export default function ForumWindow() {
               style={{
                 display: "flex",
                 alignItems: "center",
-                flexWrap: "wrap",
                 gap: "var(--gy-s-5)",
                 fontFamily: "var(--gy-font-mono)",
                 fontSize: "var(--gy-t-meta)",
@@ -584,10 +580,8 @@ export default function ForumWindow() {
             >
               <span>@{activePost.author}</span>
               <span>{timeAgo(activePost.createdAt)}</span>
-              {activePost.mentions.map((m) => (
-                <MentionChip key={m} name={m} />
-              ))}
             </div>
+            <MentionRow mentions={activePost.mentions} />
             <div style={{ display: "flex", alignItems: "center", gap: "var(--gy-s-6)", paddingTop: "var(--gy-s-2)" }}>
               <button
                 onClick={() => toggleLike(activePost.id)}
@@ -670,11 +664,13 @@ export default function ForumWindow() {
         </article>
       )}
 
-      {/* ---- sign in / sign up ---- */}
+      {/* ---- sign in / sign up, centred in whatever space is left below the
+             top row ---- */}
       {(view === "signin" || view === "signup") && (
+        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
         <form
           onSubmit={view === "signin" ? submitSignin : submitSignup}
-          style={{ display: "flex", flexDirection: "column", gap: "var(--gy-s-5)", maxWidth: 340 }}
+          style={{ display: "flex", flexDirection: "column", gap: "var(--gy-s-5)", width: 300 }}
         >
           {view === "signup" && (
             <label style={{ display: "flex", flexDirection: "column", gap: "var(--gy-s-2)" }}>
@@ -710,7 +706,7 @@ export default function ForumWindow() {
           </button>
 
           <p style={{ margin: 0, fontSize: "var(--gy-t-ui)", color: "var(--gy-ink-faint)" }}>
-            {view === "signin" ? "Need an account? " : "Already have one? "}
+            {view === "signin" ? "Need an account? " : "Already have an account? "}
             <button
               type="button"
               onClick={() => { resetAuthForm(); setView(view === "signin" ? "signup" : "signin"); }}
@@ -722,11 +718,24 @@ export default function ForumWindow() {
           <button
             type="button"
             onClick={() => setView("feed")}
-            style={{ alignSelf: "flex-start", background: "none", border: "none", padding: 0, color: "var(--gy-ink-faint)", cursor: "pointer", font: "inherit", fontSize: "var(--gy-t-meta)" }}
+            style={{
+              alignSelf: "flex-start",
+              display: "flex",
+              alignItems: "center",
+              gap: "var(--gy-s-2)",
+              background: "none",
+              border: "none",
+              padding: 0,
+              color: "var(--gy-ink-faint)",
+              cursor: "pointer",
+              font: "inherit",
+              fontSize: "var(--gy-t-meta)",
+            }}
           >
             <BackGlyph size={11} /> Back to the forum
           </button>
         </form>
+        </div>
       )}
     </div>
   );
