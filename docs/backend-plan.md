@@ -514,7 +514,30 @@ Watch the Vercel preview build, then hit `<preview-url>/api/embed-smoke`.
 
 **Returns 384** → MiniLM is settled. Continue to Task 4. Note the `coldStartMs`; if it is over ~5000, mention it to Darryl so the results page can warm the function on page load.
 
-**"A Serverless Function has exceeded the unzipped maximum size of 250 MB"** → stop. Tell Darryl this hour and switch to the Supabase Edge fallback in [backend-spec.md §12](backend-spec.md). Only `lib/embed.ts` changes shape; every task below stays as written.
+**"A Serverless Function has exceeded the unzipped maximum size of 250 MB"** → do not immediately abandon MiniLM. Work the exclusions below first, and switch to the Supabase Edge fallback in [backend-spec.md §12](backend-spec.md) only if they do not get it under. Only `lib/embed.ts` changes shape either way; every task below stays as written. Tell Darryl the same hour.
+
+### Measured size, and what to cut if the gate fails
+
+Everything the `/api/search` function must carry, measured locally:
+
+| | Size |
+|---|---|
+| `onnxruntime-node` | 92M |
+| `onnxruntime-web` | 66M |
+| `sharp` | 50M |
+| `@xenova/transformers` | 45M |
+| `models/` (committed weights) | 23M |
+| **total** | **239M** |
+
+Against a 250MB ceiling that is an 11MB margin, and Next's tracer is not guaranteed to be tighter than `du`. Treat this gate as genuinely uncertain rather than a formality.
+
+If it fails, add `outputFileTracingExcludes` to `next.config.ts` and re-push, cutting in this order — **one at a time, re-deploying between each**, because each can break the model at runtime rather than at build time and you want to know which one did:
+
+1. **`onnxruntime-web`** (66M, the biggest safe win). transformers.js uses `onnxruntime-node` when the native binding loads and falls back to the WASM build otherwise. Excluding it makes that fallback impossible — which is what you want on a platform where you have already committed to the native path. If the binding then fails on Vercel you get a loud error instead of a silent switch to a slower backend.
+2. **Non-linux `onnxruntime-node` binaries.** The package ships prebuilds per platform under `bin/napi-v3/`; Vercel only ever needs `linux/x64`. This is the exclusion from [transformers.js#1164](https://github.com/huggingface/transformers.js/issues/1164) — keep `libonnxruntime.so.1` and `onnxruntime_binding.node`, drop the rest.
+3. **`sharp` — carefully.** 50M and we never process an image, but `@xenova/transformers` imports it at module load, so excluding the package outright crashes the import. Only its non-linux vendored libvips builds can go; the linux binary and its DLLs must stay.
+
+Do not touch `models/` — that 23M is the entire point of the design.
 
 ---
 
@@ -1846,7 +1869,28 @@ Backend routes are real. Six contract changes, all in docs/backend-spec.md §9:
    Without this, /api/reconstruct hits archive.org live on every request during
    the pitch.  → Asher, Davin
 
+8. pnpm-workspace.yaml: sharp moved from ignoredBuiltDependencies to
+   onlyBuiltDependencies. @xenova/transformers declares sharp a HARD dependency
+   and imports it at module load, so with its native binary unbuilt every import
+   of transformers threw. This broke on a fresh clone and would have broken the
+   Vercel build. Pull and reinstall.  → everyone
+9. @anthropic-ai/sdk bumped 0.71 -> 0.122. The pinned version had no
+   output_config on the non-beta messages surface and no adaptive variant of
+   thinking, so /api/report could not compile. budget_tokens is a 400 on Opus 5,
+   so there was no older-style config to fall back to.  → everyone
+
 Also: models/ adds ~23MB to the repo, so your next clone is slower.
+
+Darryl — app/graveyard/ResultsClient.tsx needs two changes and I did not make
+them, it is your file:
+  - line ~47 reads the x-graveyard-stub header to decide whether to show the
+    "do not demo this" badge. That header is gone now. Key the badge off
+    x-graveyard-degraded instead, so it fires when matches came from the BM25
+    fallback rather than from embeddings.
+  - line ~109 renders {report} from the search response, which is now always "".
+    The report comes from POST /api/report as a text/plain stream. Until you
+    wire that up the report section renders blank. Everything else on the page
+    works.
 
 And Asher — heads up, lib/claude.ts has `import "server-only"`, which throws
 under plain Node. If enrich.ts imports it the script dies on import. Construct
