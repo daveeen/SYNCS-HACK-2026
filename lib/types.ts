@@ -37,6 +37,17 @@ export type FailedStartup = {
 /** A match is a startup plus how close it is to the user's idea (0..1). */
 export type StartupMatch = FailedStartup & { similarity: number };
 
+/**
+ * Precomputed corpus vectors, keyed by startup id. Lives in its own file
+ * (data/startups.vectors.json) rather than joined onto FailedStartup: ~55 x 384
+ * floats is around 420KB, and keeping it separate leaves the enriched file
+ * readable for QA and makes it impossible to leak vectors to the browser.
+ */
+export type StartupVectors = Record<string, number[]>;
+
+/** Where a Wayback snapshot came from. */
+export type ReconstructSource = "baked" | "live" | "none";
+
 /** Response shape of POST /api/search. */
 export type SearchResponse = {
   query: string;
@@ -85,6 +96,8 @@ export type ReconstructResponse = {
   /** Wayback timestamp, e.g. "20160421075323". */
   timestamp: string | null;
   available: boolean;
+  /** Baked into the record at pipeline time, resolved live, or absent. */
+  source: ReconstructSource;
 };
 
 /** Every route handler returns this shape on failure. */

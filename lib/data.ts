@@ -16,10 +16,13 @@
  * Consequence: data/startups.enriched.json must always exist and always be
  * valid JSON. It starts life as an empty array `[]`.
  */
-import type { FailedStartup } from "@/lib/types";
+import "server-only";
+
+import type { FailedStartup, StartupVectors } from "@/lib/types";
 
 import enriched from "@/data/startups.enriched.json";
 import mock from "@/data/startups.mock.json";
+import vectors from "@/data/startups.vectors.json";
 
 /** True when we are serving invented placeholder companies, not real ones. */
 export function isUsingMockData(): boolean {
@@ -35,4 +38,14 @@ export function loadStartups(): FailedStartup[] {
 
 export function getStartupById(id: string): FailedStartup | undefined {
   return loadStartups().find((s) => s.id === id);
+}
+
+/**
+ * Precomputed corpus vectors, keyed by startup id. Returns {} until
+ * `pnpm pipeline:embed` has run — /api/search treats a missing vector as a
+ * zero score rather than an error, so a half-embedded corpus degrades instead
+ * of throwing.
+ */
+export function loadVectors(): StartupVectors {
+  return vectors as StartupVectors;
 }
