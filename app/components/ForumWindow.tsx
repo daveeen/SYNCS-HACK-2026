@@ -461,6 +461,10 @@ export default function ForumWindow() {
             </div>
           )}
 
+          {/* Chat-list layout: avatar fixed on the far left, everything else
+              stacked in a column beside it — title + time on the top line,
+              preview + like/comment badges on the bottom line, the way a
+              WhatsApp row pairs a contact photo with name-and-last-message. */}
           <ul style={{ margin: 0, padding: 0, listStyle: "none" }}>
             {posts.map((p) => {
               const count = commentsFor(p.id).length;
@@ -473,9 +477,9 @@ export default function ForumWindow() {
                       width: "100%",
                       textAlign: "left",
                       display: "flex",
-                      flexDirection: "column",
-                      gap: "var(--gy-s-3)",
-                      padding: "var(--gy-s-6) var(--gy-s-2)",
+                      alignItems: "flex-start",
+                      gap: "var(--gy-s-5)",
+                      padding: "var(--gy-s-5) var(--gy-s-2)",
                       background: "transparent",
                       border: "none",
                       cursor: "pointer",
@@ -483,62 +487,83 @@ export default function ForumWindow() {
                       color: "inherit",
                     }}
                   >
-                    <span style={{ fontSize: "var(--gy-t-title)", fontWeight: 600, color: "var(--gy-ink)", lineHeight: 1.3 }}>
-                      {p.title}
-                    </span>
-                    <span
-                      style={{
-                        fontFamily: "var(--gy-font-mono)",
-                        fontSize: "var(--gy-t-meta)",
-                        color: "var(--gy-ink-faint)",
-                      }}
-                    >
-                      @{p.author} · {timeAgo(p.createdAt)}
-                    </span>
-                    <MentionRow mentions={p.mentions} />
-                    <span
-                      style={{
-                        fontSize: "var(--gy-t-body)",
-                        color: "var(--gy-ink-dim)",
-                        lineHeight: 1.5,
-                        display: "-webkit-box",
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: "vertical",
-                        overflow: "hidden",
-                      }}
-                    >
-                      {p.body}
-                    </span>
-                    <span style={{ display: "flex", alignItems: "center", gap: "var(--gy-s-6)", marginTop: "var(--gy-s-1)" }}>
-                      <span
-                        onClick={(e) => toggleLike(p.id, e)}
-                        role="button"
-                        tabIndex={0}
-                        aria-label={liked ? "Unlike" : "Like"}
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "var(--gy-s-2)",
-                          color: liked ? "var(--gy-dead)" : "var(--gy-ink-faint)",
-                          fontSize: "var(--gy-t-meta)",
-                          fontFamily: "var(--gy-font-mono)",
-                          cursor: "pointer",
-                        }}
-                      >
-                        <HeartGlyph active={liked} /> {likes[p.id] ?? 0}
+                    <Avatar handle={p.author} size={44} />
+                    <span style={{ display: "flex", flexDirection: "column", gap: "var(--gy-s-2)", flex: 1, minWidth: 0 }}>
+                      <span style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "var(--gy-s-4)" }}>
+                        <span
+                          style={{
+                            fontSize: "var(--gy-t-lead)",
+                            fontWeight: 600,
+                            color: "var(--gy-ink)",
+                            lineHeight: 1.3,
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {p.title}
+                        </span>
+                        <span
+                          style={{
+                            flex: "0 0 auto",
+                            fontFamily: "var(--gy-font-mono)",
+                            fontSize: "var(--gy-t-micro)",
+                            color: "var(--gy-ink-faint)",
+                          }}
+                        >
+                          {timeAgo(p.createdAt)}
+                        </span>
                       </span>
-                      <span
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "var(--gy-s-2)",
-                          color: "var(--gy-ink-faint)",
-                          fontSize: "var(--gy-t-meta)",
-                          fontFamily: "var(--gy-font-mono)",
-                        }}
-                      >
-                        <BubbleGlyph /> {count}
+
+                      <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--gy-s-4)" }}>
+                        <span
+                          style={{
+                            fontSize: "var(--gy-t-body)",
+                            color: "var(--gy-ink-dim)",
+                            lineHeight: 1.4,
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            minWidth: 0,
+                          }}
+                        >
+                          <span style={{ fontFamily: "var(--gy-font-mono)", color: "var(--gy-ink-faint)" }}>@{p.author}:</span>{" "}
+                          {p.body}
+                        </span>
+                        <span style={{ flex: "0 0 auto", display: "flex", alignItems: "center", gap: "var(--gy-s-4)" }}>
+                          <span
+                            onClick={(e) => toggleLike(p.id, e)}
+                            role="button"
+                            tabIndex={0}
+                            aria-label={liked ? "Unlike" : "Like"}
+                            style={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "var(--gy-s-2)",
+                              color: liked ? "var(--gy-dead)" : "var(--gy-ink-faint)",
+                              fontSize: "var(--gy-t-meta)",
+                              fontFamily: "var(--gy-font-mono)",
+                              cursor: "pointer",
+                            }}
+                          >
+                            <HeartGlyph active={liked} /> {likes[p.id] ?? 0}
+                          </span>
+                          <span
+                            style={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "var(--gy-s-2)",
+                              color: "var(--gy-ink-faint)",
+                              fontSize: "var(--gy-t-meta)",
+                              fontFamily: "var(--gy-font-mono)",
+                            }}
+                          >
+                            <BubbleGlyph /> {count}
+                          </span>
+                        </span>
                       </span>
+
+                      {p.mentions.length > 0 && <MentionRow mentions={p.mentions} />}
                     </span>
                   </button>
                 </li>
@@ -655,7 +680,7 @@ export default function ForumWindow() {
             </form>
           ) : (
             <span style={{ fontSize: "var(--gy-t-ui)", color: "var(--gy-ink-faint)" }}>
-              <button onClick={() => { resetAuthForm(); setView("signin"); }} style={{ background: "none", border: "none", padding: 0, color: "var(--gy-live)", cursor: "pointer", font: "inherit" }}>
+              <button onClick={() => { resetAuthForm(); setView("signin"); }} style={{ background: "none", border: "none", padding: 0, color: "var(--gy-ground)", cursor: "pointer", font: "inherit" }}>
                 Sign in
               </button>{" "}
               to comment.
@@ -710,7 +735,7 @@ export default function ForumWindow() {
             <button
               type="button"
               onClick={() => { resetAuthForm(); setView(view === "signin" ? "signup" : "signin"); }}
-              style={{ background: "none", border: "none", padding: 0, color: "var(--gy-live)", cursor: "pointer", font: "inherit" }}
+              style={{ background: "none", border: "none", padding: 0, color: "var(--gy-ground)", cursor: "pointer", font: "inherit" }}
             >
               {view === "signin" ? "Sign up" : "Sign in"}
             </button>
