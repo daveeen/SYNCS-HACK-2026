@@ -78,3 +78,62 @@ app/components/ and the design tokens; Darryl owns page composition and routing
   these closely. They exist so an arbitrary judge-typed idea finds a real match
   instead of a 0.19 similarity to something irrelevant.
 Both land in data/startups.enriched.json in the same FailedStartup shape.
+
+## Design: do not build AI slop (Sam's list — she owns the visual system)
+
+Judges have seen forty of these this weekend. Every item below is a tell that
+the page was generated rather than designed. Avoid them:
+
+1. Harsh gradients
+2. Lucide icons
+3. Pure white background
+4. Rainbow colouring
+5. Drop shadows
+6. 3 feature cards in a row
+7. Emojis
+8. Liquid Glass
+9. Em dashes (this one is about COPY, not layout — applies to all UI text)
+10. Inter / Geist / Space Grotesk
+11. Coloured left stripe
+12. Fake testimonials
+13. Bento grids
+14. Terminal window
+15. "It's not x, it's y"
+16. Checkmark bullets
+17. 3 pricing tiers
+19. Soft corner radius
+20. Purple and black
+22. Radial orbs
+23. Dot grids
+24. Sparkle icons
+25. Animated arrows
+28. Gratuitous hover animation (cards scaling, glowing, lifting) — this is NOT a
+    ban on hover and focus states themselves, see clarification below
+29. Neon colours
+30. Basic pastel colours
+
+### The inverted four — slop LACKS these, so we must HAVE them
+Items 18, 21, 26 and 27 on Sam's list are things AI-generated sites are missing.
+Do not read them as bans:
+
+- **18. Real product demos** — the live semantic match IS the demo. Never
+  replace it with a static mockup or a video.
+- **21. Skeleton loaders** — a real Claude report takes 5-8s. Show real loading
+  state. A frozen screen reads as broken.
+- **26/27. TOS + privacy policy** — no auth, no accounts, no data collected, so
+  there is nothing to write a policy about. If we ever add a footer, an honest
+  "we store nothing" line beats a fabricated policy. Never generate fake legal text.
+
+### Two clarifications so the list doesn't backfire
+- **28. Hover animations** — the tell is gratuitous motion (cards scaling,
+  glowing, lifting). Interactive elements still need a visible hover and focus
+  state, or the page fails accessibility. Kill decoration, keep affordance.
+- **5 / 19. Drop shadows and corner radius** — the tell is uniformity: the same
+  soft shadow and the same `rounded-lg` on every surface. A deliberate, varied
+  treatment is a design choice. Blanket-default is the slop.
+
+### Consequence for existing code
+app/globals.css and app/graveyard/ResultsClient.tsx are placeholder scaffold and
+violate several of these. They were always marked throwaway — Sam replaces them.
+app/layout.tsx currently loads Geist (item 10) from the Next.js template; it must
+be swapped when Sam picks type.
