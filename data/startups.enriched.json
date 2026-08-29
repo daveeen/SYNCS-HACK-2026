@@ -10,7 +10,7 @@
     "fundingRaised": "$1.5M",
     "proximateCause": "ran out of cash",
     "rootCause": "spread itself across too many game titles at once instead of focusing on one, burning cash on breadth instead of depth",
-    "timingNote": "not a timing problem \u2014 the mobile app boom was real and happening; the failure was self-inflicted execution sprawl, not the market being unready",
+    "timingNote": "not a timing problem — the mobile app boom was real and happening; the failure was self-inflicted execution sprawl, not the market being unready",
     "lesson": "Focus beats frenzy",
     "sources": [
       "https://techcrunch.com/2012/02/11/airy-labs-big-cuts/",
@@ -29,7 +29,7 @@
     "fundingRaised": "$12.8M",
     "proximateCause": "users and cultural relevance had already moved to Facebook years before Twitch's 2019 acquisition",
     "rootCause": "AOL's 2008 acquisition mismanaged the platform and starved it of investment while Facebook's network effects compounded internationally; by the time it was sold to Twitch for esports in 2019, it was a spare-parts deal for the brand, not a comeback",
-    "timingNote": "timing mattered \u2014 Bebo peaked right before Facebook opened to the public and scaled internationally; AOL's neglect meant it had no answer when that wave hit, and every later revival attempt landed in a market Facebook already owned",
+    "timingNote": "timing mattered — Bebo peaked right before Facebook opened to the public and scaled internationally; AOL's neglect meant it had no answer when that wave hit, and every later revival attempt landed in a market Facebook already owned",
     "lesson": "Network effects can crush",
     "sources": [
       "https://techcrunch.com/2019/06/18/amazon-twitch-bebo-esports/",
@@ -48,7 +48,7 @@
     "fundingRaised": "$95M",
     "proximateCause": "insolvency driven by high operating costs",
     "rootCause": "the white-glove, high-touch auction model (in-house experts, live-streamed auctions, authentication) carried costs that didn't scale, and a public valuation/authentication scandal undermined the trust the luxury-auction business model depended on",
-    "timingNote": "not a timing problem \u2014 online luxury auctions were a real, growing category; the failure was operational (cost structure) and reputational (scandal), not the market being unready",
+    "timingNote": "not a timing problem — online luxury auctions were a real, growing category; the failure was operational (cost structure) and reputational (scandal), not the market being unready",
     "lesson": "Trust and economics matter",
     "sources": [
       "https://news.artnet.com/art-world/auctionata-insolvency-proceedings-822965",
@@ -66,8 +66,8 @@
     "diedYear": 2023,
     "fundingRaised": "$326M",
     "proximateCause": "filed for bankruptcy under the weight of shipping and fulfillment costs",
-    "rootCause": "the bulk-buying convenience model required expensive last-mile shipping of heavy, low-margin bulk goods \u2014 a cost structure Amazon could absorb at its scale but Boxed couldn't match without it",
-    "timingNote": "not primarily a timing issue \u2014 bulk e-commerce demand existed throughout; the failure was a structural cost disadvantage against a competitor with vastly greater shipping scale, not a market that closed",
+    "rootCause": "the bulk-buying convenience model required expensive last-mile shipping of heavy, low-margin bulk goods — a cost structure Amazon could absorb at its scale but Boxed couldn't match without it",
+    "timingNote": "not primarily a timing issue — bulk e-commerce demand existed throughout; the failure was a structural cost disadvantage against a competitor with vastly greater shipping scale, not a market that closed",
     "lesson": "Scale trumps convenience",
     "sources": [
       "https://techcrunch.com/2023/08/18/online-wholesaler-boxed-acquired-after-filing-for-bankruptcy/",
@@ -86,7 +86,7 @@
     "fundingRaised": "$35M",
     "proximateCause": "the FDA required Scanadu to deactivate its Scout devices once its investigational study concluded",
     "rootCause": "Scanadu sold and shipped the Scout as a consumer device funded via crowdfunding while it was still legally an investigational device under an IRB-approved study; when the study reached its endpoint, FDA rules forced it to shut down devices customers had already paid for and were using, with no cleared consumer product ready to replace it",
-    "timingNote": "a timing mismatch, but not a market one \u2014 Scanadu got ahead of its own regulatory pathway, shipping to consumers before it had a clear route to full FDA clearance, so the regulatory clock ran out before the business model matured",
+    "timingNote": "a timing mismatch, but not a market one — Scanadu got ahead of its own regulatory pathway, shipping to consumers before it had a clear route to full FDA clearance, so the regulatory clock ran out before the business model matured",
     "lesson": "Speed to market matters",
     "sources": [
       "https://techcrunch.com/2016/12/13/fda-orders-scanadu-to-shut-down-support-for-its-scout-device-and-customers-are-mad",
@@ -105,7 +105,7 @@
     "fundingRaised": "$30M",
     "proximateCause": "Intel issued a full recall and shut down the Basis Peak after reports of overheating and skin burns",
     "rootCause": "the watch's continuous LED heart-rate sensor could overheat under certain conditions and cause burns; once Intel couldn't engineer a fix, it was cheaper and safer to recall and discontinue the whole product line than keep competing against Fitbit and Apple Watch with an unresolved safety flaw",
-    "timingNote": "not a timing problem \u2014 wearable fitness tracking was a booming category at the time; the failure was a hardware safety defect that had nothing to do with market readiness",
+    "timingNote": "not a timing problem — wearable fitness tracking was a booming category at the time; the failure was a hardware safety defect that had nothing to do with market readiness",
     "lesson": "Reliability is make-or-break",
     "sources": [
       "https://techcrunch.com/2016/08/03/basis-peak-watches-recalled-due-to-overheating/",
@@ -124,7 +124,7 @@
     "fundingRaised": "$25M",
     "proximateCause": "shut down after its acquirer BBVA was itself acquired and exited the business",
     "rootCause": "Simple ceded strategic control by selling to BBVA early, and once BBVA was acquired by PNC, Simple had no independent path forward while faster-growing independents like Chime and Ally captured the neobank market on their own terms",
-    "timingNote": "timing worked against it in a specific way \u2014 it was early to neobanking but lost strategic independence just as the category was taking off, so it couldn't capture the growth its early-mover position should have earned",
+    "timingNote": "timing worked against it in a specific way — it was early to neobanking but lost strategic independence just as the category was taking off, so it couldn't capture the growth its early-mover position should have earned",
     "lesson": "Neobanks need independence",
     "sources": [
       "https://techcrunch.com/2021/01/07/bbva-says-that-it-is-shutting-down-banking-app-simple-will-transfer-users-to-bbva-usa/",
@@ -143,7 +143,7 @@
     "fundingRaised": "$6M",
     "proximateCause": "couldn't generate enough loan volume to sustain the business",
     "rootCause": "online pawn lending removed the in-person trust and immediacy that make pawnshops useful to their core customers, so it competed against an entrenched offline habit without offering a compelling enough advantage to shift behavior",
-    "timingNote": "not a timing issue \u2014 the niche itself was structurally small and tied to in-person behavior; waiting longer wouldn't have grown the addressable market",
+    "timingNote": "not a timing issue — the niche itself was structurally small and tied to in-person behavior; waiting longer wouldn't have grown the addressable market",
     "lesson": "Niche lending needs demand",
     "sources": [
       "https://www.crunchbase.com/organization/pawngo"
@@ -161,7 +161,7 @@
     "fundingRaised": "$200M",
     "proximateCause": "high per-unit hardware costs made the product too expensive to compete at consumer toy price points",
     "rootCause": "building AI-driven robotics into a toy meant hardware costs that couldn't come down to compete with cheaper, established players like Lego and Sphero, so its price stayed too high for the mass-market toy audience it needed",
-    "timingNote": "not a timing failure \u2014 the cost structure of the hardware was the constraint at any point in time, not a market that wasn't ready yet",
+    "timingNote": "not a timing failure — the cost structure of the hardware was the constraint at any point in time, not a market that wasn't ready yet",
     "lesson": "Consumer hardware needs mass pricing",
     "sources": [
       "https://www.axios.com/2019/04/29/robotics-startup-anki-shutting-down-despite-200m-in-funding",
@@ -180,11 +180,904 @@
     "fundingRaised": "$2M",
     "proximateCause": "low adoption among bars and customers",
     "rootCause": "asked bars to change ordering behavior and adopt a new app layer on top of existing point-of-sale systems, and neither bars nor customers saw enough incremental convenience to justify switching from the POS systems already in place",
-    "timingNote": "not a timing problem \u2014 the friction was behavioral and structural (integrating with existing POS systems), not a market condition that would resolve itself with more time",
+    "timingNote": "not a timing problem — the friction was behavioral and structural (integrating with existing POS systems), not a market condition that would resolve itself with more time",
     "lesson": "Convenience needs converts",
     "sources": [
       "https://www.cbinsights.com/company/flowtab",
       "https://www.failory.com/cemetery/flowtab"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "burbn",
+    "name": "Burbn",
+    "tagline": "The multi-feature check-in app that got reduced to its one good idea, and that idea became Instagram",
+    "description": "Check-in app with photo-sharing",
+    "industry": "Information",
+    "foundedYear": 2010,
+    "diedYear": 2012,
+    "fundingRaised": "$0.5M",
+    "proximateCause": "the app was cluttered and low-engagement as a check-in/gaming/photo product",
+    "rootCause": "Burbn combined check-ins, plans-making, and photo-sharing into one app; when usage data showed photo-sharing was the only feature people actually used, the founders killed everything else and rebuilt around it as Instagram",
+    "timingNote": "not a timing failure — the founders caught the smartphone-photo wave at exactly the right moment; the product just had the wrong shape until it was stripped down",
+    "lesson": "Pivots can save",
+    "sources": [
+      "https://techcrunch.com/2010/11/08/instagram-a-pivotal-pivot/",
+      "https://www.startuparchive.org/p/how-kevin-systrom-pivoted-a-failed-check-in-app-into-instagram"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "color-labs",
+    "name": "Color Labs",
+    "tagline": "Raised $41M and a wave of hype before anyone understood what the app actually did",
+    "description": "Photo-sharing by location",
+    "industry": "Information",
+    "foundedYear": 2011,
+    "diedYear": 2012,
+    "fundingRaised": "$41M",
+    "proximateCause": "users found the product confusing and didn't adopt it",
+    "rootCause": "Color's location-based, contactless photo-sharing concept asked users to learn a genuinely new social model right as Instagram was winning with a simpler one (follow people, see their photos), so the pre-launch hype never converted into real usage",
+    "timingNote": "timing worked against it — it launched right as Instagram was defining and winning the category with a simpler model, leaving no room for a more confusing alternative to find its footing",
+    "lesson": "Hype can't save fit",
+    "sources": [
+      "https://www.cbsnews.com/news/photo-sharing-site-color-labs-announces-shut-down/",
+      "https://medium.com/fail-company/what-happened-to-color-labs-2611bc01b41b"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "factual",
+    "name": "Factual",
+    "tagline": "A location-data platform that made more sense merged with its biggest rival than standing alone",
+    "description": "Location data platform",
+    "industry": "Information",
+    "foundedYear": 2008,
+    "diedYear": 2020,
+    "fundingRaised": "$104M",
+    "proximateCause": "merged into Foursquare rather than continuing as an independent competitor",
+    "rootCause": "location data became a scale game dominated by Google Maps' first-party data advantage; two mid-sized independent players (Factual and Foursquare) combining was a defensive move to pool data and compete, which is itself evidence neither could win alone",
+    "timingNote": "not a pure timing issue — the location-data category consolidated broadly around this time as smaller players found they couldn't match Google's scale independently",
+    "lesson": "Data's only gold if sold",
+    "sources": [
+      "https://techcrunch.com/2020/04/06/foursquare-merges-with-factual",
+      "https://siliconangle.com/2020/04/06/foursquare-merges-factual-create-location-data-powerhouse"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "digg",
+    "name": "Digg",
+    "tagline": "A redesign so unpopular it accidentally launched its own killer",
+    "description": "Social news aggregator",
+    "industry": "Information",
+    "foundedYear": 2004,
+    "diedYear": 2012,
+    "fundingRaised": "$45M",
+    "proximateCause": "a 2010 redesign gutted the features and community mechanics users relied on",
+    "rootCause": "Digg's 'version 4' relaunch removed the community-driven bury button and shifted the algorithm to favor publishers over user submissions, alienating the power users who had built the site's front page; those users mass-migrated to Reddit within weeks, and the site never recovered before being sold off cheaply",
+    "timingNote": "not a market-timing problem — social news aggregation was thriving; the failure was a self-inflicted product decision that handed an entire engaged community to a direct competitor almost overnight",
+    "lesson": "User loyalty fragile",
+    "sources": [
+      "https://fourweekmba.com/what-happened-to-digg/",
+      "https://www.techradar.com/news/internet/web/whatever-happened-to-digg-1093422"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "formspring",
+    "name": "Formspring",
+    "tagline": "The anonymous Q&A app that couldn't outrun the bullying it enabled",
+    "description": "Anonymous Q&A social app",
+    "industry": "Information",
+    "foundedYear": 2009,
+    "diedYear": 2013,
+    "fundingRaised": "$14M",
+    "proximateCause": "cyberbullying on the platform, including cases linked to teen suicides, drove users and advertisers away",
+    "rootCause": "Formspring's core anonymity feature was also its core liability; once bullying became severe enough to trigger public backlash, the company had to curb the very anonymity that made the product distinctive, which killed engagement without solving the underlying trust problem",
+    "timingNote": "not a timing issue — anonymous Q&A apps had a real audience; the failure was that the product's defining feature and its worst harm were the same mechanism",
+    "lesson": "Toxicity's a sword",
+    "sources": [
+      "https://techcrunch.com/2013/03/15/formspring-the-pioneering-anonymous-qa-platform-is-shutting-down/",
+      "https://www.failory.com/cemetery/formspring"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "rethinkdb",
+    "name": "RethinkDB",
+    "tagline": "Open-source engineers loved it; almost nobody paid for it",
+    "description": "Open-source database",
+    "industry": "Information",
+    "foundedYear": 2009,
+    "diedYear": 2016,
+    "fundingRaised": "$12.2M",
+    "proximateCause": "the company couldn't convert its open-source user base into enough paying enterprise customers",
+    "rootCause": "RethinkDB built a technically well-regarded NoSQL database, but the industry's shift toward cloud-managed database services meant customers increasingly wanted a hosted product rather than software to run themselves; RethinkDB never built that hosted business fast enough to fund the underlying open-source engineering",
+    "timingNote": "a timing problem, but not the commonly assumed one — it wasn't beaten by MongoDB on features, it was overtaken by the broader industry shift to cloud-managed databases before it built a monetization model around that shift",
+    "lesson": "Open source needs pay",
+    "sources": [
+      "https://www.techrepublic.com/article/rethinkdb-is-dead-and-mongodb-isnt-what-killed-it/",
+      "https://siliconangle.com/2016/10/06/rethinkdb-bids-the-developer-community-farewell/"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "secret",
+    "name": "Secret",
+    "tagline": "Built for candor, shut down by its own worst users",
+    "description": "Anonymous social app",
+    "industry": "Information",
+    "foundedYear": 2014,
+    "diedYear": 2015,
+    "fundingRaised": "$35M",
+    "proximateCause": "the app's founder shut it down after concluding it was mostly being used for defamatory and mean-spirited posts",
+    "rootCause": "Secret's anonymity model removed accountability at the exact layer (naming real people) where accountability mattered most, so the app's most viral use case became targeted harassment rather than the candid, low-stakes sharing it was designed for",
+    "timingNote": "not a timing problem — anonymous sharing apps had real usage in this window; the failure was a direct, foreseeable consequence of the product's core design choice, not a market that wasn't ready",
+    "lesson": "Anonymity's messy",
+    "sources": [
+      "https://techcrunch.com/2015/04/29/psst/",
+      "https://www.nbcnews.com/tech/social-media/anonymous-sharing-app-secret-shuts-down-n350711"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "maker-media",
+    "name": "Maker Media",
+    "tagline": "Make: magazine and Maker Faire ran out of sponsors before they ran out of makers",
+    "description": "DIY tech magazine and events",
+    "industry": "Information",
+    "foundedYear": 2005,
+    "diedYear": 2019,
+    "fundingRaised": "$10M",
+    "proximateCause": "the company couldn't cover print and event costs and ceased operations abruptly, laying off all 22 employees",
+    "rootCause": "Maker Media depended on corporate sponsorship and investor funding to subsidize money-losing print publishing and live events; when sponsorship and investor interest dried up, there was no cash cushion left to keep the business running",
+    "timingNote": "not a timing problem for the underlying maker movement, which stayed active — the failure was a monetization model (print plus events) that never became self-sustaining; the founder relaunched a smaller version under new ownership almost immediately after",
+    "lesson": "Passion doesn't pay",
+    "sources": [
+      "https://techcrunch.com/2019/06/07/make-magazine-maker-media-layoffs/",
+      "https://hackaday.com/2019/06/07/maker-media-ceases-operations/"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "trunk-club",
+    "name": "Trunk Club",
+    "tagline": "Nordstrom bought the personal stylist that never quite justified the price tag",
+    "description": "Personal styling service",
+    "industry": "Retail Trade",
+    "foundedYear": 2010,
+    "diedYear": 2022,
+    "fundingRaised": "$17M",
+    "proximateCause": "Nordstrom shut it down after years of failing to make the service profitable",
+    "rootCause": "once acquired, Trunk Club's high-touch, human-stylist model carried costs that Nordstrom's broader retail business couldn't justify indefinitely, especially as Stitch Fix scaled a cheaper, more automated version of the same idea",
+    "timingNote": "not primarily a timing issue — personal styling demand was real; the model's underlying economics (human stylists, physical clubhouses) never matched Stitch Fix's more automated cost structure",
+    "lesson": "Curation needs scale",
+    "sources": [
+      "https://www.businessoffashion.com/news/retail/nordstrom-is-shuttering-trunk-club/",
+      "https://www.retaildive.com/news/what-trunk-clubs-demise-says-about-apparel-subscriptions/624667/"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "carwoo",
+    "name": "Carwoo",
+    "tagline": "Tried to make car buying transparent; the dealers who had to cooperate mostly didn't",
+    "description": "Online car-buying platform",
+    "industry": "Retail Trade",
+    "foundedYear": 2009,
+    "diedYear": 2014,
+    "fundingRaised": "$15M",
+    "proximateCause": "ran out of funding after raising $16M total",
+    "rootCause": "Carwoo's reverse-auction model depended on dealer participation and cooperation to work, but dealers had little incentive to compete transparently against each other on price, so the network never reached the density needed to make the product reliably useful",
+    "timingNote": "not a timing problem — frustration with opaque car pricing was and is real; the constraint was structural resistance from the dealer network the product depended on, not market readiness",
+    "lesson": "Resistance stalls disruption",
+    "sources": [
+      "https://techcrunch.com/2014/01/21/negotiation-free-car-buying-service-carwoo-shuts-down/",
+      "https://www.inc.com/jill-krasny/what-went-wrong-at-carwoo.html"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "webvan",
+    "name": "Webvan",
+    "tagline": "Promised grocery delivery to 26 cities in 18 months, and the warehouses bankrupted it first",
+    "description": "Online grocery delivery",
+    "industry": "Retail Trade",
+    "foundedYear": 1996,
+    "diedYear": 2001,
+    "fundingRaised": "$122M",
+    "proximateCause": "burned through its IPO cash building automated warehouses faster than demand could justify",
+    "rootCause": "Webvan built capital-intensive automated distribution centers across many cities simultaneously, betting on rapid demand growth that never materialized at dot-com-era prices; the fixed costs of that infrastructure outpaced revenue from actual orders by a huge margin",
+    "timingNote": "a genuine timing problem — broadband penetration, modern logistics tech, and consumer comfort with online grocery shopping were all roughly a decade away; Webvan built an operationally sound idea for a market and infrastructure environment that didn't exist yet",
+    "lesson": "Scale needs demand",
+    "sources": [
+      "https://www.sfgate.com/news/article/Webvan-runs-out-of-gas-Online-grocer-closes-it-2901363.php",
+      "https://thebigcollapse.medium.com/webvan-the-1-2-billion-grocery-delivery-dream-that-crashed-before-amazon-could-fly-a8e6ba982a3e"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "dot-bo",
+    "name": "Dot & Bo",
+    "tagline": "A millennial furniture brand that burned $20M before finding a business model that worked",
+    "description": "Online home decor retailer",
+    "industry": "Retail Trade",
+    "foundedYear": 2013,
+    "diedYear": 2016,
+    "fundingRaised": "$20M",
+    "proximateCause": "ran out of venture funding after acquisition talks fell through",
+    "rootCause": "Dot & Bo's curated, story-driven approach to furniture e-commerce required expensive content production and marketing to compete for the same customers as Wayfair's much larger inventory and ad spend, and it never found a version of the model that was profitable at its funding level",
+    "timingNote": "not a timing problem — online furniture retail was a real, growing category (Wayfair itself succeeded in it); the failure was a curation-heavy cost structure competing against a scale-first rival",
+    "lesson": "Cash burn kills curation",
+    "sources": [
+      "https://www.digitalcommerce360.com/2016/09/26/online-only-home-furnishings-retailer-dot-and-bo-shuts-down/",
+      "https://techcrunch.com/2016/09/23/dot-bo-closes-down"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "fashism",
+    "name": "Fashism",
+    "tagline": "Ashton Kutcher's backing couldn't turn outfit votes into revenue",
+    "description": "Fashion advice app",
+    "industry": "Retail Trade",
+    "foundedYear": 2009,
+    "diedYear": 2013,
+    "fundingRaised": "$5M",
+    "proximateCause": "the company couldn't generate enough revenue to sustain operations despite an engaged user base",
+    "rootCause": "Fashism built real engagement around a fun, low-stakes social feature (vote on my outfit) but never built a monetization layer commensurate with that engagement, so growth in users didn't translate into growth in revenue",
+    "timingNote": "not a timing issue — the core behavior (seeking outfit feedback) has stayed popular on other platforms; Fashism's specific failure was never solving monetization, not being early or late to the behavior",
+    "lesson": "Social needs stickiness",
+    "sources": [
+      "https://www.forbes.com/sites/lydiadishman/2013/09/28/why-ashton-kutcher-couldnt-save-this-stylish-startup/",
+      "https://fashionista.com/2013/09/ashton-kutcher-and-nina-garcia-backed-startup-fashism-shutters"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "drizly",
+    "name": "Drizly",
+    "tagline": "Uber paid $1.1 billion for it, then folded it into Uber Eats three years later",
+    "description": "Alcohol delivery app",
+    "industry": "Retail Trade",
+    "foundedYear": 2012,
+    "diedYear": 2024,
+    "fundingRaised": "$120M",
+    "proximateCause": "Uber shut it down to fold alcohol delivery directly into the Uber Eats app",
+    "rootCause": "after acquiring Drizly for $1.1B in 2021, Uber decided a standalone alcohol-delivery app wasn't worth maintaining separately from Uber Eats, especially given the extra regulatory complexity of alcohol delivery across different states; folding it into the main app let Uber keep the category without the standalone overhead",
+    "timingNote": "not really a market-timing failure — alcohol delivery demand was real and growing; this was a post-acquisition integration decision by the parent company rather than Drizly failing to find a market",
+    "lesson": "Regs and giants choke",
+    "sources": [
+      "https://www.cnn.com/2024/01/15/business/uber-is-shutting-down-drizly/index.html",
+      "https://www.modernretail.co/operations/why-uber-decided-to-sunset-drizly/"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "proteus-digital-health",
+    "name": "Proteus Digital Health",
+    "tagline": "The 'digital pill' pioneer that ran out of cash right as COVID hit",
+    "description": "Ingestible sensors",
+    "industry": "Health Care",
+    "foundedYear": 2004,
+    "diedYear": 2020,
+    "fundingRaised": "$500M",
+    "proximateCause": "filed for Chapter 11 bankruptcy after a severe liquidity crisis",
+    "rootCause": "Proteus depended on a small number of large pharma partnerships (like its collaboration with Otsuka) to fund the years of clinical and regulatory work needed for ingestible sensors; when that partnership scaled back, the company couldn't raise replacement capital in time, and COVID-19 closed the funding window completely",
+    "timingNote": "a real timing problem — Proteus needed one more funding round to bridge to sustainability, and that round's window closed exactly as COVID-19 froze venture and biotech funding markets in early 2020",
+    "lesson": "Don’t bet on one partner",
+    "sources": [
+      "https://www.cnbc.com/2020/06/15/proteus-digital-health-once-worth-1point5-billion-files-for-chapter-11.html",
+      "https://www.fiercebiotech.com/medtech/digital-pill-developer-proteus-files-for-bankruptcy"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "carezone",
+    "name": "CareZone",
+    "tagline": "Sold its best technology to Walmart, then Walmart quietly let the original app die",
+    "description": "Medication management app",
+    "industry": "Health Care",
+    "foundedYear": 2013,
+    "diedYear": 2023,
+    "fundingRaised": "$161M",
+    "proximateCause": "Walmart discontinued the consumer app after acquiring CareZone's medication-management technology",
+    "rootCause": "CareZone built genuinely useful medication-management tools, but as a standalone consumer app it couldn't build a durable business around a feature that a company like Walmart could absorb into its own pharmacy ecosystem; selling the technology for around $200M was a good outcome for investors, but it meant the original product had no independent path forward",
+    "timingNote": "not a timing failure — medication management is a persistent need; the product's fate was tied to being strategically useful to an acquirer rather than being independently sustainable",
+    "lesson": "Defensible revenue matters",
+    "sources": [
+      "https://medcitynews.com/2020/06/walmart-buys-carezones-medication-management-technology/",
+      "https://www.healthcaredive.com/news/walmart-buys-medication-management-tech-from-startup-carezone/579875/"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "goldfinch-bio",
+    "name": "Goldfinch Bio",
+    "tagline": "$214M and a Gilead partnership weren't enough to survive one disappointing trial readout",
+    "description": "Precision kidney meds",
+    "industry": "Health Care",
+    "foundedYear": 2016,
+    "diedYear": 2023,
+    "fundingRaised": "$209M",
+    "proximateCause": "couldn't raise additional capital after its lead kidney-disease drug posted underwhelming Phase 2 results",
+    "rootCause": "Goldfinch built its pipeline around precision treatments for a small number of rare kidney diseases; when its most advanced drug candidate's Phase 2 data came back lukewarm, the company lost its clearest path to a near-term win right as the broader biotech funding environment tightened, leaving no cushion to fund a pivot",
+    "timingNote": "a timing problem — the Phase 2 disappointment landed during a broader downturn in private biotech funding, so there was no favorable market left to raise a bridge round through",
+    "lesson": "Timing is critical",
+    "sources": [
+      "https://www.fiercebiotech.com/biotech/goldfinch-bio-falls-sky-after-failing-find-path-forward-kidney-treatments",
+      "https://cen.acs.org/pharmaceuticals/Goldfinch-shuts-down-Karuna-snaps/101/i6"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "jawbone",
+    "name": "Jawbone",
+    "tagline": "Raised nearly a billion dollars and still couldn't out-ship Fitbit",
+    "description": "Fitness trackers",
+    "industry": "Health Care",
+    "foundedYear": 2006,
+    "diedYear": 2017,
+    "fundingRaised": "$930M",
+    "proximateCause": "liquidated its assets after running out of cash and options",
+    "rootCause": "Jawbone raised enormous amounts of capital relative to its actual product execution, repeatedly shipping late and dealing with product recalls while Fitbit and then Apple Watch captured the wearables market it was trying to lead; commentators called it 'death by overfunding' — the cash cushion let operational problems compound for years instead of forcing a correction",
+    "timingNote": "not a timing problem — Jawbone was arguably early to wearables; the failure was years of execution problems (late shipping, recalls) that outlasted its enormous funding cushion",
+    "lesson": "Differentiate or die",
+    "sources": [
+      "https://www.cnbc.com/2017/07/10/jawbones-demise-a-case-of-death-by-overfunding-in-silicon-valley.html",
+      "https://www.fastcompany.com/4042723/fitness-tracker-company-jawbone-is-going-out-of-business"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "healthspot",
+    "name": "HealthSpot",
+    "tagline": "Built a telemedicine kiosk network inside pharmacies, then ran out of cash before it could prove out",
+    "description": "Telemedicine kiosks",
+    "industry": "Health Care",
+    "foundedYear": 2012,
+    "diedYear": 2016,
+    "fundingRaised": "$43M",
+    "proximateCause": "ran out of cash and filed for Chapter 7 bankruptcy, abruptly notifying retail partners it was shutting down within days",
+    "rootCause": "HealthSpot's kiosk model required expensive hardware deployed and maintained across physical retail locations (Rite Aid, Cleveland Clinic) well before software-based telemedicine had proven a cheaper path to the same outcome; the capital intensity of the hardware rollout outpaced the company's ability to raise enough follow-on funding",
+    "timingNote": "a real timing problem — HealthSpot bet on hardware kiosks right as smartphone-based telemedicine apps were becoming viable, a far cheaper way to deliver the same remote-visit outcome, which undercut the case for expensive physical kiosks before HealthSpot could scale",
+    "lesson": "Flexibility beats rigidity",
+    "sources": [
+      "https://medcitynews.com/2016/01/telemedicine-kiosk-maker-healthspot-shuts-down/",
+      "https://www.healthcaredive.com/news/healthspot-files-chapter-7-bankruptcy-shutters-telehealth-kiosks/412325/"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "zeo",
+    "name": "Zeo",
+    "tagline": "Measured your sleep stages with real EEG tech, in a headband nobody wanted to wear to bed",
+    "description": "Sleep tracking headband",
+    "industry": "Health Care",
+    "foundedYear": 2008,
+    "diedYear": 2013,
+    "fundingRaised": "$30M",
+    "proximateCause": "the business model didn't generate enough margin to sustain the company",
+    "rootCause": "Zeo's founder pointed to a 'suboptimal profit margin' business model combined with a physically invasive headband device and a clunky requirement to manually log data on a website — friction that limited how many people would actually adopt and keep using a sleep tracker in this form factor",
+    "timingNote": "a timing problem in the sense that Zeo arrived years before comfortable, unobtrusive sleep tracking (built into watches and rings) became possible; the underlying headband-EEG approach was never going to reach mass comfort no matter how long Zeo waited",
+    "lesson": "Broad appeal needed",
+    "sources": [
+      "https://www.mobihealthnews.com/news/exclusive-sleep-coach-company-zeo-shutting-down",
+      "https://syneoshealthcommunications.com/blog/zeo-the-big-ugly-retainer-of-self-trackers"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "arivale",
+    "name": "Arivale",
+    "tagline": "Personalized wellness backed by real genomics data, priced out of reach of the people it wanted to help",
+    "description": "Personalized health coaching",
+    "industry": "Health Care",
+    "foundedYear": 2015,
+    "diedYear": 2019,
+    "fundingRaised": "$50M",
+    "proximateCause": "shut down abruptly, saying the cost of running the service exceeded what customers could pay",
+    "rootCause": "Arivale's coaching was built on genuinely rigorous genetic, blood, and microbiome testing, but that same rigor made the direct-to-consumer cost structure unsustainable — the tests needed to power each customer's personalized plan cost more than a consumer subscription business could recover",
+    "timingNote": "not a timing problem — personalized wellness coaching remains in demand; the failure was a cost structure (expensive lab testing per customer) that a direct-to-consumer subscription price could never cover",
+    "lesson": "Premium needs mass market",
+    "sources": [
+      "https://www.geekwire.com/2019/scientific-wellness-startup-arivale-closes-abruptly-tragic-end-vision-transform-personal-health/",
+      "https://medcitynews.com/2019/04/personalized-health-coaching-startup-arivale-shuts-down/"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "lendup",
+    "name": "LendUp",
+    "tagline": "Marketed itself as the ethical alternative to payday loans, then got shut down for deceptive lending",
+    "description": "Loans for subprime borrowers",
+    "industry": "Finance and Insurance",
+    "foundedYear": 2012,
+    "diedYear": 2021,
+    "fundingRaised": "$350M",
+    "proximateCause": "the CFPB ordered it to stop making new loans and fined it for repeated deceptive practices",
+    "rootCause": "LendUp built its brand around a 'ladder' that promised responsible borrowers access to larger loans at better rates, but regulators found that promise didn't hold for tens of thousands of customers in practice; a 2016 CFPB order followed by continued violations led to a second, terminal enforcement action in 2021 that ended its ability to lend at all",
+    "timingNote": "not a timing problem — subprime lending demand was constant throughout; the failure was a sustained gap between LendUp's marketed promise and its actual practices, which regulators eventually treated as a pattern rather than a one-time violation",
+    "lesson": "Fintech can’t skirt regs",
+    "sources": [
+      "https://www.bankingdive.com/news/cfpb-shuts-down-online-lender-lendup/616486/",
+      "https://www.consumerfinance.gov/archive/newsroom/cfpb-shutters-lending-by-vc-backed-fintech-for-violating-agency-order/"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "clarity-money",
+    "name": "Clarity Money",
+    "tagline": "Goldman Sachs bought it, borrowed its best ideas for Marcus, then closed the original app",
+    "description": "Personal finance app",
+    "industry": "Finance and Insurance",
+    "foundedYear": 2016,
+    "diedYear": 2021,
+    "fundingRaised": "$11M",
+    "proximateCause": "Goldman Sachs wound the app down after migrating its most-used features into its own Marcus Insights product",
+    "rootCause": "once Goldman acquired Clarity Money in 2018, the app's long-term fate depended on Goldman's own consumer-banking strategy rather than the product's independent traction; Goldman ultimately decided to fold the best ideas into its own Marcus brand instead of continuing to run a separately branded app, ending Clarity Money's existence",
+    "timingNote": "not a timing failure by Clarity Money's own product-market fit — it was a strategic decision by its acquirer to consolidate features under its own brand, which can happen to any acquired app whose parent company reprioritizes",
+    "lesson": "Finance apps need edge",
+    "sources": [
+      "https://www.theblock.co/linked/93252/goldman-sachs-fintech-clarity-money-shutter",
+      "https://www.fintechfutures.com/paytech/goldman-winds-down-clarity-money-to-focus-on-marcus-insights"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "isentium",
+    "name": "Isentium",
+    "tagline": "Built the sentiment-analysis engine Bloomberg's terminal used, until Bloomberg built its own",
+    "description": "Social sentiment for trading",
+    "industry": "Finance and Insurance",
+    "foundedYear": 2012,
+    "diedYear": 2019,
+    "fundingRaised": "$15M",
+    "proximateCause": "lost its primary distribution channel when Bloomberg ended their partnership and launched a competing in-house app",
+    "rootCause": "Isentium's business depended heavily on its integration into the Bloomberg Terminal to reach financial customers; once Bloomberg decided the sentiment-analysis feature was valuable enough to build in-house rather than license, Isentium lost its main distribution channel, and a costly IP lawsuit against Bloomberg drained resources without winning back that access",
+    "timingNote": "not a timing problem — social-sentiment trading signals remained a real product category; the failure was structural dependence on a single distribution partner who had every incentive to eventually build the feature itself",
+    "lesson": "Trading tools need traction",
+    "sources": [
+      "https://www.worldipreview.com/news/bloomberg-triumphs-against-ai-company-in-social-media-patent-spat-16903",
+      "https://www.integrity-research.com/isentium-launches-sentiment-search-engine-on-bloomberg/"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "bitpass",
+    "name": "Bitpass",
+    "tagline": "Tried to make small online payments work years before anyone would pay for small online payments",
+    "description": "Micropayments platform",
+    "industry": "Finance and Insurance",
+    "foundedYear": 2002,
+    "diedYear": 2007,
+    "fundingRaised": "$2M",
+    "proximateCause": "shut down and closed all customer accounts after concluding the business wasn't viable",
+    "rootCause": "Bitpass explicitly cited competition from Google Checkout, launched the same year, as undermining its micropayments system; a free, general-purpose payment option from a company with Google's reach and distribution made a standalone micropayments-specific startup redundant almost overnight",
+    "timingNote": "a timing problem — Bitpass was pursuing a real need (small digital-content payments) years before that need had a viable large-scale solution, and when a well-resourced entrant (Google) finally addressed it, a small independent player couldn't compete on distribution",
+    "lesson": "Micropayments need mass use",
+    "sources": [
+      "https://venturebeat.com/business/bitpass-croaks-is-this-the-end-of-micropayments/",
+      "https://www.finextra.com/newsarticle/16403/bitpass-bites-the-dust"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "lytro",
+    "name": "Lytro",
+    "tagline": "Reinvented the camera at the sensor level, and still lost to the phone in your pocket",
+    "description": "Light-field cameras",
+    "industry": "Manufacturing",
+    "foundedYear": 2006,
+    "diedYear": 2018,
+    "fundingRaised": "$200M",
+    "proximateCause": "shut down after failing to build a sustainable market for its light-field cameras",
+    "rootCause": "Lytro's light-field sensor technology was a genuine computational-photography breakthrough, but neither its consumer cameras nor its later pivot to professional and VR cameras found a market big enough to justify the hardware's cost; meanwhile smartphone cameras absorbed computational photography features (like depth-of-field effects) through software, closing the gap Lytro's hardware was built to fill",
+    "timingNote": "a timing problem — Lytro's core insight (compute depth and focus after the shot) turned out to be right, but smartphones delivered a software version of that insight to billions of people before Lytro's specialized hardware could find a large enough market of its own",
+    "lesson": "Cameras can’t beat smartphones",
+    "sources": [
+      "https://techcrunch.com/2018/03/27/lytro-is-shutting-down",
+      "https://www.engadget.com/2018-03-27-lytro-winding-down-business.html"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "aria-insights",
+    "name": "Aria Insights",
+    "tagline": "Rebranded from hardware to data days before shutting down entirely",
+    "description": "Tethered industrial drones",
+    "industry": "Manufacturing",
+    "foundedYear": 2008,
+    "diedYear": 2019,
+    "fundingRaised": "$39M",
+    "proximateCause": "shut down abruptly, just two months after rebranding from CyPhy Works to focus on drone data instead of drone hardware",
+    "rootCause": "as CyPhy Works, the company built tethered industrial drones but couldn't build a hardware business competitive with DJI's manufacturing scale; the last-minute pivot to a data/analytics business model came too late to raise the funding needed to make that transition, and the company ran out of runway almost immediately after rebranding",
+    "timingNote": "a timing problem in its final act — the strategic pivot to a data business might have been the right long-term direction, but it happened too late relative to the company's remaining cash to give the new model a real chance to prove itself",
+    "lesson": "Hardware niches need big adopters",
+    "sources": [
+      "https://www.therobotreport.com/aria-insights-cyphy-works-shuts-down/",
+      "https://techcrunch.com/2019/03/22/drone-analytics-startup-aria-insights-suddenly-shutters"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "maple",
+    "name": "Maple",
+    "tagline": "Vertically integrated the entire meal-delivery chain, and still lost money on every meal",
+    "description": "Premium meal delivery",
+    "industry": "Accommodation and Food Services",
+    "foundedYear": 2014,
+    "diedYear": 2017,
+    "fundingRaised": "$50M",
+    "proximateCause": "sold its technology and team to European rival Deliveroo rather than continue operating independently",
+    "rootCause": "Maple owned its own kitchens, delivery fleet, and app to control quality end-to-end, but that vertical integration meant carrying the full fixed costs of restaurant-grade food production without restaurant-scale volume; the company was reportedly losing money on every meal it delivered, and rather than keep funding that gap, it sold its assets to Deliveroo and its team relocated to London",
+    "timingNote": "not a timing problem — food delivery was a booming, well-timed category; the failure was a cost structure (owning the entire kitchen-to-doorstep chain) that couldn't reach profitability at the volumes Maple achieved",
+    "lesson": "Premium food needs profit",
+    "sources": [
+      "https://techcrunch.com/2017/05/08/maple-shuts-down/",
+      "https://qz.com/972859/inside-maples-improbable-dream-of-delivering-a-better-office-lunch"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "munchery",
+    "name": "Munchery",
+    "tagline": "Chef-prepared meals at scale, undone by aggressive expansion it couldn't afford",
+    "description": "Chef-prepared meal delivery",
+    "industry": "Accommodation and Food Services",
+    "foundedYear": 2010,
+    "diedYear": 2019,
+    "fundingRaised": "$125M",
+    "proximateCause": "shut down abruptly and filed for Chapter 11 bankruptcy after running out of cash",
+    "rootCause": "Munchery expanded into new cities faster than it could establish efficient kitchen and delivery operations in each one, and increasing competition made it harder to acquire new customers cheaply enough to offset that expansion cost; by the time it shut down it owed millions to vendors and gift-card-holding customers it couldn't pay back",
+    "timingNote": "not a timing problem — meal delivery was a real, growing category (competitors survived); the failure was expanding faster than the unit economics in each new market could support",
+    "lesson": "Expansion eats cash",
+    "sources": [
+      "https://www.bloomberg.com/news/articles/2019-01-24/munchery-becomes-the-latest-casualty-of-the-food-delivery-shakeout",
+      "https://techcrunch.com/2019/03/04/failed-meal-kit-service-munchery-owes-6m-to-gift-card-holders-vendors"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "cafe-x",
+    "name": "Cafe X",
+    "tagline": "Robot baristas were a great demo and a hard sell at street-level foot traffic",
+    "description": "Robotic coffee kiosks",
+    "industry": "Accommodation and Food Services",
+    "foundedYear": 2015,
+    "diedYear": 2020,
+    "fundingRaised": "$15M",
+    "proximateCause": "closed its downtown storefront locations, then its airport locations, as pandemic foot traffic collapsed",
+    "rootCause": "Cafe X's downtown San Francisco locations were explicitly described by its own CEO as running 'prototype' machines meant to learn about customer behavior rather than a proven profitable format; when the company pivoted to airport locations to find a better foot-traffic model, the COVID-19 collapse in air travel removed that foot traffic before the pivot could be judged on its own terms",
+    "timingNote": "a real timing problem in its final act — the pivot to airport kiosks might have found a workable niche, but the pandemic's collapse in air travel hit right as that new bet was being placed",
+    "lesson": "Humans trump robots",
+    "sources": [
+      "https://www.axios.com/2020/01/07/cafe-x-shuts-some-of-its-robot-coffee-shops",
+      "https://thespoon.tech/cafe-x-shuts-down-its-three-downtown-san-francisco-locations/"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "newstilt",
+    "name": "NewsTilt",
+    "tagline": "A platform to make journalists into entrepreneurs, launched with no journalists and no readers on either side",
+    "description": "Platform for journalists",
+    "industry": "Information",
+    "foundedYear": 2009,
+    "diedYear": 2010,
+    "fundingRaised": "$0.5M",
+    "proximateCause": "shut down about two months after launch after failing to attract either journalists or an audience",
+    "rootCause": "NewsTilt tried to build a marketplace connecting journalists with an audience, but launched hoping supply and demand would meet rather than having built either side first; founder Paul Biggar later wrote that neither co-founder had a journalism background or real passion for the idea, and the company burned through its Y Combinator funding chasing a two-sided market that never formed",
+    "timingNote": "not a timing problem â€” the failure was fundamental market design (a two-sided marketplace with neither side present at launch) and founder-market fit, not something more time would have fixed",
+    "lesson": "Markets need sides",
+    "sources": [
+      "https://blog.paulbiggar.com/why-we-shut-newstilt-down/",
+      "https://gigaom.com/2010/09/17/anatomy-of-a-failure-lessons-from-the-death-of-newstilt/"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "wickr",
+    "name": "Wickr",
+    "tagline": "Built one of the first mainstream encrypted messengers, then Amazon quietly euthanized the consumer version",
+    "description": "Secure messaging app",
+    "industry": "Information",
+    "foundedYear": 2012,
+    "diedYear": 2023,
+    "fundingRaised": "$73M",
+    "proximateCause": "AWS shut down the free consumer app, Wickr Me, on December 31, 2023, after acquiring Wickr in 2021",
+    "rootCause": "after Amazon Web Services acquired Wickr in 2021, it kept investing in the enterprise- and government-focused Wickr/AWS Wickr products but decided the free consumer messaging app no longer fit its business priorities; new signups were cut off at the end of 2022 and the app was fully shut down a year later so AWS could concentrate on business and public-sector customers instead",
+    "timingNote": "not a market-timing failure â€” encrypted messaging remained in high demand throughout (Signal and WhatsApp both grew); this was an acquirer's strategic choice to deprioritize a free consumer product, not the market rejecting it",
+    "lesson": "Privacy's crowded",
+    "sources": [
+      "https://techcrunch.com/2022/11/21/amazon-wickr-app-shutting-down/",
+      "https://cybernews.com/news/wickr-me-shutting-down/"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "ahalife",
+    "name": "Ahalife",
+    "tagline": "A curated luxury marketplace that survived an IPO and a leadership shakeup, but not the cost of acquiring customers",
+    "description": "Curated luxury goods marketplace",
+    "industry": "Retail Trade",
+    "foundedYear": 2010,
+    "diedYear": 2020,
+    "fundingRaised": "$20M",
+    "proximateCause": "the company quietly stopped operating around 2020 after years of restructuring, and is listed as 'Dead' by CB Insights",
+    "rootCause": "AHAlife spent heavily on marketing to compete for high-end shoppers against Amazon and dedicated luxury e-commerce players, and after a 2016 ASX listing it went through a 2017 restructuring in which both co-founders left their executive roles; the site kept limping along with service and fulfillment problems (an expired SSL certificate, unresolved customer orders) before going dark around 2020 without a formal shutdown announcement",
+    "timingNote": "not a timing problem â€” curated luxury e-commerce was and is a viable category (Moda Operandi and others succeeded in it); AHAlife's failure was a marketing-cost structure and leadership instability that a niche audience couldn't sustain",
+    "lesson": "Niche doesn't defend",
+    "sources": [
+      "https://www.cbinsights.com/company/ahalife",
+      "https://www.globenewswire.com/news-release/2017/02/27/1450590/0/en/AHAlife-Restructure-and-Half-Year-Results-Announcement.html"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "gowalla",
+    "name": "Gowalla",
+    "tagline": "Lost the location check-in war to Foursquare, then got bought by Facebook just for the team",
+    "description": "Location-based social app",
+    "industry": "Information",
+    "foundedYear": 2007,
+    "diedYear": 2012,
+    "fundingRaised": "$10.4M",
+    "proximateCause": "Facebook acquired Gowalla in December 2011 purely for its team, and shut the product down by March 2012",
+    "rootCause": "Gowalla and Foursquare fought head-to-head for the location-based check-in market through 2010-2011, and Foursquare pulled decisively ahead in users and brand recognition; Facebook's acquisition was explicitly an acqui-hire for the founders' design and engineering talent rather than a purchase of Gowalla's technology or user base, so the product itself was wound down within three months",
+    "timingNote": "a network-effects timing loss more than a pure market-timing one â€” Gowalla and Foursquare launched into the same window, but Foursquare won the scale race, and once one player pulled ahead in a winner-take-most category the also-ran had no independent path forward",
+    "lesson": "Winners take all",
+    "sources": [
+      "https://techcrunch.com/2011/12/05/gowalla-acqhire/",
+      "http://www.enterprise-cio.com/news/2012/03/12/gowalla-shuts-down-after-facebook-acquisition/"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "vine",
+    "name": "Vine",
+    "tagline": "Invented six-second video stardom, then its own parent company starved it of the tools to compete",
+    "description": "Short-video app",
+    "industry": "Information",
+    "foundedYear": 2012,
+    "diedYear": 2017,
+    "fundingRaised": "$645M (Twitter)",
+    "proximateCause": "Twitter announced in October 2016 it would shut down the Vine app, folding it down completely by January 2017",
+    "rootCause": "Twitter acquired Vine before launch in 2012 but never invested enough in creator monetization or platform development to keep pace once Instagram (adding video in 2013) and Snapchat drew away both users and creators; facing its own financial pressure and an unsuccessful search for a buyer for the whole company, Twitter cut Vine as part of a broader round of layoffs rather than keep funding a product it had let stagnate",
+    "timingNote": "a real timing failure â€” Vine had first-mover advantage in short-form video, but Twitter's years of underinvestment let Instagram and Snapchat catch up and overtake it before Twitter finally acted, so by the time it needed to compete, the moment for standalone short video had already passed to rivals",
+    "lesson": "Neglect kills hits",
+    "sources": [
+      "https://techcrunch.com/2016/10/27/twitter-is-shutting-down-vine/",
+      "https://money.cnn.com/2017/01/17/technology/vine-shuts-down/index.html"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "99dresses",
+    "name": "99dresses",
+    "tagline": "A teenage founder's viral closet-swap app that couldn't make its US relaunch stick",
+    "description": "Fashion swapping app",
+    "industry": "Retail Trade",
+    "foundedYear": 2010,
+    "diedYear": 2014,
+    "fundingRaised": "$0.5M",
+    "proximateCause": "shut down in 2014 after a US relaunch failed to replicate the engagement of its original Australian user base",
+    "rootCause": "99dresses built a loyal following in Australia around swapping secondhand clothes using an in-app credit currency, but when 19-year-old founder Nikki Durkin moved the company to San Francisco and rebuilt it as a US-first mobile product, American users didn't adopt the virtual-currency swapping mechanic the way Australian users had, and the company burned through its funding without finding the same traction in the new market",
+    "timingNote": "not a timing problem â€” clothing swap and resale later became a large category (Poshmark, ThredUp); 99dresses' failure was a market-fit and localization problem when it tried to transplant an Australia-specific mechanic to US users, not a market that wasn't ready",
+    "lesson": "Retention is king",
+    "sources": [
+      "https://www.smartcompany.com.au/startupsmart/99dresses-shuts-down-amid-financial-woes/",
+      "https://www.failory.com/cemetery/99dresses"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "kozmo-com",
+    "name": "Kozmo.com",
+    "tagline": "Promised free one-hour delivery of almost anything, and free was exactly the problem",
+    "description": "Urban free delivery service",
+    "industry": "Retail Trade",
+    "foundedYear": 1998,
+    "diedYear": 2001,
+    "fundingRaised": "$110M",
+    "proximateCause": "shut down all operations in April 2001 after burning through its funding without ever turning a profit",
+    "rootCause": "Kozmo built an entire courier and warehouse infrastructure to deliver small items like videos and snacks with no delivery fee and no minimum order size, so it was structurally paying more per delivery than many orders were worth; when the dot-com crash cut off the additional venture capital the model depended on, there was no way to keep subsidizing every order and the company folded, laying off nearly 1,100 employees at once",
+    "timingNote": "a genuine timing problem in the sense that broadband, smartphone logistics, and gig-economy delivery labor were all a decade away, but the core issue ran deeper than timing â€” the free-delivery-of-anything model didn't have viable unit economics at any point without those later tools",
+    "lesson": "Free's a trap",
+    "sources": [
+      "https://en.wikipedia.org/wiki/Kozmo.com",
+      "https://www.forbes.com/2001/04/12/0412topnews.html"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "getglue",
+    "name": "GetGlue",
+    "tagline": "Gamified checking in to TV shows, then got sold, renamed, and shut down within about a year",
+    "description": "Social TV check-in app",
+    "industry": "Information",
+    "foundedYear": 2008,
+    "diedYear": 2015,
+    "fundingRaised": "$24M",
+    "proximateCause": "i.TV, which had acquired GetGlue and relaunched it as TVtag, shut the service down entirely on January 1, 2015",
+    "rootCause": "GetGlue's core loop of checking in to TV shows and collecting virtual stickers never became a habit for enough viewers as streaming fragmented the shared live-TV moment it depended on; i.TV acquired the struggling service in November 2013, rebranded it as TVtag, and after roughly a year of trying to make the concept work under new ownership, decided to redirect its resources elsewhere and pulled the plug",
+    "timingNote": "a timing problem â€” social TV check-ins made more sense in an era of appointment live television, and by the time GetGlue/TVtag needed a mass audience, on-demand and streaming viewing habits had already fragmented the 'watching together' moment the product was built around",
+    "lesson": "Niche trends risky",
+    "sources": [
+      "https://www.adweek.com/lostremote/checked-out-tvtag-formerly-getglue-to-shut-down/",
+      "https://en.wikipedia.org/wiki/Tvtag"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "juicero",
+    "name": "Juicero",
+    "tagline": "A $400 Wi-Fi-connected juicer that a Bloomberg reporter proved you could squeeze by hand",
+    "description": "Wi-Fi juicer",
+    "industry": "Manufacturing",
+    "foundedYear": 2013,
+    "diedYear": 2017,
+    "fundingRaised": "$120M",
+    "proximateCause": "shut down in September 2017 after a Bloomberg video showed its proprietary juice packs could be squeezed by hand nearly as effectively as by the machine",
+    "rootCause": "Juicero built an internet-connected press using DRM-locked produce packs that cost $400 (later $700), positioning itself as sophisticated hardware; when Bloomberg demonstrated in April 2017 that consumers could get nearly identical juice by hand-squeezing the packs, it undercut the entire premise of needing an expensive machine and turned the company into a punchline, and the company â€” already reportedly losing about $4 million a month building out nationwide distribution â€” never recovered",
+    "timingNote": "not a timing problem â€” the failure was a fundamental product-value mismatch (an expensive machine solving a problem hands could solve for free), not a market that wasn't ready",
+    "lesson": "Hardware must solve real problems",
+    "sources": [
+      "https://www.cnbc.com/2017/09/01/the-tech-start-up-that-made-a-700-juicing-machine-has-shut-down.html",
+      "https://www.bloomberg.com/news/features/2017-09-08/inside-juicero-s-demise-from-prized-startup-to-fire-sale"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "grooveshark",
+    "name": "Grooveshark",
+    "tagline": "Let anyone upload music for free, then got legislated and litigated out of existence",
+    "description": "Music streaming with uploads",
+    "industry": "Information",
+    "foundedYear": 2006,
+    "diedYear": 2015,
+    "fundingRaised": "$4.9M",
+    "proximateCause": "shut down permanently on April 30, 2015, as part of a settlement with major record labels UMG, Sony, and Warner",
+    "rootCause": "Grooveshark's core product let users upload and stream music freely without licensing agreements from labels, which powered explosive early growth (35 million users at its peak) but also constituted the copyright infringement labels sued over starting in 2011; facing a trial with potential damages of up to $736 million, the company agreed to shut down entirely, wipe its music library, hand over its IP, and pay $50 million rather than risk a larger judgment",
+    "timingNote": "not a timing problem â€” the failure was structural and legal from day one: building a music platform on unlicensed user uploads was always going to collide with copyright law once it got big enough for labels to sue",
+    "lesson": "Legality's key",
+    "sources": [
+      "https://www.rollingstone.com/music/music-news/grooveshark-shuts-down-after-eight-years-74101/",
+      "https://en.wikipedia.org/wiki/Grooveshark"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "pulse",
+    "name": "Pulse",
+    "tagline": "A slick news reader LinkedIn paid $90M for, then folded into a feature nobody asked to keep separate",
+    "description": "News reader app",
+    "industry": "Information",
+    "foundedYear": 2010,
+    "diedYear": 2017,
+    "fundingRaised": "$10M",
+    "proximateCause": "LinkedIn officially discontinued the standalone Pulse app on May 31, 2017",
+    "rootCause": "LinkedIn acquired Pulse for $90 million in 2013 to add news-reading habits to its platform, first replacing its own LinkedIn Today feature with it and later trying a redesigned personalized-news app; neither version became central enough to LinkedIn's strategy, and the company eventually folded Pulse's remaining function into the main site's 'Articles' publishing feature, retiring the standalone app entirely",
+    "timingNote": "not really a market-timing failure â€” this was an acquirer absorbing and eventually discontinuing a standalone product as its own strategy evolved, not Pulse failing to find a market on its own",
+    "lesson": "Buyers can bury",
+    "sources": [
+      "https://www.salesrobot.co/blogs/linkedin-pulse",
+      "https://www.demandgenreport.com/industry-news/linkedin-buys-pulse-news-reader/21261/"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "ecomom",
+    "name": "Ecomom",
+    "tagline": "An eco-friendly baby products retailer undone by a discount policy that lost money on every sale",
+    "description": "Eco-friendly baby products e-commerce",
+    "industry": "Retail Trade",
+    "foundedYear": 2009,
+    "diedYear": 2013,
+    "fundingRaised": "$12M",
+    "proximateCause": "wound down due to financial insolvency in early 2013, shortly after founder and CEO Jody Sherman's death",
+    "rootCause": "Ecomom adopted an uncapped 50%-off discount policy that let repeat customers buy below cost indefinitely, so growth in orders actively drained cash rather than building revenue; CEO Jody Sherman, by his own team's account, didn't understand the resulting margin problem, and after raising over $12M the 28-person startup ran out of cash with no one able to account for where it had gone",
+    "timingNote": "not a timing problem â€” the failure was financial mismanagement (a discount structure that guaranteed losses) rather than a market that wasn't ready for eco-friendly baby products",
+    "lesson": "Execution beats ethos",
+    "sources": [
+      "https://techcrunch.com/2013/04/24/ecomom-greencupboards/",
+      "http://www.daniellemorrill.com/2013/04/mis-management-incompetence-at-ecomom/"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "fancy",
+    "name": "Fancy",
+    "tagline": "A Pinterest-for-shopping platform that burned through $100M chasing Amazon and Shopify's turf",
+    "description": "Social e-commerce platform",
+    "industry": "Retail Trade",
+    "foundedYear": 2010,
+    "diedYear": 2020,
+    "fundingRaised": "$80M",
+    "proximateCause": "operations gradually wound down and the company effectively closed by October 2020 after years of shrinking margins and no path to profitability",
+    "rootCause": "Fancy built a social discovery and shopping platform that let users curate and buy from a visually driven catalog, but its gross margins nearly halved between 2018 and 2019 as it competed for the same merchants and shoppers as much larger, better-resourced platforms like Shopify and Amazon; despite raising and spending roughly $100 million, and bringing in a new CEO in 2019 to try to reinvent the brand, the company couldn't find a profitable version of the model before it ran out of runway",
+    "timingNote": "not a timing problem â€” social/curated e-commerce had real proof points elsewhere; Fancy's failure was a margin and competitive-positioning problem against much larger platforms, not a market that wasn't ready",
+    "lesson": "Curation needs cash flow",
+    "sources": [
+      "https://grokipedia.com/page/Fancy.com",
+      "https://mission.org/up-next-in-commerce/re-inventing-a-brand-and-turning-engagement-into-transactions-with-fancy-com-ceo-greg-spillane/"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "combatant-gentlemen",
+    "name": "Combatant Gentlemen",
+    "tagline": "Promised sharp, affordable suits by mail, then buckled under its own growth and unfulfilled orders",
+    "description": "Online menswear brand",
+    "industry": "Retail Trade",
+    "foundedYear": 2012,
+    "diedYear": 2018,
+    "fundingRaised": "$35M",
+    "proximateCause": "filed for Chapter 11 bankruptcy in 2018 after quality-control problems, unfulfilled orders, and mounting customer-service complaints piled up",
+    "rootCause": "Combatant Gentlemen scaled its direct-to-consumer menswear business quickly, but rapid growth outpaced its ability to maintain product quality and reliably fulfill orders; as complaints about unfulfilled orders and poor customer service accumulated, the resulting reputational damage and financial strain forced the third-generation-tailor-founded company into bankruptcy",
+    "timingNote": "not a timing problem â€” affordable direct-to-consumer menswear was and remained a viable category; the failure was operational, scaling faster than the company's fulfillment and quality processes could support",
+    "lesson": "Quality over growth",
+    "sources": [
+      "https://www.crunchbase.com/organization/combatant-gentlemen",
+      "https://askandyaboutclothes.com/community/threads/combatant-gent-may-be-out-of-business.238096/"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "nasty-gal",
+    "name": "Nasty Gal",
+    "tagline": "The eBay-store-turned-fashion-unicorn that couldn't survive its own overexpansion",
+    "description": "Fast-fashion e-commerce",
+    "industry": "Retail Trade",
+    "foundedYear": 2006,
+    "diedYear": 2017,
+    "fundingRaised": "$160M",
+    "proximateCause": "filed for Chapter 11 bankruptcy in November 2016 after years of executive turnover and slowing sales, with its assets sold off in a bankruptcy auction",
+    "rootCause": "Nasty Gal expanded rapidly from a scrappy eBay vintage-resale shop into a venture-backed fast-fashion brand, opening physical stores and burning through cash on marketing and leadership changes (including multiple CEO transitions) faster than its sales could support; when growth slowed, the company couldn't refinance its way out and filed for bankruptcy, with British fast-fashion retailer Boohoo winning the $20 million stalking-horse bid for its brand and customer data in a court-approved sale that closed in February 2017",
+    "timingNote": "not a timing problem â€” fast-fashion e-commerce was thriving throughout this period (ASOS and Boohoo itself both succeeded); Nasty Gal's failure was a self-inflicted scaling and management problem, not a market that wasn't ready",
+    "lesson": "Growth needs control",
+    "sources": [
+      "https://techcrunch.com/2017/01/09/boohoo-a-step-closer-to-acquiring-nasty-gals-assets-for-20m/",
+      "https://www.refinery29.com/en-us/2016/11/129425/nasty-gal-files-bankruptcy"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "beepi",
+    "name": "Beepi",
+    "tagline": "Promised to reinvent buying a used car peer-to-peer, then burned $7M a month getting there",
+    "description": "Peer-to-peer used car marketplace",
+    "industry": "Retail Trade",
+    "foundedYear": 2013,
+    "diedYear": 2017,
+    "fundingRaised": "$150M",
+    "proximateCause": "shut down operations outside California in December 2016 after a planned merger with Fair.com collapsed, and wound down entirely by early 2017 through an assignment for the benefit of creditors",
+    "rootCause": "Beepi built a capital-intensive operation â€” buying, inspecting, reconditioning, and shipping used cars peer-to-peer â€” while spending around $7 million a month, much of it on inflated salaries and other non-essential costs; when it couldn't raise a new round on those terms, a planned sale to Fair.com fell apart, a follow-up deal with a California dealer group also fell through, and the company had no path left but to liquidate its remaining assets to repay creditors",
+    "timingNote": "not a timing problem â€” peer-to-peer and online used-car sales later became a large, successful category (Carvana, Vroom); Beepi's failure was an unsustainable burn rate and operational cost structure, not a market that wasn't ready",
+    "lesson": "Costs can kill",
+    "sources": [
+      "https://techcrunch.com/2017/02/16/car-startup-beepi-sold-for-parts-after-potential-exits-to-fair-and-then-dgdg-broke-down",
+      "https://www.axios.com/2017/12/15/used-car-marketplace-beepi-goes-bust-1513300511"
+    ],
+    "waybackUrl": ""
+  },
+  {
+    "id": "pets-com",
+    "name": "Pets.com",
+    "tagline": "The sock-puppet mascot became more famous than the unprofitable business underneath it",
+    "description": "Online pet supply retailer",
+    "industry": "Retail Trade",
+    "foundedYear": 1998,
+    "diedYear": 2000,
+    "fundingRaised": "$300M",
+    "proximateCause": "announced on November 7, 2000 that it would stop taking orders and liquidate, going from IPO to shutdown in 268 days",
+    "rootCause": "Pets.com sold heavy, low-margin pet supplies like litter and food below cost while absorbing expensive shipping itself, and it spent aggressively on brand marketing (a Super Bowl ad, the Macy's Parade) to build awareness faster than its unit economics could support; when the dot-com funding market collapsed in 2000, there was no more capital to keep subsidizing every order, and there was no profitable business underneath the marketing",
+    "timingNote": "a genuine timing problem â€” the infrastructure Pets.com needed (cheap fulfillment logistics, higher broadband and e-commerce adoption) arrived roughly a decade later and enabled companies like Chewy to succeed with a similar premise",
+    "lesson": "Margins beat hype",
+    "sources": [
+      "https://en.wikipedia.org/wiki/Pets.com",
+      "https://www.sunsethq.com/blog/why-did-petscom-fail"
     ],
     "waybackUrl": ""
   }
