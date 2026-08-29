@@ -5,11 +5,13 @@
  * else (the pipeline, /api/search) calls embed(). Swapping MiniLM for a hosted
  * provider later means editing this file and nothing else.
  *
- * SERVER ONLY. Never import this from a client component.
+ * NOT server-only guarded — see the note above the imports.
  *
  * STATUS: NOT IMPLEMENTED — this is scaffold. See the TODO below.
  */
-import "server-only";
+// No `server-only` guard here on purpose: scripts/pipeline/embed.ts and
+// scripts/check.ts import embed() under plain Node, where that package throws.
+// The guard lives on lib/data.ts and lib/claude.ts instead.
 
 /** Model we standardised on: local, no API key, 384 dimensions. */
 export const EMBEDDING_MODEL = "Xenova/all-MiniLM-L6-v2";
