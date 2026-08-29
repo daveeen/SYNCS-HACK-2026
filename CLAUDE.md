@@ -56,9 +56,25 @@ type SearchResponse = {
    demo still runs, and what you need next.
 
 ## Ownership
-- Darryl: fullstack/frontend lead + integration + deploy.
+- Darryl: app flow + page composition/routing, integration, deploy. Owns develop
+  merges. Tie-breaker on contract changes.
 - Sam: frontend + branding/visual system (graveyard aesthetic, readable+accessible).
+  Owns app/components/ and the tokens in globals.css.
 - Yeriel: route handlers (/api/search, /api/report, /api/reconstruct) + lib/types.ts
   + the embed() wrapper.
-- Asher: data pipeline + enriched JSON quality (the cargo).
-- Davin: research/PM, curate seed startups, pitch + demo script, QA data accuracy.
+- Asher: data pipeline + enriched JSON quality (the cargo). NO database — the
+  source of truth is the committed JSON file. Owns the ~50 breadth entries.
+- Davin: research/PM + pitch + demo script. Curates the 5 HERO startups (deepest
+  paper trail, best Wayback snapshots) and QAs data accuracy.
+
+Darryl and Sam both work on the frontend. To avoid collisions: Sam owns
+app/components/ and the design tokens; Darryl owns page composition and routing
+(app/page.tsx, app/graveyard/page.tsx). Same design conversation, different files.
+
+## Seed data is two tiers — do not conflate them
+- 5 HERO startups (Davin): deeply researched, verified sources, good Wayback
+  snapshots. These carry the planted demo ideas and the reconstruction reveal.
+- ~50 BREADTH startups (Asher): bulk-ingested, lighter enrichment. Nobody reads
+  these closely. They exist so an arbitrary judge-typed idea finds a real match
+  instead of a 0.19 similarity to something irrelevant.
+Both land in data/startups.enriched.json in the same FailedStartup shape.
