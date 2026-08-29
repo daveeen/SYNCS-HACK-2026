@@ -126,18 +126,36 @@ export function composeReport(query: string, matches: StartupMatch[]): string {
       "not as evidence.",
     );
   } else if (shared.length === 0) {
-    const causes = [...new Set(matches.map((m) => m.rootCauseCategory))]
-      .filter((c) => c !== "unknown")
-      .map((c) => `*${c}*`);
-    out.push(
-      "These companies did not die of the same thing.",
-      causes.length > 0
-        ? `The causes on record are ${causes.join(", ")} — no single trap explains them.`
-        : "Their causes are unrecorded, so we cannot say what they shared.",
-      "",
-      "That is worth knowing on its own: a space where everyone failed differently",
-      "is a harder space than one with a single obvious trap to avoid.",
+    const causes = [...new Set(matches.map((m) => m.rootCauseCategory))].filter(
+      (c) => c !== "unknown",
     );
+
+    if (causes.length === 0) {
+      // Nothing is categorised. We know NOTHING about whether they share a
+      // cause, so we must not say they differ — that is an assertion the data
+      // does not support, and it is the same fabrication as inventing a shared
+      // pattern, just pointing the other way.
+      out.push(
+        "We cannot say. None of these companies has a categorised cause on record,",
+        "so there is no basis here for claiming they died of the same thing or of",
+        "different things. Read the individual causes above and judge for yourself.",
+      );
+    } else if (causes.length === 1) {
+      // One cause on record and no cluster means exactly one match is
+      // categorised. "No single trap explains them" would be nonsense.
+      out.push(
+        `Only one of these has a categorised cause on record: *${causes[0]}*.`,
+        "That is too little to call a pattern either way.",
+      );
+    } else {
+      out.push(
+        "These companies did not die of the same thing.",
+        `The causes on record are ${causes.map((c) => `*${c}*`).join(", ")} — no single trap explains them.`,
+        "",
+        "That is worth knowing on its own: a space where everyone failed differently",
+        "is a harder space than one with a single obvious trap to avoid.",
+      );
+    }
   } else {
     const top = shared[0];
     const names = top.members.map((m) => m.name).join(", ");

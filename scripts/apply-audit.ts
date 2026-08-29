@@ -73,10 +73,16 @@ async function main(): Promise<void> {
     }
     if (p.verdict === "contradicted") contradicted.push(p);
 
-    const existing = new Set((r.sources ?? []).map(host));
-    const fresh = (p.newSources ?? [])
-      .filter(isHttp)
-      .filter((u) => !existing.has(host(u)));
+    // Dedupe against the existing sources AND within the patch itself. Two URLs
+    // from the same publisher are one source, and counting them as two inflates
+    // exactly the corroboration number this script exists to report.
+    const seen = new Set((r.sources ?? []).map(host));
+    const fresh: string[] = [];
+    for (const u of (p.newSources ?? []).filter(isHttp)) {
+      if (seen.has(host(u))) continue;
+      seen.add(host(u));
+      fresh.push(u);
+    }
 
     if (fresh.length > 0) {
       r.sources = [...(r.sources ?? []), ...fresh];

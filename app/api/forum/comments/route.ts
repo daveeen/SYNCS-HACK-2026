@@ -55,6 +55,14 @@ export async function POST(
 
   // The schema cannot express "parent must belong to the same post", so the
   // route must. Without it a reply can be grafted onto an unrelated thread.
+  // A well-formed uuid for a post that does not exist would otherwise reach the
+  // insert, trip the foreign key, and come back as a 500 — our fault, for what
+  // is plainly a bad request. Deleted posts make this reachable in normal use.
+  const { data: post } = await supabase.from("posts").select("id").eq("id", postId).maybeSingle();
+  if (!post) {
+    return NextResponse.json({ error: "that post does not exist" }, { status: 404 });
+  }
+
   if (parentId) {
     const { data: parent } = await supabase
       .from("comments")

@@ -45,6 +45,25 @@ export async function POST(
   }
 
   const supabase = await createClient();
+
+  // likes.target_id is polymorphic, so it has no foreign key and the database
+  // will happily store a like against any uuid at all. Without this check,
+  // likes accumulate on things that do not exist, and a comment id sent with
+  // targetType "post" creates a second, divergent count for the same row.
+  const table = targetType === "post" ? "posts" : "comments";
+  const { data: target } = await supabase
+    .from(table)
+    .select("id")
+    .eq("id", targetId)
+    .maybeSingle();
+
+  if (!target) {
+    return NextResponse.json(
+      { error: `that ${targetType} does not exist` },
+      { status: 404 },
+    );
+  }
+
   const key = { user_id: caller.userId, target_type: targetType, target_id: targetId };
 
   const { data: existing } = await supabase

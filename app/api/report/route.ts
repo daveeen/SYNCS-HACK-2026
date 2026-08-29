@@ -15,7 +15,13 @@
  */
 import { NextResponse } from "next/server";
 import { composeReport } from "@/lib/report";
-import type { ApiError, ReportRequest, StartupMatch } from "@/lib/types";
+import { ROOT_CAUSE_CATEGORIES } from "@/lib/types";
+import type {
+  ApiError,
+  ReportRequest,
+  RootCauseCategory,
+  StartupMatch,
+} from "@/lib/types";
 
 export const runtime = "nodejs";
 
@@ -48,7 +54,11 @@ function isRenderable(m: unknown): m is StartupMatch {
     typeof r.name === "string" &&
     typeof r.tagline === "string" &&
     typeof r.rootCause === "string" &&
-    typeof r.rootCauseCategory === "string" &&
+    // Must be a MEMBER of the vocabulary, not merely a string. The matches come
+    // from the request body, and this value is interpolated into Markdown as
+    // `died of the same thing: **X**` — so an arbitrary string is a content
+    // injection into a document we tell the user is derived from our records.
+    ROOT_CAUSE_CATEGORIES.includes(r.rootCauseCategory as RootCauseCategory) &&
     typeof r.timingNote === "string" &&
     typeof r.lesson === "string" &&
     typeof r.fundingRaised === "string" &&

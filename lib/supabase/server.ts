@@ -10,12 +10,25 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
 export async function createClient() {
+  // Fail with something actionable. Non-null assertions here produce a bare 500
+  // on every /api/auth and /api/forum route when the env is simply missing,
+  // which reads as a code bug rather than a five-second fix. lib/supabase/admin.ts
+  // already does this for the service key.
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) {
+    throw new Error(
+      "NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are required. " +
+        "Copy .env.example to .env.local and fill them in.",
+    );
+  }
+
   // cookies() is async in Next 16.
   const cookieStore = await cookies();
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    url,
+    key,
     {
       cookies: {
         getAll() {

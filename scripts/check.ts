@@ -143,6 +143,27 @@ async function main(): Promise<void> {
     assert.doesNotMatch(md, /died of the same thing: \*\*/);
   });
 
+  // All-unknown must not be reported as "they died of different things" — that
+  // asserts a difference the data cannot support, which is the same fabrication
+  // as inventing a shared pattern, pointed the other way.
+  await check("report: all-unknown categories claims neither sameness nor difference", async () => {
+    const matches = (await loadMatches(4)).map((m) => ({ ...m, rootCauseCategory: "unknown" as const }));
+    const md = composeReport("anything", matches);
+    assert.match(md, /We cannot say/);
+    assert.doesNotMatch(md, /did not die of the same thing/);
+    assert.doesNotMatch(md, /died of the same thing: \*\*/);
+  });
+
+  await check("report: a single categorised match is not called a difference", async () => {
+    const matches = (await loadMatches(3)).map((m, i) => ({
+      ...m,
+      rootCauseCategory: i === 0 ? ("regulatory" as const) : ("unknown" as const),
+    }));
+    const md = composeReport("anything", matches);
+    assert.match(md, /too little to call a pattern/);
+    assert.doesNotMatch(md, /no single trap explains them/);
+  });
+
   await check("report: one match is called an anecdote, not a pattern", async () => {
     const md = composeReport("anything", await loadMatches(1));
     assert.match(md, /one data point is an anecdote/);

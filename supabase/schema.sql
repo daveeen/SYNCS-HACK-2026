@@ -206,7 +206,7 @@ create or replace function public.cleanup_orphans()
 returns trigger
 language plpgsql
 security definer set search_path = ''
-as 2651
+as $$
 begin
   delete from public.likes
    where target_type = tg_argv[0] and target_id = old.id;

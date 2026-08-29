@@ -247,6 +247,31 @@ Three worth knowing about:
 
 ---
 
+## Known gaps
+
+**`rootCauseCategory` is missing on all 173 records, so "The pattern" never
+fires.** The field postdates the enrichment. `loadStartups()` coerces missing
+values to `"unknown"` so the report degrades honestly rather than printing
+`undefined`, but the section stays dormant until someone runs
+`pnpm pipeline:categorize` with an `ANTHROPIC_API_KEY`.
+
+This is the single biggest available improvement to report quality. Search a
+meal-delivery idea today and it correctly finds SpoonRocket, Munchery, Sprig and
+Maple — four companies that all died of the same thing — and the report cannot
+say so.
+
+**`src/enrich_next30.py` and `src/enrich_top10.py` do not emit the field.**
+Re-running either re-introduces the gap for whatever it writes. Run
+`pipeline:categorize` afterwards, or add the field to those writers.
+
+**Two records are wrong, both the same way.** `Pawngo` and `One Kings Lane` were
+acquired, not shut down — One Kings Lane is still trading. Both are flagged, not
+corrected, because `rootCause` is Davin's QA. **64 of 173 records mention an
+acquisition in their cause**, so the class of error is wider than the two found;
+the risk is specifically records where the brand survived the sale.
+
+---
+
 ## Traps that have already bitten
 
 **`import "server-only"` on anything a script imports.** That package throws
@@ -268,6 +293,22 @@ conference wifi.
 **Do not upgrade `@xenova/transformers` past 2.17.2.** In 3.x
 `onnxruntime-node` became a hard dependency and the traced function blows
 Vercel's 250MB limit.
+
+**`pkill -f "next dev"` does not kill Next on Windows.** The wrapper dies, the
+server keeps serving, and your next test silently hits the OLD build with the
+model still cached in memory. This produced two false results here — once
+"proving" the degraded fallback was broken when it works. Kill by port:
+
+```bash
+PID=$(netstat -ano | grep ':3000' | grep LISTENING | head -1 | awk '{print $NF}')
+taskkill //PID $PID //F
+```
+
+**Do not pipe code containing `$$`, `\*` or backticks through `bash -c`.** The
+shell expands it. `$$` in `supabase/schema.sql` became the shell's PID, which
+would have aborted the entire schema on apply; escaped regexes in
+`scripts/check.ts` lost their backslashes twice. Use the editor, not a heredoc,
+for anything with escapes.
 
 **Supabase grants are separate from RLS.** Projects created after 30 May 2026
 need explicit `grant` statements before PostgREST can see a table. Skip them and
