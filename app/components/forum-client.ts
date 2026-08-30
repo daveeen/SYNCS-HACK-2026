@@ -37,10 +37,35 @@ function normalise(s: string): string {
 
 const MENTION_TOKEN = /(^|\s)@([a-z0-9_]{2,40})/gi;
 
-/** Startup names for a set of resolved ids, in the shape the mention pill needs. */
-export function resolveMentionNames(ids: string[], startups: FailedStartup[]): string[] {
-  const byId = new Map(startups.map((s) => [s.id, s.name]));
-  return ids.map((id) => byId.get(id)).filter((n): n is string => Boolean(n));
+/** Full startup records for a post's resolved mention ids — the pill needs
+    the whole record, not just the name, so clicking it can open the same
+    StartupWindow the trash and search results open. An id the corpus no
+    longer has (data/README.md's own caveat) is dropped, not shown broken. */
+export function resolveMentions(ids: string[], startups: FailedStartup[]): FailedStartup[] {
+  const byId = new Map(startups.map((s) => [s.id, s]));
+  return ids.map((id) => byId.get(id)).filter((s): s is FailedStartup => Boolean(s));
+}
+
+/**
+ * Mirrors lib/forum/mentions.ts's parseMentions() exactly (regex, order of
+ * operations, dedup) — that module is server-only and can't be imported here.
+ *
+ * The route resolves mentions synchronously, inside the same request that
+ * creates the post (app/api/forum/posts/route.ts), so by the time
+ * createPost() resolves the mentions row already exists in Supabase. This
+ * function exists anyway, purely to skip the extra round trip: it lets the
+ * newly-created post's optimistic feed entry show the right MENTIONS pill
+ * and a correctly-stripped body immediately, instead of `mentionIds: []`
+ * until the next full reload.
+ */
+export function resolveMentionIdsFromText(text: string, startups: FailedStartup[]): string[] {
+  const byName = new Map(startups.map((s) => [normalise(s.name), s.id]));
+  const found: string[] = [];
+  for (const match of text.matchAll(MENTION_TOKEN)) {
+    const id = byName.get(normalise(match[2]));
+    if (id && !found.includes(id)) found.push(id);
+  }
+  return found;
 }
 
 /**
@@ -196,8 +221,7 @@ export async function fetchPostDetail(postId: string, userId: string | null): Pr
     .select(
       `id, author_id, title, body, created_at,
        profiles(handle),
-       comments(id, post_id, author_id, parent_id, body, created_at, profiles(handle)),
-       mentions(startup_id)`,
+       comments(id, post_id, author_id, parent_id, body, created_at, profiles(handle))`,
     )
     .eq("id", postId)
     .single();
@@ -206,10 +230,15 @@ export async function fetchPostDetail(postId: string, userId: string | null): Pr
   const row = post as unknown as ForumPost & {
     profiles: { handle: string } | null;
     comments: (ForumComment & { profiles: { handle: string } | null })[];
-    mentions: { startup_id: string }[];
   };
 
-  const [{ count: likeCount }, likedRow] = await Promise.all([
+  // mentions.source_id is polymorphic (a post OR a comment id, forum-spec.md
+  // §3) so it deliberately has no foreign key to posts — PostgREST's nested
+  // `mentions(startup_id)` embed syntax needs one to resolve, and without it
+  // fails with "Could not find a relationship between 'posts' and
+  // 'mentions'". A plain filtered query, the same shape fetchFeed already
+  // uses, doesn't need the relationship at all.
+  const [{ count: likeCount }, likedRow, { data: mentionRows }] = await Promise.all([
     supabase
       .from("likes")
       .select("user_id", { count: "exact", head: true })
@@ -222,6 +251,7 @@ export async function fetchPostDetail(postId: string, userId: string | null): Pr
           .match({ user_id: userId, target_type: "post", target_id: postId })
           .maybeSingle()
       : Promise.resolve({ data: null }),
+    supabase.from("mentions").select("startup_id").eq("source_type", "post").eq("source_id", postId),
   ]);
 
   return {
@@ -234,7 +264,7 @@ export async function fetchPostDetail(postId: string, userId: string | null): Pr
     commentCount: row.comments.length,
     likeCount: likeCount ?? 0,
     likedByMe: Boolean(likedRow.data),
-    mentionIds: row.mentions.map((m) => m.startup_id),
+    mentionIds: (mentionRows ?? []).map((m) => m.startup_id),
     comments: row.comments
       .slice()
       .sort((a, b) => a.created_at.localeCompare(b.created_at))

@@ -424,8 +424,10 @@ export default function Desktop({ startups }: { startups: FailedStartup[] }) {
           {w.pane.kind === "startup" && <StartupWindow s={w.pane.startup} />}
           {/* startups: so a resolved @mention can show the real company name
               (forum-reads.md "Rendering @mentions") — already loaded here,
-              just not previously threaded down to Sam's canvas. */}
-          {w.pane.kind === "forum" && <ForumWindow startups={startups} />}
+              just not previously threaded down to Sam's canvas.
+              onOpenStartup: reuses the same opener ResultsWindow/TrashWindow
+              already use, so clicking a mention opens the same StartupWindow. */}
+          {w.pane.kind === "forum" && <ForumWindow startups={startups} onOpenStartup={openStartup} />}
           {w.pane.kind === "site" && <SiteWindow s={w.pane.startup} />}
           {w.pane.kind === "results" && (
             <ResultsWindow

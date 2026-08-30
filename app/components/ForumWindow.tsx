@@ -35,7 +35,8 @@ import {
   logout,
   onSessionChange,
   registerAccount,
-  resolveMentionNames,
+  resolveMentionIdsFromText,
+  resolveMentions,
   stripResolvedMentionTokens,
   subscribeToComments,
   timeAgo,
@@ -132,8 +133,8 @@ function Avatar({ handle, size = 26 }: { handle: string; size?: number }) {
  * mentions a company, shows the real name. See "Rendering @mentions" in
  * docs/forum-reads.md.
  */
-function MentionRow({ names }: { names: string[] }) {
-  if (names.length === 0) return null;
+function MentionRow({ mentions, onOpen }: { mentions: FailedStartup[]; onOpen: (s: FailedStartup) => void }) {
+  if (mentions.length === 0) return null;
   return (
     <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "var(--gy-s-3)" }}>
       <span
@@ -146,9 +147,29 @@ function MentionRow({ names }: { names: string[] }) {
       >
         mentions
       </span>
-      {names.map((n) => (
+      {mentions.map((s) => (
+        // A real <button> here would be a <button> nested inside the feed
+        // card's own <button> (invalid HTML — React warns, and browsers
+        // reparent nested buttons unpredictably). role="button" on a span is
+        // the same pattern already used for the like control below.
         <span
-          key={n}
+          key={s.id}
+          role="button"
+          tabIndex={0}
+          onClick={(e) => {
+            // Without this, a click on the pill also fires the feed card's
+            // own onClick and opens the post AND the startup at once.
+            e.stopPropagation();
+            onOpen(s);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              e.stopPropagation();
+              onOpen(s);
+            }
+          }}
+          aria-label={`Open ${s.name} in the trash`}
           style={{
             display: "inline-flex",
             padding: "1px var(--gy-s-3)",
@@ -157,9 +178,10 @@ function MentionRow({ names }: { names: string[] }) {
             color: "var(--gy-mention)",
             background: "var(--gy-mention-dim)",
             borderRadius: "var(--gy-r-pill)",
+            cursor: "pointer",
           }}
         >
-          @{n}
+          @{s.name}
         </span>
       ))}
     </div>
@@ -238,7 +260,13 @@ function AccountControl({ handle, onSignOut }: { handle: string; onSignOut: () =
   );
 }
 
-export default function ForumWindow({ startups }: { startups: FailedStartup[] }) {
+export default function ForumWindow({
+  startups,
+  onOpenStartup,
+}: {
+  startups: FailedStartup[];
+  onOpenStartup: (s: FailedStartup) => void;
+}) {
   const [view, setView] = useState<View>("feed");
   const [activeId, setActiveId] = useState<string | null>(null);
 
@@ -398,17 +426,18 @@ export default function ForumWindow({ startups }: { startups: FailedStartup[] })
     setComposeBusy(true);
     try {
       const created = await createPost(newTitle.trim(), newBody.trim());
-      // The route returns the raw row — no joined handle, no mentions/matches
-      // yet (those are derived server-side after the fact, forum-spec.md §5
-      // steps 5-6). Stand in with what we already know; a full reload would
-      // pick up the resolved mentions once they land.
+      // The route returns the raw row — no joined handle, no matches (those
+      // need a live similarity search, forum-spec.md §5 step 6). Mentions the
+      // route DOES resolve synchronously before responding (step 5), so
+      // rather than wait for a reload, recompute them the same way it did —
+      // see resolveMentionIdsFromText's doc comment.
       const feedPost: FeedPost = {
         ...created,
         authorHandle: session.handle,
         commentCount: 0,
         likeCount: 0,
         likedByMe: false,
-        mentionIds: [],
+        mentionIds: resolveMentionIdsFromText(`${created.title} ${created.body}`, startups),
       };
       setFeed((f) => (f.kind === "ready" ? { ...f, value: [feedPost, ...f.value] } : f));
       setNewTitle("");
@@ -660,7 +689,7 @@ export default function ForumWindow({ startups }: { startups: FailedStartup[] })
                 </p>
               )}
               {feed.value.map((p) => {
-                const names = resolveMentionNames(p.mentionIds, startups);
+                const mentions = resolveMentions(p.mentionIds, startups);
                 return (
                   <li key={p.id} style={{ borderBottom: "1px solid var(--gy-line-soft)" }}>
                     <button
@@ -720,7 +749,7 @@ export default function ForumWindow({ startups }: { startups: FailedStartup[] })
                             }}
                           >
                             <span style={{ fontFamily: "var(--gy-font-mono)", color: "var(--gy-ink-faint)" }}>@{p.authorHandle}:</span>{" "}
-                            {stripResolvedMentionTokens(p.body, names)}
+                            {stripResolvedMentionTokens(p.body, mentions.map((s) => s.name))}
                           </span>
                           <span style={{ flex: "0 0 auto", display: "flex", alignItems: "center", gap: "var(--gy-s-4)" }}>
                             <span
@@ -755,7 +784,7 @@ export default function ForumWindow({ startups }: { startups: FailedStartup[] })
                           </span>
                         </span>
 
-                        <MentionRow names={names} />
+                        <MentionRow mentions={mentions} onOpen={onOpenStartup} />
                       </span>
                     </button>
                   </li>
@@ -777,7 +806,7 @@ export default function ForumWindow({ startups }: { startups: FailedStartup[] })
           )}
           {detail.kind === "ready" && (() => {
             const post = detail.value;
-            const names = resolveMentionNames(post.mentionIds, startups);
+            const mentions = resolveMentions(post.mentionIds, startups);
             return (
               <article style={{ display: "flex", flexDirection: "column", gap: "var(--gy-s-7)" }}>
                 <header style={{ display: "flex", flexDirection: "column", gap: "var(--gy-s-3)" }}>
@@ -794,7 +823,7 @@ export default function ForumWindow({ startups }: { startups: FailedStartup[] })
                     {post.title}
                   </h1>
                   <p style={{ margin: 0, fontSize: "var(--gy-t-lead)", color: "var(--gy-ink-dim)", lineHeight: 1.5 }}>
-                    {stripResolvedMentionTokens(post.body, names)}
+                    {stripResolvedMentionTokens(post.body, mentions.map((s) => s.name))}
                   </p>
                   <div
                     style={{
@@ -810,7 +839,7 @@ export default function ForumWindow({ startups }: { startups: FailedStartup[] })
                     <span>@{post.authorHandle}</span>
                     <span>{timeAgo(post.created_at)}</span>
                   </div>
-                  <MentionRow names={names} />
+                  <MentionRow mentions={mentions} onOpen={onOpenStartup} />
                   <div style={{ display: "flex", alignItems: "center", gap: "var(--gy-s-6)", paddingTop: "var(--gy-s-2)" }}>
                     <button
                       onClick={() => handleToggleLike(post.id)}
