@@ -37,10 +37,13 @@ function normalise(s: string): string {
 
 const MENTION_TOKEN = /(^|\s)@([a-z0-9_]{2,40})/gi;
 
-/** Startup names for a set of resolved ids, in the shape the mention pill needs. */
-export function resolveMentionNames(ids: string[], startups: FailedStartup[]): string[] {
-  const byId = new Map(startups.map((s) => [s.id, s.name]));
-  return ids.map((id) => byId.get(id)).filter((n): n is string => Boolean(n));
+/** Full startup records for a post's resolved mention ids — the pill needs
+    the whole record, not just the name, so clicking it can open the same
+    StartupWindow the trash and search results open. An id the corpus no
+    longer has (data/README.md's own caveat) is dropped, not shown broken. */
+export function resolveMentions(ids: string[], startups: FailedStartup[]): FailedStartup[] {
+  const byId = new Map(startups.map((s) => [s.id, s]));
+  return ids.map((id) => byId.get(id)).filter((s): s is FailedStartup => Boolean(s));
 }
 
 /**
