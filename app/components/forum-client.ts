@@ -44,6 +44,28 @@ export function resolveMentionNames(ids: string[], startups: FailedStartup[]): s
 }
 
 /**
+ * Mirrors lib/forum/mentions.ts's parseMentions() exactly (regex, order of
+ * operations, dedup) — that module is server-only and can't be imported here.
+ *
+ * The route resolves mentions synchronously, inside the same request that
+ * creates the post (app/api/forum/posts/route.ts), so by the time
+ * createPost() resolves the mentions row already exists in Supabase. This
+ * function exists anyway, purely to skip the extra round trip: it lets the
+ * newly-created post's optimistic feed entry show the right MENTIONS pill
+ * and a correctly-stripped body immediately, instead of `mentionIds: []`
+ * until the next full reload.
+ */
+export function resolveMentionIdsFromText(text: string, startups: FailedStartup[]): string[] {
+  const byName = new Map(startups.map((s) => [normalise(s.name), s.id]));
+  const found: string[] = [];
+  for (const match of text.matchAll(MENTION_TOKEN)) {
+    const id = byName.get(normalise(match[2]));
+    if (id && !found.includes(id)) found.push(id);
+  }
+  return found;
+}
+
+/**
  * Strip only the raw "@token"s that resolved to one of this post's mentions —
  * an unresolved "@something" the user typed has nowhere else to appear, so it
  * stays. Mirrors the request: a mention shows up in MENTIONS, not twice.

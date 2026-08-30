@@ -35,6 +35,7 @@ import {
   logout,
   onSessionChange,
   registerAccount,
+  resolveMentionIdsFromText,
   resolveMentionNames,
   stripResolvedMentionTokens,
   subscribeToComments,
@@ -398,17 +399,18 @@ export default function ForumWindow({ startups }: { startups: FailedStartup[] })
     setComposeBusy(true);
     try {
       const created = await createPost(newTitle.trim(), newBody.trim());
-      // The route returns the raw row — no joined handle, no mentions/matches
-      // yet (those are derived server-side after the fact, forum-spec.md §5
-      // steps 5-6). Stand in with what we already know; a full reload would
-      // pick up the resolved mentions once they land.
+      // The route returns the raw row — no joined handle, no matches (those
+      // need a live similarity search, forum-spec.md §5 step 6). Mentions the
+      // route DOES resolve synchronously before responding (step 5), so
+      // rather than wait for a reload, recompute them the same way it did —
+      // see resolveMentionIdsFromText's doc comment.
       const feedPost: FeedPost = {
         ...created,
         authorHandle: session.handle,
         commentCount: 0,
         likeCount: 0,
         likedByMe: false,
-        mentionIds: [],
+        mentionIds: resolveMentionIdsFromText(`${created.title} ${created.body}`, startups),
       };
       setFeed((f) => (f.kind === "ready" ? { ...f, value: [feedPost, ...f.value] } : f));
       setNewTitle("");
