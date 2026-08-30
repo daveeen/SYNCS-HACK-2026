@@ -196,8 +196,7 @@ export async function fetchPostDetail(postId: string, userId: string | null): Pr
     .select(
       `id, author_id, title, body, created_at,
        profiles(handle),
-       comments(id, post_id, author_id, parent_id, body, created_at, profiles(handle)),
-       mentions(startup_id)`,
+       comments(id, post_id, author_id, parent_id, body, created_at, profiles(handle))`,
     )
     .eq("id", postId)
     .single();
@@ -206,10 +205,15 @@ export async function fetchPostDetail(postId: string, userId: string | null): Pr
   const row = post as unknown as ForumPost & {
     profiles: { handle: string } | null;
     comments: (ForumComment & { profiles: { handle: string } | null })[];
-    mentions: { startup_id: string }[];
   };
 
-  const [{ count: likeCount }, likedRow] = await Promise.all([
+  // mentions.source_id is polymorphic (a post OR a comment id, forum-spec.md
+  // §3) so it deliberately has no foreign key to posts — PostgREST's nested
+  // `mentions(startup_id)` embed syntax needs one to resolve, and without it
+  // fails with "Could not find a relationship between 'posts' and
+  // 'mentions'". A plain filtered query, the same shape fetchFeed already
+  // uses, doesn't need the relationship at all.
+  const [{ count: likeCount }, likedRow, { data: mentionRows }] = await Promise.all([
     supabase
       .from("likes")
       .select("user_id", { count: "exact", head: true })
@@ -222,6 +226,7 @@ export async function fetchPostDetail(postId: string, userId: string | null): Pr
           .match({ user_id: userId, target_type: "post", target_id: postId })
           .maybeSingle()
       : Promise.resolve({ data: null }),
+    supabase.from("mentions").select("startup_id").eq("source_type", "post").eq("source_id", postId),
   ]);
 
   return {
@@ -234,7 +239,7 @@ export async function fetchPostDetail(postId: string, userId: string | null): Pr
     commentCount: row.comments.length,
     likeCount: likeCount ?? 0,
     likedByMe: Boolean(likedRow.data),
-    mentionIds: row.mentions.map((m) => m.startup_id),
+    mentionIds: (mentionRows ?? []).map((m) => m.startup_id),
     comments: row.comments
       .slice()
       .sort((a, b) => a.created_at.localeCompare(b.created_at))
